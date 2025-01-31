@@ -1,16 +1,3 @@
-# almaskan
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1 -  in statement when clicking all statement the balance amount of amount recieved and total amount with project name should be shown.
+2 -  in vat when updating the invamount , vat , total amount it is not updating in total .
+3 -  in quotation pdf when the list of discription is created when the limit of page exceeds the whole list is going to next page .
