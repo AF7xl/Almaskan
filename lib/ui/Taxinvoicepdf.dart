@@ -215,8 +215,8 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                 ),
                 pw.SizedBox(height: 3),
                 pw.Table(border: pw.TableBorder.all(), columnWidths: const {
-                  0: pw.FlexColumnWidth(2), // First column width (flexible)
-                  1: pw.FlexColumnWidth(2), // Second column width (flexible)
+                  0: pw.FlexColumnWidth(1), // First column width (flexible)
+                  1: pw.FlexColumnWidth(1), // Second column width (flexible)
                 }, children: [
                   pw.TableRow(
                     decoration:

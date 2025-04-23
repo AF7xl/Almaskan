@@ -4,9 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../Toast Message.dart';
-import 'Dashboard2.dart';
+import 'Dashboard1.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +26,9 @@ class _DashboardState extends State<Dashboard> {
   TextEditingController name = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController trn = TextEditingController();
+  FocusNode namefocusnode = FocusNode();
+  FocusNode addressfocusnode = FocusNode();
+  FocusNode trnfocusnode = FocusNode();
   final firestore = FirebaseFirestore.instance.collection('Clients');
   final ref = FirebaseFirestore.instance.collection('Clients');
   final firestor = FirebaseFirestore.instance.collection('Clients').snapshots();
@@ -82,8 +86,14 @@ class _DashboardState extends State<Dashboard> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             left: 15.w, right: 15.w, bottom: 5.h),
-                        child: TextFormField(textInputAction: TextInputAction.next,
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          focusNode: namefocusnode,
                           controller: name,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(addressfocusnode);
+                          },
                           cursorColor: Colors.black,
                         ),
                       )),
@@ -114,10 +124,14 @@ class _DashboardState extends State<Dashboard> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             left: 15.w, right: 15.w, bottom: 5.h),
-                        child: TextFormField(textInputAction: TextInputAction.next,
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
                           controller: address,
+                          focusNode: addressfocusnode,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(trnfocusnode);
+                          },
                           cursorColor: Colors.black,
-
                         ),
                       )),
                 )
@@ -147,7 +161,9 @@ class _DashboardState extends State<Dashboard> {
                       child: Padding(
                         padding: EdgeInsets.only(
                             left: 15.w, right: 15.w, bottom: 5.h),
-                        child: TextFormField(textInputAction: TextInputAction.next,
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          focusNode: trnfocusnode,
                           controller: trn,
                           cursorColor: Colors.black,
                         ),
@@ -168,18 +184,22 @@ class _DashboardState extends State<Dashboard> {
                       'address': address.text,
                       'TRN NO': trn.text,
                     });
+
                     ToastMessage().toastmessage(message: 'Client Added');
                     tooglecontainer();
                   } catch (e) {
                     debugPrint('Error adding client: $e');
                     ToastMessage().toastmessage(message: e.toString());
                   }
+                  name.clear();
+                  address.clear();
+                  trn.clear();
                 },
                 child: Container(
                   width: 90.w,
                   height: 35.h,
                   decoration: BoxDecoration(
-                      color: Colors.red[900],
+                      color: Colors.blueGrey[300],
                       borderRadius: BorderRadius.circular(2.r)),
                   child: Center(
                     child: Text(
@@ -202,124 +222,116 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(
-      children: [
-        SingleChildScrollView(
-          child: Column(
-            children: [
-              StreamBuilder<QuerySnapshot>(
-                  stream: firestor,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    if (snapshot.hasError) {
-                      return Text(
-                        'error',
-                        style: TextStyle(color: Colors.purple),
-                      );
-                    }
-                    if (snapshot.hasData) {
-                      return GridView.count(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        shrinkWrap: true,
-                        padding:
-                            EdgeInsets.only(top: 25.h, left: 20.w, right: 20.w),
-                        childAspectRatio: 378.w / 202.h,
-                        physics: NeverScrollableScrollPhysics(),
-                        children:
-                            List.generate(snapshot.data!.docs.length, (index) {
-                          return Card(
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => Dashboard2(
-                                          id: snapshot.data!.docs[index].id,
-                                          name: snapshot.data!.docs[index]
-                                              ['name'],
-                                          address: snapshot.data!.docs[index]
-                                              ['address'],
-                                          trn: snapshot.data!.docs[index]
-                                              ['TRN NO'],
-                                        )));
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black12)),
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 15.w),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 15.h),
-                                        child: Text(
-                                          snapshot.data!.docs[index]['name'],
-                                          style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 15.sp,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 5.h),
-                                        child: Text(
-                                          snapshot.data!.docs[index]['address'],
-                                          style: TextStyle(
-                                              fontSize: 13.sp,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.black),
-                                        ),
-                                      ),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 5.h),
-                                          child: Text(
-                                            "United Arab Emirates",
-                                            style: TextStyle(
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black),
-                                          )),
-                                      Padding(
-                                          padding: EdgeInsets.only(top: 5.h),
-                                          child: Text(
-                                            "TRN : ${snapshot.data!.docs[index]['TRN NO']}",
-                                            style: TextStyle(
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black),
-                                          )),
-                                      Row(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  StreamBuilder<QuerySnapshot>(
+                      stream: firestor,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return Text(
+                            'error',
+                            style: TextStyle(color: Colors.purple),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return GridView.count(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(
+                                top: 25.h, left: 20.w, right: 20.w),
+                            childAspectRatio: 378.w / 202.h,
+                            physics: NeverScrollableScrollPhysics(),
+                            children: List.generate(snapshot.data!.docs.length,
+                                (index) {
+                              return Card(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (_) => Dashboard2(
+                                                  id: snapshot
+                                                      .data!.docs[index].id,
+                                                  name: snapshot.data!
+                                                      .docs[index]['name'],
+                                                  address: snapshot.data!
+                                                      .docs[index]['address'],
+                                                  trn: snapshot.data!
+                                                      .docs[index]['TRN NO'],
+                                                )));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.blueGrey[100],
+                                        borderRadius:
+                                            BorderRadius.circular(4.r),
+                                        border:
+                                            Border.all(color: Colors.black12)),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 15.w),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Padding(
+                                            padding: EdgeInsets.only(top: 15.h),
+                                            child: Text(
+                                              snapshot.data!.docs[index]
+                                                  ['name'],
+                                              style: GoogleFonts.workSans(
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.sp,
+                                                  letterSpacing: 0.5),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 5.h),
+                                            child: Text(
+                                              snapshot.data!.docs[index]
+                                                  ['address'],
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          Padding(
                                               padding:
-                                                  EdgeInsets.only(top: 5.h),
-                                              child: Container(
-                                                width: 100.w,
-                                                height: 25.h,
-                                                child: Text(
-                                                  "Projects : 1533",
-                                                  style: TextStyle(
+                                                  EdgeInsets.only(top: 8.h),
+                                              child: Text(
+                                                  "United Arab Emirates",
+                                                  style: GoogleFonts.poppins(
                                                       fontSize: 13.sp,
                                                       fontWeight:
                                                           FontWeight.w400,
-                                                      color: Colors.black),
-                                                ),
-                                              )),
+                                                      color: Colors.black))),
+                                          Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 8.h),
+                                              child: Text(
+                                                  "TRN : ${snapshot.data!.docs[index]['TRN NO']}",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 13.sp,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.black))),
                                           Row(
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.only(
-                                                    left: 110.w),
+                                                    left: 230.w),
                                                 child: InkWell(
                                                   onTap: () {
-
                                                     firestore
                                                         .doc(snapshot.data!
                                                             .docs[index]['id'])
@@ -332,7 +344,8 @@ class _DashboardState extends State<Dashboard> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               2.r),
-                                                      color: Colors.white,
+                                                      color:
+                                                          Colors.blueGrey[100],
                                                     ),
                                                     child: Icon(
                                                       CupertinoIcons.delete,
@@ -522,7 +535,7 @@ class _DashboardState extends State<Dashboard> {
                                                                               updaddress.text,
                                                                           'TRN NO':
                                                                               updtrn.text
-                                                                        });
+                                                                        });Navigator.of(context).pop();
                                                                       },
                                                                       child:
                                                                           Container(
@@ -532,7 +545,7 @@ class _DashboardState extends State<Dashboard> {
                                                                             35.h,
                                                                         decoration: BoxDecoration(
                                                                             color:
-                                                                                Colors.red[900],
+                                                                                Colors.blueGrey[300],
                                                                             borderRadius: BorderRadius.circular(2.r)),
                                                                         child:
                                                                             Center(
@@ -561,7 +574,8 @@ class _DashboardState extends State<Dashboard> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               2.r),
-                                                      color: Colors.white,
+                                                      color:
+                                                          Colors.blueGrey[100],
                                                     ),
                                                     child: Icon(
                                                       Icons.edit,
@@ -574,47 +588,45 @@ class _DashboardState extends State<Dashboard> {
                                             ],
                                           )
                                         ],
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                              );
+                            }),
                           );
-                        }),
-                      );
-                    } else
-                      return SizedBox();
-                  }),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 900.w, top: 570.h),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              shape: CircleBorder(),
-              backgroundColor: Colors.red[900],
-              padding: EdgeInsets.all(8.w),
+                        } else
+                          return SizedBox();
+                      }),
+                ],
+              ),
             ),
-            onPressed: () {
-              tooglecontainer();
-            },
-            child: CircleAvatar(
-              radius: 30.r,
-              backgroundColor: Colors.red[900],
-              child: Center(
-                child: Icon(
-                  Icons.add,
-                  size: 25.sp,
-                  color: Colors.white,
+            Padding(
+              padding: EdgeInsets.only(left: 900.w, top: 570.h),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: CircleBorder(),
+                  backgroundColor: Colors.red[900],
+                  padding: EdgeInsets.all(8.w),
+                ),
+                onPressed: () {
+                  tooglecontainer();
+                },
+                child: CircleAvatar(
+                  radius: 30.r,
+                  backgroundColor: Colors.blueGrey[300],
+                  child: Center(
+                    child: Icon(
+                      Icons.add,
+                      size: 25.sp,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-        if (showcontainer) container()
-      ],
-    ));
+            if (showcontainer) container()
+          ],
+        ));
   }
 }

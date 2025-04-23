@@ -33,29 +33,28 @@ class Invpdf extends StatefulWidget {
   final String address;
   final String trn;
 
-  const Invpdf(
-      {super.key,
-      required this.invno,
-      required this.date,
-      required this.kindatt,
-      required this.project,
-      required this.nbq,
-      required this.sno,
-      required this.description,
-      required this.qty,
-      required this.unit,
-      required this.rate,
-      required this.amount,
-      required this.subtotal,
-      required this.discount,
-      required this.taxableamount,
-      required this.vat,
-      required this.totalamount,
-      required this.totalamountinname,
-      required this.naq,
-      required this.name,
-      required this.address,
-      required this.trn});
+  const Invpdf({super.key,
+    required this.invno,
+    required this.date,
+    required this.kindatt,
+    required this.project,
+    required this.nbq,
+    required this.sno,
+    required this.description,
+    required this.qty,
+    required this.unit,
+    required this.rate,
+    required this.amount,
+    required this.subtotal,
+    required this.discount,
+    required this.taxableamount,
+    required this.vat,
+    required this.totalamount,
+    required this.totalamountinname,
+    required this.naq,
+    required this.name,
+    required this.address,
+    required this.trn});
 
   @override
   State<Invpdf> createState() => _InvpdfState();
@@ -168,15 +167,7 @@ class _InvpdfState extends State<Invpdf> {
                     child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Padding(
-                          padding: const pw.EdgeInsets.only(left: 120),
-                          child: pw.Text(
-                            "Page : 1 of 1",
-                            style: pw.TextStyle(
-                              fontSize: 10,
-                            ),
-                          ),
-                        ),
+
                         pw.SizedBox(height: 5),
                         pw.Padding(
                           padding: const pw.EdgeInsets.only(left: 120),
@@ -227,115 +218,84 @@ class _InvpdfState extends State<Invpdf> {
                 pw.SizedBox(height: 10),
 
                 pw.Text(
-                 widget.nbq,
+                  widget.nbq,
                   style: pw.TextStyle(fontSize: 10),
                 ),
                 pw.SizedBox(height: 3),
                 // Table of Items
-                pw.ListView(
-                  children: [
-                    // Header row with background color and space before the first row
-                    pw.Container(
-                      color: PdfColor.fromInt(0xFFC62828),
-                      // Using red[900] color with RGB value #C62828
-                      child: pw.Row(
-                        children: [
-                          pw.Expanded(
-                              flex: 1,
-                              child: pw.Text("No",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                          pw.SizedBox(width: 3), // Add space between columns
-                          pw.Expanded(
-                              flex: 5,
-                              child: pw.Text("Description",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                          pw.SizedBox(width: 5), // Add space between columns
-                          pw.Expanded(
-                              flex: 1,
-                              child: pw.Text("Qty",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                          pw.SizedBox(width: 5), // Add space between columns
-                          pw.Expanded(
-                              flex: 1,
-                              child: pw.Text("Unit",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                          pw.SizedBox(width: 5), // Add space between columns
-                          pw.Expanded(
-                              flex: 1,
-                              child: pw.Text("Rate",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                          pw.SizedBox(width: 5), // Add space between columns
-                          pw.Expanded(
-                              flex: 1,
-                              child: pw.Text("Amount",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white))),
-                        ],
-                      ),
-                    ),
-                    pw.SizedBox(height: 10),
-                    // Add space between header and first row
-
-                    // Data rows
-                    for (int i = 0; i < widget.sno.length; i++) pw.Column(
-                        children: [
-                          pw.Row(
-                            children: [
-                              pw.Expanded(
-                                  flex: 1,
-                                  child: pw.Text(widget.sno[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                              pw.SizedBox(
-                                  width: 3), // Add space between columns
-                              pw.Expanded(
-                                  flex: 5,
-                                  child: pw.Text(widget.description[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                              pw.SizedBox(
-                                  width: 5), // Add space between columns
-                              pw.Expanded(
-                                  flex: 1,
-                                  child: pw.Text(widget.qty[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                              pw.SizedBox(
-                                  width: 5), // Add space between columns
-                              pw.Expanded(
-                                  flex: 1,
-                                  child: pw.Text(widget.unit[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                              pw.SizedBox(
-                                  width: 5), // Add space between columns
-                              pw.Expanded(
-                                  flex: 1,
-                                  child: pw.Text(widget.rate[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                              pw.SizedBox(
-                                  width: 5), // Add space between columns
-                              pw.Expanded(
-                                  flex: 1,
-                                  child: pw.Text(widget.amount[i],
-                                      style: pw.TextStyle(fontSize: 10))),
-                            ],
-                          ),
-                          pw.Divider(),
-                          // Divider between rows
-                          pw.SizedBox(height: 10),
-                          // Add space of 10 units between each row
-                        ],
-                      ),
-                  ],
+                pw.Container(
+                  color: PdfColor.fromInt(0xFFC62828),
+                  child: pw.Row(
+                    children: [
+                      pw.Expanded(flex: 1,
+                          child: pw.Text(
+                              "No", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                      pw.SizedBox(width: 3),
+                      pw.Expanded(flex: 5,
+                          child: pw.Text(
+                              "Description", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                      pw.SizedBox(width: 5),
+                      pw.Expanded(flex: 1,
+                          child: pw.Text(
+                              "Qty", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                      pw.SizedBox(width: 5),
+                      pw.Expanded(flex: 1,
+                          child: pw.Text(
+                              "Unit", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                      pw.SizedBox(width: 5),
+                      pw.Expanded(flex: 1,
+                          child: pw.Text(
+                              "Rate", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                      pw.SizedBox(width: 5),
+                      pw.Expanded(flex: 1,
+                          child: pw.Text(
+                              "Amount", style: pw.TextStyle(fontWeight: pw
+                              .FontWeight.bold, color: PdfColors.white))),
+                    ],
+                  ),
                 ),
+                pw.SizedBox(height: 10),
+                // Add space between header and first row
+
+                // Data rows
+                ...List.generate(widget.sno.length, (i) {
+                  return pw.Column(children: [
+                    pw.Row(
+                      children: [
+                        pw.Expanded(flex: 1,
+                            child: pw.Text(widget.sno[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                        pw.SizedBox(width: 3),
+                        pw.Expanded(flex: 5,
+                            child: pw.Text(widget.description[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                        pw.SizedBox(width: 5),
+                        pw.Expanded(flex: 1,
+                            child: pw.Text(widget.qty[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                        pw.SizedBox(width: 5),
+                        pw.Expanded(flex: 1,
+                            child: pw.Text(widget.unit[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                        pw.SizedBox(width: 5),
+                        pw.Expanded(flex: 1,
+                            child: pw.Text(widget.rate[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                        pw.SizedBox(width: 5),
+                        pw.Expanded(flex: 1,
+                            child: pw.Text(widget.amount[i],
+                                style: pw.TextStyle(fontSize: 10))),
+                      ],
+                    ),
+                    if (i != 0) pw.Divider(),
+                    pw.SizedBox(height: 10),
+                  ]);
+                }),
 
                 pw.SizedBox(height: 5),
 
@@ -410,13 +370,14 @@ class _InvpdfState extends State<Invpdf> {
                     fontSize: 10,
                     fontWeight: pw.FontWeight.bold,
                     decoration:
-                        pw.TextDecoration.underline, // Adds the underline
+                    pw.TextDecoration.underline, // Adds the underline
                   ),
                 ),
 
                 // Notes
                 pw.SizedBox(height: 10),
-                pw.Text("Note:${widget.naq}", style: pw.TextStyle(fontSize: 10)),
+                pw.Text(
+                    "Note:${widget.naq}", style: pw.TextStyle(fontSize: 10)),
                 pw.SizedBox(height: 10),
                 pw.Text("Bank Details:",
                     style: pw.TextStyle(
@@ -554,7 +515,7 @@ class _InvpdfState extends State<Invpdf> {
     if (fileName.isNotEmpty) {
       // Append .pdf extension if not already present
       final fileNameWithExtension =
-          fileName.endsWith('.pdf') ? fileName : '$fileName.pdf';
+      fileName.endsWith('.pdf') ? fileName : '$fileName.pdf';
 
       // Save the file using the Invpdf class method
       await Invpdf.save(bytes!, fileNameWithExtension);

@@ -1,31 +1,33 @@
-import 'dart:ffi';
-
+import 'package:almaskan/ui/Invpdf.dart';
+import 'package:almaskan/ui/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:number_to_words/number_to_words.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../Toast Message.dart';
-import 'Quotationpdf.dart';
 
-class Quotation2 extends StatefulWidget {
+class invoice1 extends StatefulWidget {
   final String id;
   final String name;
   final String address;
+  final String trn;
 
-  const Quotation2(
-      {super.key, required this.id, required this.name, required this.address});
+  const invoice1(
+      {super.key,
+      required this.id,
+      required this.name,
+      required this.address,
+      required this.trn});
 
   @override
-  State<Quotation2> createState() => _Quotation2State();
+  State<invoice1> createState() => _invoice1State();
 }
 
-class _Quotation2State extends State<Quotation2> {
+class _invoice1State extends State<invoice1> {
+  List<TextEditingController> description = [];
+  List<String> descriptionData = [];
   final List<String> desoptions = [
     'Supply and installation of 12.5mm thick regular gypsum board ceiling, ready for primer',
     'Supply and installation of 9mm aqua panel cement board ceiling, ready for primer ',
@@ -81,6 +83,7 @@ class _Quotation2State extends State<Quotation2> {
     'Installation of trimless track light frame',
     'Installation of trimless light frame',
   ];
+
   final List<String> unitoptions = ['Lm', 'Sqm', 'Nos', 'Rm', 'L/s'];
   final List<String> nbqoptions = [
     'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum  work  as per the drawing.',
@@ -92,15 +95,14 @@ class _Quotation2State extends State<Quotation2> {
   List<TextEditingController> qtyControllers = [];
   List<TextEditingController> amountControllers = [];
   List<TextEditingController> sno = [];
-  List<TextEditingController> description = [];
-  List<String> descriptionData = [];
+
   List<String> snodata = [];
   List<String> qtydata = [];
   List<String> unitdata = [];
   List<String> ratedata = [];
   List<String> amountdata = [];
   List<TextEditingController> unit = [];
-  TextEditingController qtnno = TextEditingController();
+  TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
   TextEditingController kindatt = TextEditingController();
   TextEditingController project = TextEditingController();
@@ -116,12 +118,12 @@ class _Quotation2State extends State<Quotation2> {
   double vat = 0.0;
   double totalAmount = 0.0;
 
-  get index => 0;
+  get index => 1;
 
   @override
   void initState() {
     super.initState();
-    rowCount = 1; // Start with 1 row
+    rowCount = index; // Start with 1 row
     initializeControllers(); // Initialize controllers for the first row
   }
 
@@ -244,10 +246,10 @@ class _Quotation2State extends State<Quotation2> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                  OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -262,9 +264,9 @@ class _Quotation2State extends State<Quotation2> {
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.r),
               ),
-              child: Autocomplete(
+              child: Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty) {
+                  if (textEditingValue.text == '') {
                     return const Iterable<String>.empty();
                   }
                   return desoptions.where((String option) {
@@ -273,34 +275,35 @@ class _Quotation2State extends State<Quotation2> {
                         .contains(textEditingValue.text.toLowerCase());
                   });
                 },
+                displayStringForOption: (String option) => option,
                 onSelected: (String selection) {
-                  print('You selected: $selection');
+                  description[index].text = selection;
                 },
                 fieldViewBuilder: (BuildContext context,
                     TextEditingController textEditingController,
                     FocusNode focusNode,
                     VoidCallback onFieldSubmitted) {
+                  // Assign your controller value to keep things synced
+                  textEditingController.text = description[index].text;
+
+                  textEditingController.addListener(() {
+                    description[index].text = textEditingController.text;
+                  });
+
                   return TextFormField(
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (value) {
-                      descriptionData.add(value);
-                    },
                     controller: textEditingController,
                     focusNode: focusNode,
+                    textInputAction: TextInputAction.next,
                     maxLines: null,
-                    keyboardType: TextInputType.text,
-                    cursorHeight: 25.h,
-                    textAlignVertical: TextAlignVertical.center,
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    textAlign: TextAlign.start,
-                    cursorColor: Colors.black,
                     decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                       border: InputBorder.none,
                       enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                      OutlineInputBorder(borderSide: BorderSide.none),
                     ),
+                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                    cursorColor: Colors.black,
                   );
                 },
               ),
@@ -331,10 +334,10 @@ class _Quotation2State extends State<Quotation2> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                  OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -349,9 +352,9 @@ class _Quotation2State extends State<Quotation2> {
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(5.r),
               ),
-              child: Autocomplete(
+              child: Autocomplete<String>(
                 optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty) {
+                  if (textEditingValue.text == '') {
                     return const Iterable<String>.empty();
                   }
                   return unitoptions.where((String option) {
@@ -360,34 +363,35 @@ class _Quotation2State extends State<Quotation2> {
                         .contains(textEditingValue.text.toLowerCase());
                   });
                 },
+                displayStringForOption: (String option) => option,
                 onSelected: (String selection) {
-                  print('You selected: $selection');
+                  unit[index].text = selection;
                 },
                 fieldViewBuilder: (BuildContext context,
                     TextEditingController textEditingController,
                     FocusNode focusNode,
                     VoidCallback onFieldSubmitted) {
+                  // Assign your controller value to keep things synced
+                  textEditingController.text = unit[index].text;
+
+                  textEditingController.addListener(() {
+                    unit[index].text = textEditingController.text;
+                  });
+
                   return TextFormField(
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (value) {
-                      unitdata.add(value);
-                    },
                     controller: textEditingController,
                     focusNode: focusNode,
+                    textInputAction: TextInputAction.next,
                     maxLines: null,
-                    keyboardType: TextInputType.text,
-                    cursorHeight: 25.h,
-                    textAlignVertical: TextAlignVertical.center,
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    textAlign: TextAlign.start,
-                    cursorColor: Colors.black,
                     decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                       border: InputBorder.none,
                       enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                      OutlineInputBorder(borderSide: BorderSide.none),
                     ),
+                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                    cursorColor: Colors.black,
                   );
                 },
               ),
@@ -418,10 +422,10 @@ class _Quotation2State extends State<Quotation2> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                  OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -454,10 +458,10 @@ class _Quotation2State extends State<Quotation2> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                  OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -468,19 +472,35 @@ class _Quotation2State extends State<Quotation2> {
     );
   }
 
-  @override
+  void collectFormData() {
+    snodata.clear();
+    descriptionData.clear();
+    unitdata.clear();
+    ratedata.clear();
+    qtydata.clear();
+    amountdata.clear();
+
+    for (int i = 0; i < rowCount; i++) {
+      snodata.add(sno[i].text);
+      descriptionData.add(description[i].text);
+      unitdata.add(unit[i].text);
+      ratedata.add(rateControllers[i].text);
+      qtydata.add(qtyControllers[i].text);
+      amountdata.add(amountControllers[i].text);
+    }
+  }
+
   Widget build(BuildContext context) {
     final firestore = FirebaseFirestore.instance
         .collection("Clients")
         .doc(widget.id)
-        .collection("quotation");
+        .collection("invoice");
     final firestor = FirebaseFirestore.instance
         .collection("Clients")
         .doc(widget.id)
-        .collection("quotation")
-        .snapshots();
-
+        .collection("invoice").snapshots();
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,9 +515,9 @@ class _Quotation2State extends State<Quotation2> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
-                          "QTN No",
+                          "INV No",
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
                         ),
@@ -506,16 +526,16 @@ class _Quotation2State extends State<Quotation2> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
-                          controller: qtnno,
+                          controller: invno,
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -523,8 +543,8 @@ class _Quotation2State extends State<Quotation2> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "23/156",
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -545,7 +565,7 @@ class _Quotation2State extends State<Quotation2> {
                         child: Text(
                           "Date",
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
                         ),
@@ -554,7 +574,7 @@ class _Quotation2State extends State<Quotation2> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -563,7 +583,7 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -571,8 +591,8 @@ class _Quotation2State extends State<Quotation2> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "06-June-2023",
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: '',
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -591,9 +611,9 @@ class _Quotation2State extends State<Quotation2> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
-                          "Kind Att:",
+                          "Kind Att",
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
                         ),
@@ -602,7 +622,7 @@ class _Quotation2State extends State<Quotation2> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -611,7 +631,7 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style:TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -619,8 +639,8 @@ class _Quotation2State extends State<Quotation2> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "Kind att",
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -641,7 +661,7 @@ class _Quotation2State extends State<Quotation2> {
                         child: Text(
                           "Project:",
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
                         ),
@@ -650,7 +670,7 @@ class _Quotation2State extends State<Quotation2> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -659,7 +679,7 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -667,8 +687,8 @@ class _Quotation2State extends State<Quotation2> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "Project",
+                            OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -693,7 +713,7 @@ class _Quotation2State extends State<Quotation2> {
                         child: Text(
                           "NOTE Before Quote",
                           style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
                         ),
@@ -702,7 +722,7 @@ class _Quotation2State extends State<Quotation2> {
                         width: 790.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: Autocomplete(
                           optionsBuilder: (TextEditingValue textEditingValue) {
@@ -715,7 +735,8 @@ class _Quotation2State extends State<Quotation2> {
                             });
                           },
                           onSelected: (String selection) {
-                            print('You selected: $selection');
+                            nbq.text = selection;
+                            selectednbq = selection;
                           },
                           fieldViewBuilder: (BuildContext context,
                               TextEditingController textEditingController,
@@ -734,7 +755,7 @@ class _Quotation2State extends State<Quotation2> {
                               keyboardType: TextInputType.multiline,
                               cursorHeight: 25.h,
                               textAlignVertical: TextAlignVertical.center,
-                              style: TextStyle(color: Colors.black45),
+                              style: TextStyle(color: Colors.black),
                               textAlign: TextAlign.start,
                               cursorColor: Colors.black45,
                               decoration: InputDecoration(
@@ -743,7 +764,7 @@ class _Quotation2State extends State<Quotation2> {
                                 border: InputBorder.none,
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide.none),
-                                hintText: "Add Note",
+                                hintText: "",
                                 hintStyle: TextStyle(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 16,
@@ -929,11 +950,11 @@ class _Quotation2State extends State<Quotation2> {
                           discount = double.tryParse(value) ?? 0.0;
                           calculateTotal();
                         },
-                        maxLines: null,
+                        maxLines: null,textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black45),
+                        style: TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -941,7 +962,7 @@ class _Quotation2State extends State<Quotation2> {
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
@@ -1011,7 +1032,7 @@ class _Quotation2State extends State<Quotation2> {
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: Text(
-                          vat.toStringAsFixed(2),
+                          vat.toStringAsFixed(1),
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               fontSize: 18.sp,
@@ -1090,7 +1111,7 @@ class _Quotation2State extends State<Quotation2> {
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                         ),
                       ),
                     ),
@@ -1120,11 +1141,11 @@ class _Quotation2State extends State<Quotation2> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: naq,
-                        maxLines: null,
+                        maxLines: null,textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black45),
+                        style: TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -1132,7 +1153,7 @@ class _Quotation2State extends State<Quotation2> {
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
@@ -1155,21 +1176,93 @@ class _Quotation2State extends State<Quotation2> {
                           padding: EdgeInsets.only(left: 500.w),
                           child: ElevatedButton(
                               onPressed: () async {
-                                print("hello" + selectednbq);
-                                {
-                                  final id = DateTime.now()
-                                      .microsecondsSinceEpoch
-                                      .toString();
-                                  debugPrint('Generated ID: $id');
-                                  try {
-                                    await firestore.doc(id).set({
-                                      'id': id,
+                                collectFormData();
+                                final id = DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString();
+                                try {
+                                  await firestore.doc(id).set({
+                                    'id': id,
+                                    'project': project.text,
+                                    'kindatt': kindatt.text,
+                                    'date': date.text,
+                                    'Inv no': invno.text,
+                                    'note before quote': selectednbq,
+                                    'sno': snodata,
+                                    'description': descriptionData,
+                                    'unit': unitdata,
+                                    'rate': ratedata,
+                                    'quantity': qtydata,
+                                    'amount': amountdata,
+                                    'subtotal': subtotal.toString(),
+                                    'discount': discount.toString(),
+                                    'taxable amount': taxableAmount.toString(),
+                                    'vat': vat.toStringAsFixed(2),
+                                    'total amount': totalAmount.toString(),
+                                    'total amount in name':
+                                    totalamountinname.text,
+                                    'note after quote': naq.text,'trn':widget.trn
+                                  });
+                                  ToastMessage()
+                                      .toastmessage(message: 'Quotation Added');
+                                } catch (e) {
+                                  ToastMessage()
+                                      .toastmessage(message: e.toString());
+                                }
+                              },
+                              child: Text("Save")),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 20.w),
+                          child: ElevatedButton(
+                              onPressed: () {
+                                collectFormData();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Invpdf(
+                                      invno: invno.text,
+                                      trn:widget.trn,
+                                      date: date.text,
+                                      kindatt: kindatt.text,
+                                      project: project.text,
+                                      nbq: selectednbq,
+                                      sno: snodata,
+                                      amount: amountdata,
+                                      description: descriptionData,
+                                      discount: discount.toString(),
+                                      naq: naq.text,
+                                      qty: qtydata,
+                                      unit: unitdata,
+                                      rate: ratedata,
+                                      subtotal: subtotal.toString(),
+                                      taxableamount: taxableAmount.toString(),
+                                      vat: vat.toString(),
+                                      totalamount: totalAmount.toString(),
+                                      totalamountinname: totalamountinname.text,
+                                      name: widget.name,
+                                      address: widget.address,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text("Preview")),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 20.w),
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                collectFormData();
+                                try {
+                                  final snapshotData = await firestore.get();
+                                  if (snapshotData.docs.isNotEmpty) {
+                                    final lastDoc = snapshotData.docs.last;
+                                    await firestore.doc(lastDoc.id).update({
                                       'project': project.text,
                                       'kindatt': kindatt.text,
                                       'date': date.text,
-                                      'qtn no': qtnno.text,
-                                      'note before quote': selectednbq,
-                                      'date': date.text,
+                                      'inv no': invno.text,
+                                      'note before quote': nbq.text,
                                       'sno': snodata,
                                       'description': descriptionData,
                                       'unit': unitdata,
@@ -1179,97 +1272,20 @@ class _Quotation2State extends State<Quotation2> {
                                       'subtotal': subtotal.toString(),
                                       'discount': discount.toString(),
                                       'taxable amount':
-                                          taxableAmount.toString(),
+                                      taxableAmount.toString(),
                                       'vat': vat.toString(),
                                       'total amount': totalAmount.toString(),
                                       'total amount in name':
-                                          totalamountinname.text,
+                                      totalamountinname.text,
                                       'note after quote': naq.text
-                                    }).then((onValue) {
-                                      setState(() {
-                                        descriptionData.clear();
-                                      });
                                     });
                                     ToastMessage().toastmessage(
-                                        message: 'Quotation Added');
-                                  } catch (e) {
-                                    debugPrint('Error adding client: $e');
-                                    ToastMessage()
-                                        .toastmessage(message: e.toString());
+                                        message: 'Quotation Updated');
                                   }
+                                } catch (e) {
+                                  ToastMessage()
+                                      .toastmessage(message: e.toString());
                                 }
-                              },
-                              child: Text("Save")),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          InvoicePdfPreviewPage(
-                                            qtnno: qtnno.text,
-                                            date: date.text,
-                                            kindatt: kindatt.text,
-                                            project: project.text,
-                                            nbq: selectednbq,
-                                            sno: snodata,
-                                            amount: amountdata,
-                                            description: descriptionData,
-                                            discount: discount.toString(),
-                                            naq: naq.text,
-                                            qty: qtydata,
-                                            unit: unitdata,
-                                            rate: ratedata,
-                                            subtotal: subtotal.toString(),
-                                            taxableamount:
-                                                taxableAmount.toString(),
-                                            vat: vat.toString(),
-                                            totalamount: totalAmount.toString(),
-                                            totalamountinname:
-                                                totalamountinname.text,
-                                            name: widget.name,
-                                            address: widget.address,
-                                          )),
-                                );
-                              },
-                              child: Text("Preview")),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                firestore
-                                    .doc(snapshot.data!.docs[index]['id']
-                                        .toString())
-                                    .update({
-                                  'project': project.text,
-                                  'kindatt': kindatt.text,
-                                  'date': date.text,
-                                  'qtn no': qtnno.text,
-                                  'note before quote': nbq.text,
-                                  'date': date.text,
-                                  'sno': snodata,
-                                  'description': descriptionData,
-                                  'unit': unitdata,
-                                  'rate': ratedata,
-                                  'quantity': qtydata,
-                                  'amount': amountdata,
-                                  'subtotal': subtotal.toString(),
-                                  'discount': discount.toString(),
-                                  'taxable amount': taxableAmount.toString(),
-                                  'vat': vat.toString(),
-                                  'total amount': totalAmount.toString(),
-                                  'total amount in name':
-                                      totalamountinname.text,
-                                  'note after quote': naq.text
-                                }).then((v) {
-                                  setState(() {
-                                    descriptionData.clear();
-                                  });
-                                });
                               },
                               child: Text("Update")),
                         ),

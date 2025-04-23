@@ -24,6 +24,12 @@ class Taxinvoice1 extends StatefulWidget {
 }
 
 class _Taxinvoice1State extends State<Taxinvoice1> {
+  final List<String> nbqoptions = [
+    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum  work  as per the drawing.',
+    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum work  as per Site discussion.',
+    'With refer to your enquiry for the above project, please find below our best quote for material '
+  ];
+  String selectednbq = '';
   TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
   TextEditingController kindatt = TextEditingController();
@@ -102,7 +108,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -120,7 +126,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "23/156",
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -150,7 +156,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -168,7 +174,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "06-June-2023",
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -198,7 +204,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -216,7 +222,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "Kind att",
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -246,7 +252,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -264,7 +270,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: " % ",
+                            hintText: "  ",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -298,7 +304,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 250.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
@@ -316,7 +322,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "Project",
+                            hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
@@ -346,30 +352,56 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         width: 790.w,
                         height: 60.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          controller: nbq,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          cursorHeight: 25.h,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
-                          textAlign: TextAlign.start,
-                          cursorColor: Colors.black45,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(
-                                top: 2.h, left: 5.w, bottom: 15.h),
-                            border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "Add Note",
-                            hintStyle: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 16,
-                                color: Colors.black),
-                          ),
+                        child: Autocomplete(
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text.isEmpty) {
+                              return const Iterable<String>.empty();
+                            }
+                            return nbqoptions.where((String option) {
+                              return option.toLowerCase().contains(
+                                  textEditingValue.text.toLowerCase());
+                            });
+                          },
+                          onSelected: (String selection) {
+                            nbq.text = selection;
+                            selectednbq = selection;
+                          },
+                          fieldViewBuilder: (BuildContext context,
+                              TextEditingController textEditingController,
+                              FocusNode focusNode,
+                              VoidCallback) {
+                            return TextFormField(
+                              textInputAction: TextInputAction.next,
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              maxLines: null,
+                              onFieldSubmitted: (v) {
+                                setState(() {
+                                  selectednbq = v;
+                                });
+                              },
+                              keyboardType: TextInputType.multiline,
+                              cursorHeight: 25.h,
+                              textAlignVertical: TextAlignVertical.center,
+                              style: TextStyle(color: Colors.black),
+                              textAlign: TextAlign.start,
+                              cursorColor: Colors.black45,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                    top: 2.h, left: 5.w, bottom: 15.h),
+                                border: InputBorder.none,
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide.none),
+                                hintText: "",
+                                hintStyle: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 16,
+                                    color: Colors.black),
+                              ),
+                            );
+                          },
                         ),
                       )
                     ],
@@ -560,7 +592,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       width: 790.w,
                       height: 40.h,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         textInputAction: TextInputAction.next,
@@ -603,7 +635,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       width: 790.w,
                       height: 40.h,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         textInputAction: TextInputAction.next,

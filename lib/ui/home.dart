@@ -1,17 +1,16 @@
-
-
-
-
+import 'package:almaskan/ui/OverduePayment.dart';
+import 'package:almaskan/ui/PaymentEnroll.dart';
+import 'package:almaskan/ui/Sales.dart';
+import 'package:almaskan/ui/VatAdmin.dart';
 import 'package:almaskan/ui/VatPurchase.dart';
-import 'package:almaskan/ui/Vatpurchase1.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'Dashboard.dart';
-import 'VatM.dart';
+import 'DashboardMain.dart';
+import 'chart.dart';
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -39,47 +38,70 @@ class _homeState extends State<home> {
       body: Row(
         children: [
           // Sidebar with EasySideMenu
-          Padding(
-            padding: EdgeInsets.only(top: 15.h, bottom: 15.h, left: 10.h),
-            child: Container(
-              width: 250.w,
-              child: SideMenu(
-                style: SideMenuStyle(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(8.r)),
-                  displayMode: SideMenuDisplayMode.auto,
-                  backgroundColor: Colors.red[900],
-                  selectedTitleTextStyle: TextStyle(color: Colors.white),
-                  selectedIconColor: Colors.white,
-                  unselectedIconColor: Colors.white70,
-                  unselectedTitleTextStyle: TextStyle(color: Colors.white70),
-                  showHamburger: true,
-                ),
-                controller: sideMenuController,
-                items: [
-                  // Dashboard Menu Item
-                  SideMenuItem(
-                    title: 'Dashboard',
-                    icon: Icon(Icons.dashboard),
+          Container(
+            width: 235.w,
+            child: SideMenu(
+              style: SideMenuStyle(
+                selectedTitleTextStyle: GoogleFonts.workSans(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white),unselectedTitleTextStyle:  GoogleFonts.workSans(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+                displayMode: SideMenuDisplayMode.auto,
+                backgroundColor: Colors.blueGrey[300],
+                showHamburger: true,
+                hoverColor: Colors.blue[300],
+              ),
+              controller: sideMenuController,
+              items: [
+                // Dashboard Menu Item
+                SideMenuItem(
+                    title: 'Payment',
                     onTap: (index, controller) {
                       pageController.jumpToPage(index);
-                    },
-                  ),
-
-                  SideMenuItem(
-                      title: 'VAT Admin Expense',
-                      icon: Icon(Icons.receipt),
-                      onTap: (index, controller) {
-                        pageController.jumpToPage(index);
-                      }),
-                  SideMenuItem(
-                      title: 'VAT Purchase',
-                      icon: Icon(Icons.receipt),
-                      onTap: (index, controller) {
-                        pageController.jumpToPage(index);
-                      })
-                ],
-              ),
+                    }),
+                SideMenuItem(
+                  title: 'Dashboard',
+                  onTap: (index, controller) {
+                    pageController.jumpToPage(index);
+                  },
+                ),
+                SideMenuItem(
+                    title: 'Sales',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Sales()),
+                      );
+                    }),
+                SideMenuItem(
+                    title: 'Overdue Payment',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Overduepayment()),
+                      );
+                    }),
+                SideMenuItem(
+                    title: 'Vat Admin Expense',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Vatadmin()),
+                      );
+                    }),
+                SideMenuItem(
+                    title: 'Vat Purchase',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Vatpurchase()),
+                      );
+                    }),
+              ],
             ),
           ),
 
@@ -87,7 +109,14 @@ class _homeState extends State<home> {
           Expanded(
             child: PageView(
               controller: pageController,
-              children: [Dashboard(), Vatm(),Vatpurchase1()],
+              children: [
+                Paymentenroll(),
+                Dashboard(),
+                Sales(),
+                Overduepayment(),
+                Vatadmin(),
+                Vatpurchase(),
+              ],
             ),
           ),
         ],

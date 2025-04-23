@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class Vatpurchase extends StatefulWidget {
-  const Vatpurchase({super.key});
+class Vatadmin extends StatefulWidget {
+  const Vatadmin({super.key});
 
   @override
-  State<Vatpurchase> createState() => _VatpurchaseState();
+  State<Vatadmin> createState() => _VatadminState();
 }
 
-class _VatpurchaseState extends State<Vatpurchase> {
+class _VatadminState extends State<Vatadmin> {
   final currentdate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
   Future<void> generatePdf() async {
@@ -48,7 +48,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
           pw.Padding(
               padding: pw.EdgeInsets.only(left: 200),
               child: pw.Text(
-                "Vat Purchase",
+                "Vat Admin Expense",
                 style: pw.TextStyle(
                   fontSize: 15,
                   fontWeight: pw.FontWeight.bold,
@@ -72,36 +72,32 @@ class _VatpurchaseState extends State<Vatpurchase> {
             child: pw.Row(
               children: [
                 pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 5),
+                    padding: pw.EdgeInsets.only(left: 20),
                     child: pw.SizedBox(
                         width: 50, child: pw.Text("Date", style: headerStyle))),
                 pw.Padding(
                   padding: pw.EdgeInsets.only(left: 5),
                   child: pw.SizedBox(
-                      width: 70, child: pw.Text("Invoice no", style: headerStyle)),
+                      width: 80, child: pw.Text("Invoice", style: headerStyle)),
                 ),
                 pw.Padding(
                   padding: pw.EdgeInsets.only(left: 5),
-                  child:pw.SizedBox(
-                      width: 80, child: pw.Text("Supplier", style: headerStyle)),
-                ),pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 12),
                   child: pw.SizedBox(
-                      width: 70, child: pw.Text("Project", style: headerStyle)),
+                      width: 80, child: pw.Text("Account", style: headerStyle)),
                 ),
                 pw.Padding(
                   padding: pw.EdgeInsets.only(left: 5),
-                  child:pw.SizedBox(
-                      width: 75,
+                  child: pw.SizedBox(
+                      width: 80,
                       child: pw.Text("Invoice Amount", style: headerStyle)),
                 ),
                 pw.Padding(
                   padding: pw.EdgeInsets.only(left: 6),
                   child: pw.SizedBox(
-                      width: 30, child: pw.Text("Tax", style: headerStyle)),
+                      width: 50, child: pw.Text("Tax", style: headerStyle)),
                 ),
                 pw.SizedBox(
-                    width: 70,
+                    width: 80,
                     child: pw.Text("Total Amount", style: headerStyle)),
               ],
             ),
@@ -118,7 +114,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
               child: pw.Row(
                 children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 5),
+                    padding: pw.EdgeInsets.only(left: 20),
                     child: pw.SizedBox(
                         width: 50,
                         child: pw.Text(data['Date'] ?? '', style: textstyle)),
@@ -126,38 +122,33 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   pw.Padding(
                     padding: pw.EdgeInsets.only(left: 5),
                     child: pw.SizedBox(
-                        width: 75,
+                        width: 80,
                         child:
-                        pw.Text(data['Invoice no'] ?? '', style: textstyle)),
+                            pw.Text(data['Invoice'] ?? '', style: textstyle)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 1),
+                    padding: pw.EdgeInsets.only(left: 5),
                     child: pw.SizedBox(
-                        width: 90,
+                        width: 80,
                         child:
-                        pw.Text(data['Supplier'] ?? '', style: textstyle)),
+                            pw.Text(data['Account'] ?? '', style: textstyle)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 2),
+                    padding: pw.EdgeInsets.only(left: 5),
                     child: pw.SizedBox(
-                        width: 75,
-                        child: pw.Text(data['Project'] ?? '',
+                        width: 80,
+                        child: pw.Text(data['Invoice Amount'] ?? '',
                             style: textstyle)),
                   ),
                   pw.Padding(
-                      padding: pw.EdgeInsets.only(left: 2),
+                      padding: pw.EdgeInsets.only(left: 10),
                       child: pw.SizedBox(
                           width: 50,
-                          child: pw.Text(data['Invoice Amount'] ?? '', style: textstyle))),
-                  pw.Padding(
-                      padding: pw.EdgeInsets.only(left: 32),
-                      child: pw.SizedBox(
-                          width: 25,
                           child: pw.Text(data['Tax'] ?? '', style: textstyle))),
                   pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 6),
+                    padding: pw.EdgeInsets.only(left: 10),
                     child: pw.SizedBox(
-                        width: 40,
+                        width: 80,
                         child: pw.Text(data['Total Amount'] ?? '',
                             style: textstyle)),
                   ),
@@ -169,18 +160,18 @@ class _VatpurchaseState extends State<Vatpurchase> {
           pw.SizedBox(height: 20),
           pw.Divider(),
           pw.Padding(
-              padding: pw.EdgeInsets.only(left: 350),
+              padding: pw.EdgeInsets.only(left: 320),
               child: pw.Text("Invoice Amount: $totalInvoice",
                   style: pw.TextStyle(fontSize: 10))),
           pw.SizedBox(height: 2),
           pw.Padding(
-              padding: pw.EdgeInsets.only(left: 350),
+              padding: pw.EdgeInsets.only(left: 320),
               child: pw.Text("Tax (5%):           $totalTax",
                   style: pw.TextStyle(fontSize: 10))),
           pw.SizedBox(height: 2),
 
           pw.Padding(
-              padding: pw.EdgeInsets.only(left: 350),
+              padding: pw.EdgeInsets.only(left: 320),
               child: pw.Text("Total Amount:     $totalAmount",
                   style: pw.TextStyle(fontSize: 10))),
 
@@ -191,7 +182,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
               pw.Text(
                 "Thank You & Regards\n\nYours Faithfully,\n\nAl Maskan",
                 style:
-                pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
               ),
               pw.Image(image1, width: 90, height: 90),
             ],
@@ -202,10 +193,10 @@ class _VatpurchaseState extends State<Vatpurchase> {
 
     await Printing.layoutPdf(onLayout: (format) => pdf.save());
   }
+
   TextEditingController date = TextEditingController();
-  TextEditingController invoiceno = TextEditingController();
-  TextEditingController supplier = TextEditingController();
-  TextEditingController project = TextEditingController();
+  TextEditingController invoice = TextEditingController();
+  TextEditingController account = TextEditingController();
   TextEditingController invoiceamount = TextEditingController();
   TextEditingController tax = TextEditingController();
   TextEditingController totalamount = TextEditingController();
@@ -219,8 +210,9 @@ class _VatpurchaseState extends State<Vatpurchase> {
   double totalAmount = 0;
 
   List<Map<String, dynamic>> filteredData = [];
+
   bool showfiltercontainer = false;
-  final firestore = FirebaseFirestore.instance.collection('Vat Purchase');
+  final firestore = FirebaseFirestore.instance.collection('Vat Admin Expense');
 
   void initState() {
     super.initState();
@@ -242,6 +234,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
     double total = invoiceAmountValue + taxValue;
     totalamount.text = total.toStringAsFixed(2);
   }
+
   void dispose() {
     invoiceamount.removeListener(_updatetotal);
     tax.removeListener(_updatetotal);
@@ -250,6 +243,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
     tax.dispose();
     totalamount.dispose();
   }
+
   Future<void> _pickDateRange() async {
     final picked = await showDateRangePicker(
       context: context,
@@ -266,9 +260,10 @@ class _VatpurchaseState extends State<Vatpurchase> {
       await _fetchFilteredData();
     }
   }
+
   Future<void> _fetchFilteredData() async {
     final snapshot =
-    await FirebaseFirestore.instance.collection('Vat Purchase').get();
+        await FirebaseFirestore.instance.collection('Vat Admin Expense').get();
 
     final dateFormat = DateFormat('dd-MM-yyyy');
     final List<Map<String, dynamic>> loadedData = [];
@@ -315,12 +310,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
     });
   }
 
+  //edit container
   void _editcontainer(
       BuildContext context, String docId, Map<String, dynamic> data) {
     final date = TextEditingController(text: data['Date']);
-    final invoiceno = TextEditingController(text: data['Invoice no']);
-    final supplier = TextEditingController(text: data['Supplier']);
-    final project = TextEditingController(text: data['Project']);
+    final invoice = TextEditingController(text: data['Invoice']);
+    final account = TextEditingController(text: data['Account']);
     final invoiceamount = TextEditingController(text: data['Invoice Amount']);
     final tax = TextEditingController(text: data['Tax']);
     final totalamount = TextEditingController(text: data['Total Amount']);
@@ -331,7 +326,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
         title: const Text("Edit Entry"),
         content: Container(
           width: 400.w,
-          height: 380.h,
+          height: 350.h,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -341,18 +336,14 @@ class _VatpurchaseState extends State<Vatpurchase> {
                 decoration: const InputDecoration(labelText: "Date"),
               ),
               TextField(
-                controller: invoiceno,
+                controller: invoice,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Invoice no"),
+                decoration: const InputDecoration(labelText: "Invoice"),
               ),
               TextField(
-                controller: supplier,
+                controller: account,
                 textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Supplier"),
-              ), TextField(
-                controller: project,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: "Project"),
+                decoration: const InputDecoration(labelText: "Accounnt"),
               ),
               TextField(
                 controller: invoiceamount,
@@ -379,23 +370,42 @@ class _VatpurchaseState extends State<Vatpurchase> {
           ),
           ElevatedButton(
             onPressed: () async {
-              await FirebaseFirestore.instance
-                  .collection('Vat Purchase')
-                  .doc(docId)
-                  .update({
-                'Date': date.text,
-                'Invoice': invoiceno.text,
-                'Supplier': supplier.text,
-                'Project': project.text,
-                'Invoice Amount': invoiceamount.text,
-                'Tax': tax.text,
-                'Total Amount': totalamount.text,
-              });
-              Navigator.pop(context);
-              _fetchFilteredData(); // Refresh
+              try {
+                await FirebaseFirestore.instance
+                    .collection('Vat Admin Expense')
+                    .doc(docId)
+                    .update({
+                  'Date': date.text,
+                  'Invoice': invoice.text,
+                  'Account': account.text,
+                  'Invoice Amount': invoiceamount.text,
+                  'Tax': tax.text,
+                  'Total Amount': totalamount.text,
+                });
+
+                Navigator.pop(context, true);
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Updated Successfully"),
+                  backgroundColor: Colors.green,
+                  duration: Duration(seconds: 2),
+                ));
+
+
+                await Future.delayed(Duration(seconds: 2));
+                Navigator.pop(context);
+
+                _fetchFilteredData();
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text("Error: $e"),
+                  backgroundColor: Colors.red,
+                  duration: Duration(seconds: 3),
+                ));
+              }
             },
             child: const Text("Save"),
           ),
+
         ],
       ),
     );
@@ -403,7 +413,6 @@ class _VatpurchaseState extends State<Vatpurchase> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[300],
@@ -417,7 +426,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
               color: Colors.black,
             )),
         title: Text(
-          "Vat Purchase",
+          "Vat Adminexpense",
           style:
               GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
         ),
@@ -481,7 +490,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: date,
+                                  child: TextFormField(
+                                    controller: date,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -513,7 +523,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                               Padding(
                                 padding: EdgeInsets.only(top: 7.h),
                                 child: Text(
-                                  "Invoice no",
+                                  "Invoice",
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -527,7 +537,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: invoiceno,
+                                  child: TextFormField(
+                                    controller: invoice,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -559,7 +570,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                               Padding(
                                 padding: EdgeInsets.only(top: 7.h),
                                 child: Text(
-                                  "Supplier",
+                                  "Account",
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -573,53 +584,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: supplier,
-                                    textInputAction: TextInputAction.next,
-                                    maxLines: 1,
-                                    keyboardType: TextInputType.text,
-                                    cursorHeight: 20.h,
-                                    cursorWidth: 0.5,
-                                    textAlignVertical: TextAlignVertical.center,
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
-                                    textAlign: TextAlign.start,
-                                    cursorColor: Colors.black,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.only(
-                                          top: 2.h, left: 5.w, bottom: 18.h),
-                                      border: InputBorder.none,
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 7.h),
-                                child: Text(
-                                  "Project",
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 12.sp,
-                                      color: Colors.black),
-                                ),
-                              ),
-                              Container(
-                                width: 130.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
-                                child: Center(
-                                  child: TextFormField(controller: project,
+                                  child: TextFormField(
+                                    controller: account,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -665,7 +631,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: invoiceamount,
+                                  child: TextFormField(
+                                    controller: invoiceamount,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -711,7 +678,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: tax,
+                                  child: TextFormField(
+                                    controller: tax,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -757,7 +725,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: TextFormField(controller: totalamount,
+                                  child: TextFormField(
+                                    controller: totalamount,
                                     textInputAction: TextInputAction.next,
                                     maxLines: 1,
                                     keyboardType: TextInputType.text,
@@ -792,17 +761,15 @@ class _VatpurchaseState extends State<Vatpurchase> {
                               await firestore.doc(id).set({
                                 id: id,
                                 'Date': date.text,
-                                'Invoice no': invoiceno.text,
-                                'Supplier': supplier.text,
-                                'Project': project.text,
+                                'Invoice': invoice.text,
+                                'Account': account.text,
                                 'Invoice Amount': invoiceamount.text,
                                 'Tax': tax.text,
                                 'Total Amount': totalamount.text
                               });
                               date.clear();
-                              invoiceno.clear();
-                              supplier.clear();
-                              project.clear();
+                              invoice.clear();
+                              account.clear();
                               invoiceamount.clear();
                               tax.clear();
                               totalamount.clear();
@@ -819,9 +786,9 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     borderRadius: BorderRadius.circular(3.r)),
                                 child: Center(
                                     child: Text(
-                                      "ADD",
-                                      style: TextStyle(color: Colors.white),
-                                    )),
+                                  "ADD",
+                                  style: TextStyle(color: Colors.white),
+                                )),
                               ),
                             ),
                           ),
@@ -919,7 +886,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       Padding(
                         padding: EdgeInsets.only(left: 20.w, top: 10.h),
                         child: InkWell(
-                          onTap: ()  {
+                          onTap: () {
                             setState(() {
                               _startDate = null;
                               _endDate = null;
@@ -934,7 +901,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 color: Colors.black),
                           ),
                         ),
-                      ), Padding(
+                      ),
+                      Padding(
                         padding:EdgeInsets.only(left:650.w,top: 10.h),
                         child: InkWell(
                           onTap: () {
@@ -964,66 +932,57 @@ class _VatpurchaseState extends State<Vatpurchase> {
                     "Date",
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 18.sp,
+                        color: Colors.black),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 90.w),
+                  child: Text(
+                    "Invoice",
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18.sp,
+                        color: Colors.black),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 130.w),
+                  child: Text(
+                    "Account",
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18.sp,
+                        color: Colors.black),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 130.w),
+                  child: Text(
+                    "Invoice Amount",
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 18.sp,
                         color: Colors.black),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 70.w),
                   child: Text(
-                    "Invoice no",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                        color: Colors.black),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 100.w),
-                  child: Text(
-                    "Supplier",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                        color: Colors.black),
-                  ),
-                ), Padding(
-                  padding: EdgeInsets.only(left: 100.w),
-                  child: Text(
-                    "Project",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                        color: Colors.black),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 100.w),
-                  child: Text(
-                    "Invoice Amount",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                        color: Colors.black),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 55.w),
-                  child: Text(
                     "Tax",
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 18.sp,
                         color: Colors.black),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 80.w),
+                  padding: EdgeInsets.only(left: 100.w),
                   child: Text(
                     "Total Amount",
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
+                        fontSize: 18.sp,
                         color: Colors.black),
                   ),
                 )
@@ -1047,7 +1006,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             padding: EdgeInsets.only(left: 20.w),
                             child: Center(
                               child: SizedBox(
-                                width: 98.w,
+                                width: 110.w,
                                 child: Text(
                                   data['Date'],
                                   style: GoogleFonts.poppins(
@@ -1059,12 +1018,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 16.w),
+                            padding: EdgeInsets.only(left: 29.w),
                             child: Center(
                               child: SizedBox(
-                                width: 135.w,
+                                width: 150.w,
                                 child: Text(
-                                  data['Invoice no'],
+                                  data['Invoice'],
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -1074,26 +1033,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 58.w),
+                            padding: EdgeInsets.only(left: 55.w),
                             child: Center(
                               child: SizedBox(
                                 width: 160.w,
                                 child: Text(
-                                  data['Supplier'],
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w300,
-                                      fontSize: 12.sp,
-                                      color: Colors.black),
-                                ),
-                              ),
-                            ),
-                          ), Padding(
-                            padding: EdgeInsets.only(left: 18.w),
-                            child: Center(
-                              child: SizedBox(
-                                width: 160.w,
-                                child: Text(
-                                  data['Project'],
+                                  data['Account'],
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -1103,7 +1048,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 50.w),
+                            padding: EdgeInsets.only(left: 90.w),
                             child: Center(
                               child: SizedBox(
                                 width: 120.w,
@@ -1118,7 +1063,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 35.w),
+                            padding: EdgeInsets.only(left: 80.w),
                             child: Center(
                               child: SizedBox(
                                 width: 90.w,
@@ -1133,12 +1078,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 40.w),
+                            padding: EdgeInsets.only(left: 70.w),
                             child: Center(
                               child: SizedBox(
                                 width: 120.w,
                                 child: Text(
-                                 data['Total Amount'],
+                                  data['Total Amount'],
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -1149,12 +1094,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 60.w),
-                            child:PopupMenuButton(
+                            child: PopupMenuButton(
                                 onSelected: (value) async {
                                   final docid = data['id'];
                                   if (value == 'delete') {
                                     await FirebaseFirestore.instance
-                                        .collection('Vat Purchase')
+                                        .collection('Vat Admin Expense')
                                         .doc(docid)
                                         .delete();
 
@@ -1169,21 +1114,21 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 ),
                                 offset: const Offset(0, 40),
                                 itemBuilder: (context) => [
-                                  PopupMenuItem(
-                                    child: SizedBox(
-                                        width: 40.w,
-                                        height: 20.h,
-                                        child: Text("Delete")),
-                                    value: 'delete',
-                                  ),
-                                  PopupMenuItem(
-                                    child: SizedBox(
-                                        width: 40.w,
-                                        height: 20.h,
-                                        child: Text("Edit")),
-                                    value: 'edit',
-                                  )
-                                ]),
+                                      PopupMenuItem(
+                                        child: SizedBox(
+                                            width: 40.w,
+                                            height: 20.h,
+                                            child: Text("Delete")),
+                                        value: 'delete',
+                                      ),
+                                      PopupMenuItem(
+                                        child: SizedBox(
+                                            width: 40.w,
+                                            height: 20.h,
+                                            child: Text("Edit")),
+                                        value: 'edit',
+                                      )
+                                    ]),
                           )
                         ],
                       ),
@@ -1196,8 +1141,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
             child: Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 720.w),
-                  child:  Container(
+                  padding: EdgeInsets.only(left: 570.w),
+                  child: Container(
                     width: 120.w,
                     height: 35.h,
                     decoration: BoxDecoration(
@@ -1216,8 +1161,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 30.w),
-                  child:  Container(
+                  padding: EdgeInsets.only(left: 75.w),
+                  child: Container(
                     width: 120.w,
                     height: 35.h,
                     decoration: BoxDecoration(
@@ -1236,8 +1181,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 20.w),
-                  child:  Container(
+                  padding: EdgeInsets.only(left: 55.w),
+                  child: Container(
                     width: 120.w,
                     height: 35.h,
                     decoration: BoxDecoration(
