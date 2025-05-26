@@ -1,38 +1,41 @@
 import 'package:almaskan/ui/Taxinvoicepdf.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../Toast Message.dart';
-import 'Invpdf.dart';
+import 'package:intl/intl.dart';
+import 'package:number_to_words/number_to_words.dart';
 
 class Taxinvoice1 extends StatefulWidget {
   final String id;
   final String name;
   final String address;
   final String trn;
+  final String? taxinvoiceid;
 
   const Taxinvoice1(
       {super.key,
       required this.id,
       required this.name,
       required this.address,
-      required this.trn});
+      required this.trn,
+      this.taxinvoiceid});
 
   @override
   State<Taxinvoice1> createState() => _Taxinvoice1State();
 }
 
 class _Taxinvoice1State extends State<Taxinvoice1> {
-  final List<String> nbqoptions = [
-    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum  work  as per the drawing.',
-    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum work  as per Site discussion.',
-    'With refer to your enquiry for the above project, please find below our best quote for material '
-  ];
+  List<String> nbqoptions = [];
+  final nbqfirestore = FirebaseFirestore.instance
+      .collection("Suggestions")
+      .doc("AqpEzHc1d4HIUWsj6NpR")
+      .collection("SuggestionsData") // optional for clarity
+      .doc("nbqoptions");
   String selectednbq = '';
   TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
-  TextEditingController kindatt = TextEditingController();
+  TextEditingController lpoqtn = TextEditingController();
   TextEditingController project = TextEditingController();
   TextEditingController advancepercent = TextEditingController();
   TextEditingController nbq = TextEditingController();
@@ -41,12 +44,13 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   TextEditingController naq = TextEditingController();
   final TextEditingController subtotalController = TextEditingController();
   final TextEditingController advanceController = TextEditingController();
+  String selectedCompany = 'Reyah Al Maskan';
 
   double vat = 0.0;
   double advance = 0.0;
   double total = 0.0;
 
-  get index => 0;
+  get index => index;
 
   @override
   void initState() {
@@ -58,11 +62,37 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
         calculatetotal();
       });
     });
+    fetchnbqSuggestions();
+  }
+
+  void fetchnbqSuggestions() async {
+    final docSnapshot = await nbqfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      nbqoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
   }
 
   void calculatetotal() {
     vat = advance * 0.05;
     total = advance + vat;
+
+    final totalInt = total.floor();
+    final totalFils = ((total - totalInt) * 100).round();
+
+    String amountInWords =
+        NumberToWord().convert('en-in', totalInt) + 'dirhams';
+
+    if (totalFils > 0) {
+      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
+    }
+
+    amountInWords += ' only';
+
+    totalamountinname.text =
+        amountInWords[0].toUpperCase() + amountInWords.substring(1);
   }
 
   @override
@@ -73,16 +103,45 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
     super.dispose();
   }
 
+  final List<Map<String, dynamic>> paymentOptions = [
+    {'label': '30% Advance', 'value': 30.0, 'id': 1},
+    {'label': '50% Advance', 'value': 50.0, 'id': 2},
+    {'label': '50% Final Payment', 'value': 50.0, 'id': 3},
+    {'label': '50% Work In Progress', 'value': 50.0, 'id': 4},
+    {'label': '10% Final Payment', 'value': 10.0, 'id': 5},
+    {'label': '60% Work In Progress', 'value': 60.0, 'id': 6},
+  ];
+
+  double? selectedPercentage;
+
+  void updateAdvanceAmount() {
+    double subtotal = double.tryParse(subtotalController.text) ?? 0;
+    double percentage = selectedPercentage ?? 0;
+    double advance = (subtotal * percentage) / 100;
+    advanceController.text = advance.toStringAsFixed(2);
+  }
+
+  int? selectedpaymentId;
+
+  String? selectedDocumentId;
+
   Widget build(BuildContext context) {
     final firestore = FirebaseFirestore.instance
         .collection("Clients")
         .doc(widget.id)
         .collection("Taxinvoice");
-    final firestor = FirebaseFirestore.instance
-        .collection("Clients")
-        .doc(widget.id)
-        .collection("Taxinvoice").snapshots();
+
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
+        titleSpacing: 1,
+        toolbarHeight: 60.h,
+        title: Text(
+          "Create TaxInvoice",
+          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w400),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +176,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -159,26 +218,39 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
-                          textInputAction: TextInputAction.next,
                           controller: date,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
+                          readOnly: true,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (pickedDate != null) {
+                              String formattedDate =
+                                  DateFormat('dMMMyyyy').format(pickedDate);
+                              date.text = formattedDate;
+                            }
+                          },
                           cursorHeight: 25.h,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
+                          textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "",
+                            hintText: "Select Date",
                             hintStyle: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 16,
-                                color: Colors.black),
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       )
@@ -193,7 +265,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
-                          "Kind Att:",
+                          "LPO/QTN #",
                           style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
@@ -208,12 +280,12 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
-                          controller: kindatt,
+                          controller: lpoqtn,
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -233,58 +305,6 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.h),
-                        child: Text(
-                          "Advance % :",
-                          style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black),
-                        ),
-                      ),
-                      Container(
-                        width: 250.w,
-                        height: 60.h,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          controller: advancepercent,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          cursorHeight: 25.h,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
-                          textAlign: TextAlign.start,
-                          cursorColor: Colors.black45,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(
-                                top: 2.h, left: 5.w, bottom: 15.h),
-                            border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "  ",
-                            hintStyle: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 16,
-                                color: Colors.black),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-            Row(
-              children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w),
                   child: Column(
@@ -313,7 +333,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black45),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -332,7 +352,11 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       )
                     ],
                   ),
-                ),
+                )
+              ],
+            ),
+            Row(
+              children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w),
                   child: Column(
@@ -350,59 +374,95 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       ),
                       Container(
                         width: 790.w,
-                        height: 60.h,
+                        height: 70.h,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Autocomplete(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<String>.empty();
-                            }
-                            return nbqoptions.where((String option) {
-                              return option.toLowerCase().contains(
-                                  textEditingValue.text.toLowerCase());
-                            });
-                          },
-                          onSelected: (String selection) {
-                            nbq.text = selection;
-                            selectednbq = selection;
-                          },
-                          fieldViewBuilder: (BuildContext context,
-                              TextEditingController textEditingController,
-                              FocusNode focusNode,
-                              VoidCallback) {
-                            return TextFormField(
-                              textInputAction: TextInputAction.next,
-                              controller: textEditingController,
-                              focusNode: focusNode,
-                              maxLines: null,
-                              onFieldSubmitted: (v) {
-                                setState(() {
-                                  selectednbq = v;
-                                });
-                              },
-                              keyboardType: TextInputType.multiline,
-                              cursorHeight: 25.h,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.start,
-                              cursorColor: Colors.black45,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    top: 2.h, left: 5.w, bottom: 15.h),
-                                border: InputBorder.none,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                hintText: "",
-                                hintStyle: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 16,
-                                    color: Colors.black),
+                        child: Autocomplete(optionsBuilder:
+                            (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return nbqoptions.where((String option) {
+                            return option
+                                .toLowerCase()
+                                .contains(textEditingValue.text.toLowerCase());
+                          });
+                        }, onSelected: (String selection) {
+                          nbq.text = selection;
+                          selectednbq = selection;
+                        }, fieldViewBuilder: (BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted) {
+                          // Sync text initially
+                          textEditingController.text = nbq.text;
+
+                          // Sync both ways
+                          textEditingController.addListener(() {
+                            nbq.text = textEditingController.text;
+                          });
+
+                          return TextFormField(
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                            maxLines: null,
+                            onFieldSubmitted: (v) {
+                              setState(() {
+                                selectednbq = v;
+                              });
+                            },
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.multiline,
+                            cursorHeight: 25.h,
+                            textAlignVertical: TextAlignVertical.center,
+                            style: TextStyle(color: Colors.black),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black45,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              hintText: "",
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        }, optionsViewBuilder: (context, onSelected, options) {
+                          return Align(
+                            alignment: Alignment.topLeft,
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                width: 790.w,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: options.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    final option = options.elementAt(index);
+                                    return InkWell(
+                                      onTap: () {
+                                        onSelected(option);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 10),
+                                        child: Text(option),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
                       )
                     ],
                   ),
@@ -461,6 +521,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       child: TextFormField(
                         textInputAction: TextInputAction.next,
                         controller: subtotalController,
+                        onChanged: (val) => updateAdvanceAmount(),
                         textAlign: TextAlign.left,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -475,15 +536,26 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   ]),
                   TableRow(children: [
                     Padding(
-                      padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child: Text(
-                        'Advance Payment',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 16),
-                      ),
-                    ),
+                        padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                        child: DropdownButtonFormField<int>(
+                          hint: Text("Select Payment Method"),
+                          items: paymentOptions.map((option) {
+                            return DropdownMenuItem<int>(
+                              value: option['id'],
+                              child: Text(option['label']),
+                            );
+                          }).toList(),
+                          onChanged: (id) {
+                            var selectedOption = paymentOptions
+                                .firstWhere((opt) => opt['id'] == id);
+                            setState(() {
+                              selectedpaymentId = id;
+                              selectedPercentage = selectedOption['value'];
+                              updateAdvanceAmount();
+                            });
+                          },
+                          value: selectedpaymentId,
+                        )),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
@@ -589,8 +661,8 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   Padding(
                     padding: EdgeInsets.only(top: 15.h),
                     child: Container(
-                      width: 790.w,
-                      height: 40.h,
+                      width: 500.w,
+                      height: 60.h,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
@@ -632,8 +704,8 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   Padding(
                     padding: EdgeInsets.only(top: 15.h),
                     child: Container(
-                      width: 790.w,
-                      height: 40.h,
+                      width: 500.w,
+                      height: 100.h,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
@@ -644,7 +716,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black45),
+                        style: TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -665,103 +737,375 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 25.h),
+              padding: EdgeInsets.only(top: 25.h, bottom: 15.h),
               child: StreamBuilder<QuerySnapshot>(
-                stream: null,
+                stream: FirebaseFirestore.instance
+                    .collection("Clients")
+                    .doc(widget.id)
+                    .collection("Taxinvoice")
+                    .snapshots(),
                 builder: (context, snapshot) {
-                  return Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 500.w),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              {
-                                final id = DateTime.now()
-                                    .microsecondsSinceEpoch
-                                    .toString();
-                                debugPrint('Generated ID: $id');
-                                try {
-                                  await firestore.doc(id).set({
-                                    'id': id,
-                                    'inv no': invno.text,
-                                    'date': date.text,
-                                    'kindatt': kindatt.text,
-                                    'advance percent': advancepercent.text,
-                                    'project': project.text,
-                                    'note before quote': nbq.text,
-                                    'subtotal taxable amount':
-                                        subtotalController.text,
-                                    'advance payment': advanceController.text,
-                                    'vat 5%': vat.toString(),
-                                    'total amount': total.toString(),
-                                    'total amount in name': totalamountinname.text,
-                                    'note after quote': naq.text
-                                  });
-                                  ToastMessage()
-                                      .toastmessage(message: 'Taxinvoice Added');
-                                } catch (e) {
-                                  debugPrint('Error adding client: $e');
-                                  ToastMessage()
-                                      .toastmessage(message: e.toString());
-                                }
-                              }
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+
+                  var docs = snapshot.data!.docs;
+                  final invoiceMap = {
+                    for (var doc in docs)
+                      doc['inv no']?.toString() ?? 'Unknown': doc.id
+                  };
+
+                  return Padding(
+                    padding: EdgeInsets.only(left: 20.w),
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 12,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 300,
+                          // Give a fixed width to prevent stretching
+                          child: DropdownSearch<String>(
+                            asyncItems: (String? filter) async {
+                              return invoiceMap.keys
+                                  .where((key) =>
+                                      filter == null ||
+                                      key
+                                          .toLowerCase()
+                                          .contains(filter.toLowerCase()))
+                                  .toList();
                             },
-                            child: Text("Save")),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 20.w),
-                        child: ElevatedButton(
-                            onPressed: () {
+                            popupProps: PopupProps.menu(
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                    hintText: "Search by INV No"),
+                              ),
+                            ),
+                            dropdownDecoratorProps: DropDownDecoratorProps(
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: "Select Invoice to Edit",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            onChanged: (invNo) {
+                              final selectedId = invoiceMap[invNo];
+                              final selectedDoc = docs
+                                  .firstWhere((doc) => doc.id == selectedId);
+                              final data =
+                                  selectedDoc.data() as Map<String, dynamic>;
+
+                              setState(() {
+                                selectedDocumentId = selectedDoc.id;
+                                invno.text = data['inv no'] ?? '';
+                                date.text = data['date'] ?? '';
+                                lpoqtn.text = data['LpoQtn#'] ?? '';
+                                project.text = data['project'] ?? '';
+                                nbq.text = data['note before quote'] ?? '';
+                                selectednbq = data['note before quote'] ?? '';
+                                subtotalController.text =
+                                    data['subtotal taxable amount'] ?? '';
+                                advanceController.text =
+                                    data['advance payment'] ?? '';
+                                totalamountinname.text =
+                                    data['total amount in name'] ?? '';
+                                naq.text = data['note after quote'] ?? '';
+                                advancepercent.text =
+                                    data['advance percent'] ?? '';
+
+                                vat =
+                                    double.tryParse(data['vat 5%'] ?? '0') ?? 0;
+                                total = double.tryParse(
+                                        data['total amount'] ?? '0') ??
+                                    0;
+
+                                final paymentLabel = data['payment'];
+                                final paymentMatch = paymentOptions.firstWhere(
+                                  (opt) => opt['label'] == paymentLabel,
+                                  orElse: () => {},
+                                );
+
+                                if (paymentMatch.isNotEmpty) {
+                                  selectedpaymentId = paymentMatch['id'];
+                                  selectedPercentage = paymentMatch['value'];
+                                  updateAdvanceAmount();
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            final id = DateTime.now()
+                                .microsecondsSinceEpoch
+                                .toString();
+                            var selectedPayment = paymentOptions.firstWhere(
+                              (opt) => opt['id'] == selectedpaymentId,
+                              orElse: () => {'label': '', 'value': 0},
+                            );
+
+                            try {
+                              await firestore.doc(id).set({
+                                'id': id,
+                                'inv no': invno.text,
+                                'date': date.text,
+                                'payment': selectedPayment['label'],
+                                'LpoQtn#': lpoqtn.text,
+                                'project': project.text,
+                                'note before quote': nbq.text,
+                                'subtotal taxable amount':
+                                    subtotalController.text,
+                                'advance payment': advanceController.text,
+                                'vat 5%': vat.toString(),
+                                'total amount': total.toString(),
+                                'total amount in name': totalamountinname.text,
+                                'note after quote': naq.text
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Tax Invoice Saved'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.green,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to save ${e}'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black54,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 200.w),
+                            child: Container(
+                              width: 65.w,
+                              height: 35.h,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.r),
+                                  color: Colors.lightBlue[600]),
+                              child: Center(
+                                child: Text(
+                                  "Save",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            String? selected = await showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                String tempSelectedCompany = selectedCompany;
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(3.r)),
+                                  title: Text('Select Company'),
+                                  content: StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return DropdownButtonFormField<String>(
+                                        value: tempSelectedCompany,
+                                        items: ['Reyah Al Maskan', 'Al Maskan']
+                                            .map((company) {
+                                          return DropdownMenuItem(
+                                            value: company,
+                                            child: Text(company),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            tempSelectedCompany = value!;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // cancel
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context,
+                                            tempSelectedCompany); // return selected
+                                      },
+                                      child: Text("Continue"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+
+                            if (selected != null) {
+                              selectedCompany = selected;
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Taxinvoicepdf(
-                                          invno: invno.text,
-                                          date: date.text,
-                                          kindatt: kindatt.text,
-                                          advancepercent: advancepercent.text,
-                                          project: project.text,
-                                          nbq: nbq.text,
-                                          subtotal: subtotalController.text,
-                                          advance: advanceController.text,
-                                          vat: vat.toString(),
-                                          totalamount: total.toString(),
-                                          totalamountinname: totalamountinname.text,
-                                          naq: naq.text,
-                                          name: widget.name,
-                                          address: widget.address,
-                                          trn: widget.trn,
-                                        )),
+                                  builder: (context) => Taxinvoicepdf(
+                                    invno: invno.text,
+                                    date: date.text,
+                                    lpoqtn: lpoqtn.text,
+                                    advancepercent: advancepercent.text,
+                                    project: project.text,
+                                    nbq: nbq.text,
+                                    subtotal: subtotalController.text,
+                                    advance: advanceController.text,
+                                    vat: vat.toStringAsFixed(2),
+                                    totalamount: total.toStringAsFixed(2),
+                                    totalamountinname: totalamountinname.text,
+                                    naq: naq.text,
+                                    name: widget.name,
+                                    address: widget.address,
+                                    trn: widget.trn,
+                                    payment: paymentOptions.firstWhere(
+                                            (opt) =>
+                                                opt['id'] == selectedpaymentId,
+                                            orElse: () =>
+                                                {'label': ''})['label'] ??
+                                        '',
+                                    selectedCompany: selectedCompany,
+                                  ),
+                                ),
                               );
-                            },
-                            child: Text("Preview")),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 20.w),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              firestore.doc(snapshot.data!.docs[index]['id'].toString()).update(
-                                  {
-                                    'inv no': invno.text,
-                                    'date': date.text,
-                                    'kindatt': kindatt.text,
-                                    'advance percent': advancepercent.text,
-                                    'project': project.text,
-                                    'note before quote': nbq.text,
-                                    'subtotal taxable amount':
+                            }
+                          },
+                          child: Container(
+                            width: 65.w,
+                            height: 35.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.r),
+                              color: Colors.green,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Preview",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () async {
+                            if (selectedDocumentId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Please select a document to update'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black54,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            }
+
+                            var selectedPayment = paymentOptions.firstWhere(
+                              (opt) => opt['id'] == selectedpaymentId,
+                              orElse: () => {'label': '', 'value': 0},
+                            );
+
+                            try {
+                              await firestore.doc(selectedDocumentId).update({
+                                'inv no': invno.text,
+                                'date': date.text,
+                                'LpoQtn#': lpoqtn.text,
+                                'payment': selectedPayment['label'],
+                                'advance percent': advancepercent.text,
+                                'project': project.text,
+                                'note before quote': nbq.text,
+                                'subtotal taxable amount':
                                     subtotalController.text,
-                                    'advance payment': advanceController.text,
-                                    'vat 5%': vat.toString(),
-                                    'total amount': total.toString(),
-                                    'total amount in name': totalamountinname.text,
-                                    'note after quote': naq.text
-                                  });
-                            },
-                            child: Text("Update")),
-                      ),
-                    ],
+                                'advance payment': advanceController.text,
+                                'vat 5%': vat.toString(),
+                                'total amount': total.toString(),
+                                'total amount in name': totalamountinname.text,
+                                'note after quote': naq.text
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Tax Invoice Updated'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.green,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to update ${e}'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black54,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: 65.w,
+                            height: 35.h,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.r),
+                                color: Colors.red[900]),
+                            child: Center(
+                              child: Text(
+                                "Update",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   );
-                }
+                },
               ),
             )
           ],

@@ -8,14 +8,14 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class Vatadmin extends StatefulWidget {
-  const Vatadmin({super.key});
+class Vatadminreyah extends StatefulWidget {
+  const Vatadminreyah({super.key});
 
   @override
-  State<Vatadmin> createState() => _VatadminState();
+  State<Vatadminreyah> createState() => _VatadminreyahState();
 }
 
-class _VatadminState extends State<Vatadmin> {
+class _VatadminreyahState extends State<Vatadminreyah> {
   List<String> Invoptions = [];
   final Invfirestore = FirebaseFirestore.instance
       .collection("Suggestions")
@@ -29,7 +29,6 @@ class _VatadminState extends State<Vatadmin> {
       .collection("SuggestionsData") // optional for clarity
       .doc("Accoptions");
 
-
   final currentdate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
   Future<void> generatePdf() async {
@@ -38,7 +37,7 @@ class _VatadminState extends State<Vatadmin> {
       File('assets/Logo.png').readAsBytesSync(),
     );
     final image1 = pw.MemoryImage(
-      File('assets/Logo.png').readAsBytesSync(),
+      File('assets/logoin.png').readAsBytesSync(),
     );
     final headerStyle = pw.TextStyle(
       fontWeight: pw.FontWeight.bold,
@@ -62,15 +61,12 @@ class _VatadminState extends State<Vatadmin> {
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text("AL MASKAN PLASTER & TILE CONT",
+                          pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
                               style: pw.TextStyle(
                                   fontSize: 10,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.SizedBox(height: 3),
-                          pw.Text("Industrial-8",
-                              style: pw.TextStyle(fontSize: 10)),
-                          pw.SizedBox(height: 3),
-                          pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
+                          pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
                           pw.SizedBox(height: 3),
                           pw.Text("United Arab Emirates",
                               style: pw.TextStyle(fontSize: 10)),
@@ -81,148 +77,155 @@ class _VatadminState extends State<Vatadmin> {
                           pw.Text("0508089505",
                               style: pw.TextStyle(fontSize: 10)),
                           pw.SizedBox(height: 3),
-                          pw.Text("almaskandecor@gmail.com",
+                          pw.Text("reyahalmaskan@gmail.com",
                               style: pw.TextStyle(fontSize: 10)),
                         ],
-                      )
-                    ]),
-                pw.SizedBox(height: 10),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 200),
-                    child: pw.Text(
-                      "Vat Admin Expense",
-                      style: pw.TextStyle(
-                        fontSize: 15,
-                        fontWeight: pw.FontWeight.bold,
-                        decoration: pw.TextDecoration.underline,
                       ),
-                    )),
-                pw.SizedBox(height: 20),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 400),
-                  child: pw.Text("Date: $currentdate",
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.normal)),
-                ),
-                pw.SizedBox(height: 20),
+                      pw.SizedBox(height: 10),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 200),
+                          child: pw.Text(
+                            "Vat Admin Expense",
+                            style: pw.TextStyle(
+                              fontSize: 15,
+                              fontWeight: pw.FontWeight.bold,
+                              decoration: pw.TextDecoration.underline,
+                            ),
+                          )),
+                      pw.SizedBox(height: 20),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.only(left: 400),
+                        child: pw.Text("Date: $currentdate",
+                            style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.normal)),
+                      ),
+                      pw.SizedBox(height: 20),
 
-                // Header Row
-                pw.Container(
-                  width: double.infinity,
-                  height: 20,
-                  color: PdfColors.red800,
-                  child: pw.Row(
-                    children: [
-                      pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 20),
-                          child: pw.SizedBox(
-                              width: 50,
-                              child: pw.Text("Date", style: headerStyle))),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child: pw.Text("Invoice", style: headerStyle)),
+                      // Header Row
+                      pw.Container(
+                        width: double.infinity,
+                        height: 20,
+                        color: PdfColors.red800,
+                        child: pw.Row(
+                          children: [
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 20),
+                                child: pw.SizedBox(
+                                    width: 50,
+                                    child:
+                                        pw.Text("Date", style: headerStyle))),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 80,
+                                  child:
+                                      pw.Text("Invoice", style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 80,
+                                  child:
+                                      pw.Text("Account", style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 80,
+                                  child: pw.Text("Invoice Amount",
+                                      style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 6),
+                              child: pw.SizedBox(
+                                  width: 50,
+                                  child: pw.Text("Tax", style: headerStyle)),
+                            ),
+                            pw.SizedBox(
+                                width: 80,
+                                child: pw.Text("Total Amount",
+                                    style: headerStyle)),
+                          ],
+                        ),
                       ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child: pw.Text("Account", style: headerStyle)),
-                      ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child:
-                                pw.Text("Invoice Amount", style: headerStyle)),
-                      ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 6),
-                        child: pw.SizedBox(
-                            width: 50,
-                            child: pw.Text("Tax", style: headerStyle)),
-                      ),
-                      pw.SizedBox(
-                          width: 80,
-                          child: pw.Text("Total Amount", style: headerStyle)),
-                    ],
-                  ),
-                ),
 
-                // Data rows
-                ...filteredData.map((data) {
-                  return pw.Container(
-                    width: double.infinity,
-                    height: 25,
-                    color: filteredData.indexOf(data) % 2 == 0
-                        ? PdfColors.grey100
-                        : PdfColors.white,
-                    child: pw.Row(
-                      children: [
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 20),
-                          child: pw.SizedBox(
-                              width: 50,
-                              child: pw.Text(data['Date'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Invoice'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Account'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Invoice Amount'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 10),
-                            child: pw.SizedBox(
-                                width: 50,
-                                child: pw.Text(data['Tax'] ?? '',
-                                    style: textstyle))),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 10),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Total Amount'] ?? '',
-                                  style: textstyle)),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      // Data rows
+                      ...filteredData.map((data) {
+                        return pw.Container(
+                          width: double.infinity,
+                          height: 25,
+                          color: filteredData.indexOf(data) % 2 == 0
+                              ? PdfColors.grey100
+                              : PdfColors.white,
+                          child: pw.Row(
+                            children: [
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 20),
+                                child: pw.SizedBox(
+                                    width: 50,
+                                    child: pw.Text(data['Date'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 80,
+                                    child: pw.Text(data['Invoice'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 80,
+                                    child: pw.Text(data['Account'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 80,
+                                    child: pw.Text(data['Invoice Amount'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 10),
+                                  child: pw.SizedBox(
+                                      width: 50,
+                                      child: pw.Text(data['Tax'] ?? '',
+                                          style: textstyle))),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 10),
+                                child: pw.SizedBox(
+                                    width: 80,
+                                    child: pw.Text(data['Total Amount'] ?? '',
+                                        style: textstyle)),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
 
-                pw.SizedBox(height: 20),
-                pw.Divider(),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Invoice Amount: $totalInvoice",
-                        style: pw.TextStyle(fontSize: 10))),
-                pw.SizedBox(height: 2),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Tax (5%):           $totalTax",
-                        style: pw.TextStyle(fontSize: 10))),
-                pw.SizedBox(height: 2),
+                      pw.SizedBox(height: 20),
+                      pw.Divider(),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 320),
+                          child: pw.Text("Invoice Amount: $totalInvoice",
+                              style: pw.TextStyle(fontSize: 10))),
+                      pw.SizedBox(height: 2),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 320),
+                          child: pw.Text("Tax (5%):           $totalTax",
+                              style: pw.TextStyle(fontSize: 10))),
+                      pw.SizedBox(height: 2),
 
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Total Amount:     $totalAmount",
-                        style: pw.TextStyle(fontSize: 10))),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 320),
+                          child: pw.Text("Total Amount:     $totalAmount",
+                              style: pw.TextStyle(fontSize: 10))),
+
+                      pw.SizedBox(height: 30),
+                    ])
               ],
           footer: (pw.Context context) {
             return pw.Column(
@@ -249,6 +252,7 @@ class _VatadminState extends State<Vatadmin> {
   TextEditingController totalamount = TextEditingController();
   String selectedInv = '';
   String selectedAcc = '';
+
   DateTime? _startDate;
   DateTime? _endDate;
   final DateFormat _formatter = DateFormat('dd-MM-yyyy');
@@ -260,7 +264,8 @@ class _VatadminState extends State<Vatadmin> {
   List<Map<String, dynamic>> filteredData = [];
 
   bool showfiltercontainer = false;
-  final firestore = FirebaseFirestore.instance.collection('Vat Admin Expense');
+  final firestore =
+      FirebaseFirestore.instance.collection('Vat Admin Expense Reyah');
 
   void initState() {
     super.initState();
@@ -270,6 +275,7 @@ class _VatadminState extends State<Vatadmin> {
     fetchInvSuggestions();
     fetchAccSuggestions();
   }
+
   void fetchInvSuggestions() async {
     final docSnapshot = await Invfirestore.get();
 
@@ -279,6 +285,7 @@ class _VatadminState extends State<Vatadmin> {
       setState(() {}); // Trigger rebuild so Autocomplete sees updates
     }
   }
+
   void fetchAccSuggestions() async {
     final docSnapshot = await ACCfirestore.get();
 
@@ -330,8 +337,9 @@ class _VatadminState extends State<Vatadmin> {
   }
 
   Future<void> _fetchFilteredData() async {
-    final snapshot =
-        await FirebaseFirestore.instance.collection('Vat Admin Expense').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('Vat Admin Expense Reyah')
+        .get();
 
     final dateFormat = DateFormat('dd-MM-yyyy');
     final List<Map<String, dynamic>> loadedData = [];
@@ -388,8 +396,8 @@ class _VatadminState extends State<Vatadmin> {
     final tax = TextEditingController(text: data['Tax']);
     final totalamount = TextEditingController(text: data['Total Amount']);
 
-    // Listen to invoice amount changes
-    invoiceamount.addListener(() {
+    // VAT calculation logic
+    void calculateVAT() {
       final value = double.tryParse(invoiceamount.text);
       if (value != null) {
         final vat = value * 0.05;
@@ -400,15 +408,18 @@ class _VatadminState extends State<Vatadmin> {
         tax.text = '';
         totalamount.text = '';
       }
-    });
+    }
+
+    // Add listener to invoice amount input
+    invoiceamount.addListener(calculateVAT);
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Edit Entry"),
-        content: SizedBox(
-          width: 400,
-          height: 350,
+        content: Container(
+          width: 400.w,
+          height: 350.h,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -430,8 +441,8 @@ class _VatadminState extends State<Vatadmin> {
                 ),
                 TextField(
                   controller: invoiceamount,
-                  keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
+                  keyboardType: TextInputType.number,
                   decoration:
                       const InputDecoration(labelText: "Invoice Amount"),
                 ),
@@ -458,7 +469,7 @@ class _VatadminState extends State<Vatadmin> {
             onPressed: () async {
               try {
                 await FirebaseFirestore.instance
-                    .collection('Vat Admin Expense')
+                    .collection('Vat Admin Expense Reyah')
                     .doc(docId)
                     .update({
                   'Date': date.text,
@@ -475,6 +486,8 @@ class _VatadminState extends State<Vatadmin> {
                   backgroundColor: Colors.green,
                   duration: Duration(seconds: 2),
                 ));
+
+                await Future.delayed(Duration(seconds: 2));
 
                 _fetchFilteredData();
               } catch (e) {
@@ -507,7 +520,7 @@ class _VatadminState extends State<Vatadmin> {
               color: Colors.black,
             )),
         title: Text(
-          "Vat Adminexpense",
+          "Vat Adminexpense Reyah",
           style:
               GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
         ),
@@ -627,123 +640,12 @@ class _VatadminState extends State<Vatadmin> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(top: 7.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Invoice",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12.sp,
-                                          color: Colors.black),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 5.w),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              TextEditingController _InvsuggestionController =
-                                              TextEditingController();
-                                              return AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(4.r)),
-                                                title: Text("Add INV Suggestion"),
-                                                insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
-                                                // Controls width and height
-                                                content: SizedBox(
-                                                  width: 400.w, // Custom width
-                                                  height: 90.h, // Custom height
-                                                  child: TextFormField(
-                                                    controller: _InvsuggestionController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                      "Enter your Suggestion here...",
-                                                      border: OutlineInputBorder(),
-                                                    ),
-                                                    maxLines: null,
-                                                    expands: true,
-                                                    // Expands to fill the height
-                                                    keyboardType:
-                                                    TextInputType.multiline,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close dialog
-                                                    },
-                                                    child: Text("Cancel"),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () async {
-                                                      final suggestion =
-                                                      _InvsuggestionController.text.trim();
-                                                      if (suggestion.isEmpty) return;
-
-                                                      try {
-                                                        await Invfirestore.update({
-                                                          'suggestions':
-                                                          FieldValue.arrayUnion(
-                                                              [suggestion])
-                                                        }).catchError((_) async {
-                                                          await Invfirestore.set({
-                                                            'suggestions': [suggestion]
-                                                          });
-                                                        });
-
-                                                        Navigator.of(context).pop();
-                                                        fetchInvSuggestions(); // Refresh the local list
-
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Suggestion Saved'),
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                            backgroundColor:
-                                                            Colors.green,
-                                                            behavior: SnackBarBehavior
-                                                                .floating,
-                                                            shape:
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
-                                                            ),
-                                                            margin: EdgeInsets.all(15),
-                                                          ),
-                                                        );
-                                                      } catch (e) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Failed to Save: $e'),
-                                                            backgroundColor: Colors.red,
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Text("Add"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child:
-                                        Icon(Icons.add_circle, color: Colors.blue,size: 15.sp,),
-                                      ),
-                                    )
-                                  ],
+                                child: Text(
+                                  "Invoice",
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
                                 ),
                               ),
                               Container(
@@ -752,8 +654,9 @@ class _VatadminState extends State<Vatadmin> {
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
-                                child: Autocomplete(
-                                  optionsBuilder: (TextEditingValue textEditingValue) {
+                                child: Center(
+                                  child: Autocomplete(optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
                                     if (textEditingValue.text.isEmpty) {
                                       return const Iterable<String>.empty();
                                     }
@@ -761,13 +664,12 @@ class _VatadminState extends State<Vatadmin> {
                                       return option.toLowerCase().contains(
                                           textEditingValue.text.toLowerCase());
                                     });
-                                  },
-                                  onSelected: (String selection) {
+                                  }, onSelected: (String selection) {
                                     invoice.text = selection;
                                     selectedInv = selection;
-                                  },
-                                  fieldViewBuilder: (BuildContext context,
-                                      TextEditingController textEditingController,
+                                  }, fieldViewBuilder: (BuildContext context,
+                                      TextEditingController
+                                          textEditingController,
                                       FocusNode focusNode,
                                       VoidCallback onFieldSubmitted) {
                                     // Sync text initially
@@ -790,7 +692,8 @@ class _VatadminState extends State<Vatadmin> {
                                       textInputAction: TextInputAction.next,
                                       keyboardType: TextInputType.multiline,
                                       cursorHeight: 25.h,
-                                      textAlignVertical: TextAlignVertical.center,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
                                       style: TextStyle(color: Colors.black),
                                       textAlign: TextAlign.start,
                                       cursorColor: Colors.black45,
@@ -808,34 +711,39 @@ class _VatadminState extends State<Vatadmin> {
                                         ),
                                       ),
                                     );
-                                  },optionsViewBuilder: (context, onSelected, options) {
-                                  return Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Material(
-                                      elevation: 4,
-                                      child: Container(
-                                        width: 130.w,
-                                        child: ListView.builder(
-                                          padding: EdgeInsets.zero,
-                                          shrinkWrap: true,
-                                          itemCount: options.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            final option = options.elementAt(index);
-                                            return InkWell(
-                                              onTap: () {
-                                                onSelected(option);
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                                                child: Text(option),
-                                              ),
-                                            );
-                                          },
+                                  }, optionsViewBuilder:
+                                      (context, onSelected, options) {
+                                    return Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Material(
+                                        elevation: 4,
+                                        child: Container(
+                                          width: 130.w,
+                                          child: ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            itemCount: options.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              final option =
+                                                  options.elementAt(index);
+                                              return InkWell(
+                                                onTap: () {
+                                                  onSelected(option);
+                                                },
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 10),
+                                                  child: Text(option),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }
+                                    );
+                                  }),
                                 ),
                               )
                             ],
@@ -848,122 +756,12 @@ class _VatadminState extends State<Vatadmin> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(top: 7.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Account",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12.sp,
-                                          color: Colors.black),
-                                    ), Padding(
-                                      padding: EdgeInsets.only(left: 5.w),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              TextEditingController _AccsuggestionController =
-                                              TextEditingController();
-                                              return AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(4.r)),
-                                                title: Text("Add Acc Suggestion"),
-                                                insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
-                                                // Controls width and height
-                                                content: SizedBox(
-                                                  width: 400.w, // Custom width
-                                                  height: 90.h, // Custom height
-                                                  child: TextFormField(
-                                                    controller: _AccsuggestionController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                      "Enter your Suggestion here...",
-                                                      border: OutlineInputBorder(),
-                                                    ),
-                                                    maxLines: null,
-                                                    expands: true,
-                                                    // Expands to fill the height
-                                                    keyboardType:
-                                                    TextInputType.multiline,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close dialog
-                                                    },
-                                                    child: Text("Cancel"),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () async {
-                                                      final suggestion =
-                                                      _AccsuggestionController.text.trim();
-                                                      if (suggestion.isEmpty) return;
-
-                                                      try {
-                                                        await ACCfirestore.update({
-                                                          'suggestions':
-                                                          FieldValue.arrayUnion(
-                                                              [suggestion])
-                                                        }).catchError((_) async {
-                                                          await ACCfirestore.set({
-                                                            'suggestions': [suggestion]
-                                                          });
-                                                        });
-
-                                                        Navigator.of(context).pop();
-                                                        fetchAccSuggestions(); // Refresh the local list
-
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Suggestion Saved'),
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                            backgroundColor:
-                                                            Colors.green,
-                                                            behavior: SnackBarBehavior
-                                                                .floating,
-                                                            shape:
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
-                                                            ),
-                                                            margin: EdgeInsets.all(15),
-                                                          ),
-                                                        );
-                                                      } catch (e) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Failed to Save: $e'),
-                                                            backgroundColor: Colors.red,
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Text("Add"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child:
-                                        Icon(Icons.add_circle, color: Colors.blue,size: 15.sp,),
-                                      ),
-                                    )
-                                  ],
+                                child: Text(
+                                  "Account",
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
                                 ),
                               ),
                               Container(
@@ -973,63 +771,64 @@ class _VatadminState extends State<Vatadmin> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: Autocomplete(
-                                    optionsBuilder: (TextEditingValue textEditingValue) {
-                                      if (textEditingValue.text.isEmpty) {
-                                        return const Iterable<String>.empty();
-                                      }
-                                      return Accoptions.where((String option) {
-                                        return option.toLowerCase().contains(
-                                            textEditingValue.text.toLowerCase());
-                                      });
-                                    },
-                                    onSelected: (String selection) {
-                                      account.text = selection;
-                                      selectedAcc = selection;
-                                    },
-                                    fieldViewBuilder: (BuildContext context,
-                                        TextEditingController textEditingController,
-                                        FocusNode focusNode,
-                                        VoidCallback onFieldSubmitted) {
-                                      // Sync text initially
-                                      textEditingController.text = account.text;
+                                  child: Autocomplete(optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text.isEmpty) {
+                                      return const Iterable<String>.empty();
+                                    }
+                                    return Accoptions.where((String option) {
+                                      return option.toLowerCase().contains(
+                                          textEditingValue.text.toLowerCase());
+                                    });
+                                  }, onSelected: (String selection) {
+                                    account.text = selection;
+                                    selectedAcc = selection;
+                                  }, fieldViewBuilder: (BuildContext context,
+                                      TextEditingController
+                                          textEditingController,
+                                      FocusNode focusNode,
+                                      VoidCallback onFieldSubmitted) {
+                                    // Sync text initially
+                                    textEditingController.text = account.text;
 
-                                      // Sync both ways
-                                      textEditingController.addListener(() {
-                                        account.text = textEditingController.text;
-                                      });
+                                    // Sync both ways
+                                    textEditingController.addListener(() {
+                                      account.text = textEditingController.text;
+                                    });
 
-                                      return TextFormField(
-                                        controller: textEditingController,
-                                        focusNode: focusNode,
-                                        maxLines: null,
-                                        onFieldSubmitted: (v) {
-                                          setState(() {
-                                            selectedAcc = v;
-                                          });
-                                        },
-                                        textInputAction: TextInputAction.next,
-                                        keyboardType: TextInputType.multiline,
-                                        cursorHeight: 25.h,
-                                        textAlignVertical: TextAlignVertical.center,
-                                        style: TextStyle(color: Colors.black),
-                                        textAlign: TextAlign.start,
-                                        cursorColor: Colors.black45,
-                                        decoration: InputDecoration(
-                                          contentPadding: EdgeInsets.only(
-                                              top: 2.h, left: 5.w, bottom: 15.h),
-                                          border: InputBorder.none,
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide.none),
-                                          hintText: "",
-                                          hintStyle: TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 16,
-                                            color: Colors.black,
-                                          ),
+                                    return TextFormField(
+                                      controller: textEditingController,
+                                      focusNode: focusNode,
+                                      maxLines: null,
+                                      onFieldSubmitted: (v) {
+                                        setState(() {
+                                          selectedAcc = v;
+                                        });
+                                      },
+                                      textInputAction: TextInputAction.next,
+                                      keyboardType: TextInputType.multiline,
+                                      cursorHeight: 25.h,
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      style: TextStyle(color: Colors.black),
+                                      textAlign: TextAlign.start,
+                                      cursorColor: Colors.black45,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.only(
+                                            top: 2.h, left: 5.w, bottom: 15.h),
+                                        border: InputBorder.none,
+                                        enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                        hintText: "",
+                                        hintStyle: TextStyle(
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 16,
+                                          color: Colors.black,
                                         ),
-                                      );
-                                    },optionsViewBuilder: (context, onSelected, options) {
+                                      ),
+                                    );
+                                  }, optionsViewBuilder:
+                                      (context, onSelected, options) {
                                     return Align(
                                       alignment: Alignment.topLeft,
                                       child: Material(
@@ -1040,14 +839,18 @@ class _VatadminState extends State<Vatadmin> {
                                             padding: EdgeInsets.zero,
                                             shrinkWrap: true,
                                             itemCount: options.length,
-                                            itemBuilder: (BuildContext context, int index) {
-                                              final option = options.elementAt(index);
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              final option =
+                                                  options.elementAt(index);
                                               return InkWell(
                                                 onTap: () {
                                                   onSelected(option);
                                                 },
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 10),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -1056,8 +859,7 @@ class _VatadminState extends State<Vatadmin> {
                                         ),
                                       ),
                                     );
-                                  }
-                                  ),
+                                  }),
                                 ),
                               )
                             ],
@@ -1571,7 +1373,7 @@ class _VatadminState extends State<Vatadmin> {
                                   final docid = data['id'];
                                   if (value == 'delete') {
                                     await FirebaseFirestore.instance
-                                        .collection('Vat Admin Expense')
+                                        .collection('Vat Admin Expense Reyah')
                                         .doc(docid)
                                         .delete();
 

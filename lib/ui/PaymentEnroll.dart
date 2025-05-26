@@ -1,4 +1,3 @@
-import 'package:almaskan/ui/chart.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +17,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
   //focus nodes of record payment
   FocusNode customerNameFocusNode = FocusNode();
   FocusNode trnNumberFocusNode = FocusNode();
+  FocusNode ProjectFocusNOde = FocusNode();
   FocusNode invoiceNumberFocusNode = FocusNode();
   FocusNode dateFocusNode = FocusNode();
   FocusNode invoiceAmountFocusNode = FocusNode();
@@ -35,6 +35,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
   bool showcontainer = false;
   bool showcontainer1 = false;
   TextEditingController customername = TextEditingController();
+  String paymentType = 'Cash'; //dropdown for selecting cash/bank transfer
+  String emirate = 'Dubai';
+  TextEditingController Project = TextEditingController();
   TextEditingController TRN = TextEditingController();
   TextEditingController invoicenumber = TextEditingController();
   TextEditingController date = TextEditingController();
@@ -75,7 +78,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
       .collection('Overdue Payment'); //firestore for overdue payment
 
   Widget container() {
-    return Scaffold(backgroundColor: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.only(left: 80.w, top: 20.h),
         child: Container(
@@ -105,6 +109,13 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             selectedcontainer = null;
                             showcontainer = false;
                           });
+                          customername.clear();
+                          TRN.clear();
+                          invoicenumber.clear();
+                          date.clear();
+                          Invoiceamount.clear();
+                          Totalamount.clear();
+                          Project.clear();
                         },
                         icon: Icon(
                           CupertinoIcons.xmark,
@@ -141,46 +152,37 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             borderRadius: BorderRadius.circular(5.r),
                             border:
                                 Border.all(color: Colors.black, width: 0.3)),
-                        child: Center(
-                          child: TextFormField(
-                            textInputAction: TextInputAction.next,
-                            focusNode: customerNameFocusNode,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(trnNumberFocusNode);
-                            },
-                            controller: customername,
-                            maxLines: 1,
-                            keyboardType: TextInputType.text,
-                            cursorHeight: 20.h,
-                            cursorWidth: 0.5,
-                            textAlignVertical: TextAlignVertical.center,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 12.sp),
-                            textAlign: TextAlign.start,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.only(
-                                  top: 2.h, left: 5.w, bottom: 18.h),
-                              border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none),
-                            ),
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          focusNode: customerNameFocusNode,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(ProjectFocusNOde);
+                          },
+                          controller: customername,
+                          maxLines: 1,
+                          keyboardType: TextInputType.text,
+                          cursorHeight: 20.h,
+                          cursorWidth: 0.5,
+                          textAlignVertical: TextAlignVertical.center,
+                          style:
+                              TextStyle(color: Colors.black, fontSize: 12.sp),
+                          textAlign: TextAlign.start,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(
+                                top: 2.h, left: 5.w, bottom: 18.h),
+                            border: InputBorder.none,
+                            enabledBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
                           ),
                         ),
                       ),
-                    )
-                  ],
-                ),
-              ), //Customer Name
-              Padding(
-                padding: EdgeInsets.only(top: 30.sp),
-                child: Row(
-                  children: [
+                    ),
                     Padding(
-                      padding: EdgeInsets.only(left: 10.w),
+                      padding: EdgeInsets.only(left: 20.w),
                       child: Text(
-                        "TRN Number",
+                        "Payment Type",
                         style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
@@ -188,39 +190,139 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 74.w),
+                      padding: EdgeInsets.only(left: 10.w),
                       child: Container(
-                        width: 250.w,
+                        width: 150.w,
                         height: 35.h,
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.r),
                             border:
                                 Border.all(color: Colors.black, width: 0.3)),
-                        child: Center(
-                          child: TextFormField(
-                            focusNode: trnNumberFocusNode,
-                            onFieldSubmitted: (_) {
-                              FocusScope.of(context)
-                                  .requestFocus(invoiceNumberFocusNode);
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: paymentType,
+                            items:
+                                ['Cash', 'Bank Transfer'].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: Colors.black)),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                paymentType = newValue!;
+                              });
                             },
-                            textInputAction: TextInputAction.next,
-                            controller: TRN,
-                            maxLines: 1,
-                            keyboardType: TextInputType.text,
-                            cursorHeight: 20.h,
-                            cursorWidth: 0.5,
-                            textAlignVertical: TextAlignVertical.center,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 12.sp),
-                            textAlign: TextAlign.start,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.only(
-                                  top: 2.h, left: 5.w, bottom: 18.h),
-                              border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide.none),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ), //Customer Name
+              Padding(
+                padding: EdgeInsets.only(top: 30.sp),
+                child: Row(
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.w),
+                          child: Text(
+                            "Project",
+                            style: TextStyle(
+                                fontSize: 15.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 112.w),
+                          child: Container(
+                            width: 250.w,
+                            height: 35.h,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.r),
+                                border: Border.all(
+                                    color: Colors.black, width: 0.3)),
+                            child: Center(
+                              child: TextFormField(
+                                focusNode: ProjectFocusNOde,
+                                onFieldSubmitted: (_) {
+                                  FocusScope.of(context)
+                                      .requestFocus(invoiceNumberFocusNode);
+                                },
+                                textInputAction: TextInputAction.next,
+                                controller: Project,
+                                maxLines: 1,
+                                keyboardType: TextInputType.text,
+                                cursorHeight: 20.h,
+                                cursorWidth: 0.5,
+                                textAlignVertical: TextAlignVertical.center,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 12.sp),
+                                textAlign: TextAlign.start,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.only(
+                                      top: 2.h, left: 5.w, bottom: 18.h),
+                                  border: InputBorder.none,
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide.none),
+                                ),
+                              ),
                             ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Text(
+                        "Emirate",
+                        style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.w),
+                      child: Container(
+                        width: 150.w,
+                        height: 35.h,
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.r),
+                            border:
+                                Border.all(color: Colors.black, width: 0.3)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: emirate,
+                            items: [
+                              'Dubai',
+                              'Abu Dhabi',
+                              'Sharjah',
+                              'Ajman',
+                              'Umm Al Quwain',
+                              'Ras Al Khaimah',
+                              'Fujairah'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: Colors.black)),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                emirate = newValue!;
+                              });
+                            },
                           ),
                         ),
                       ),
@@ -279,7 +381,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ), //InvoiceNumber
@@ -298,23 +400,41 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 138.w),
+                      padding: EdgeInsets.only(left: 130.w),
                       child: Container(
                         width: 250.w,
                         height: 35.h,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.r),
-                            border:
-                                Border.all(color: Colors.black, width: 0.3)),
+                          borderRadius: BorderRadius.circular(5.r),
+                          border: Border.all(color: Colors.black, width: 0.3),
+                        ),
                         child: Center(
                           child: TextFormField(
+                            readOnly: true,
+                            controller: date,
                             focusNode: dateFocusNode,
+                            onTap: () async {
+                              FocusScope.of(context)
+                                  .unfocus(); // Dismiss keyboard
+                              final selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2100),
+                              );
+
+                              if (selectedDate != null) {
+                                date.text = DateFormat('dd-MM-yyyy')
+                                    .format(selectedDate);
+                                FocusScope.of(context)
+                                    .requestFocus(invoiceAmountFocusNode);
+                              }
+                            },
                             onFieldSubmitted: (_) {
                               FocusScope.of(context)
                                   .requestFocus(invoiceAmountFocusNode);
                             },
                             textInputAction: TextInputAction.next,
-                            controller: date,
                             maxLines: 1,
                             keyboardType: TextInputType.text,
                             cursorHeight: 20.h,
@@ -387,77 +507,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         controller: Invoiceamount,
                         focusNode: invoiceAmountFocusNode,
                         onFieldSubmitted: (_) {
-                          FocusScope.of(context).requestFocus(taxFocusNode);
-                        },
-                        maxLines: 1,
-                        keyboardType: TextInputType.text,
-                        cursorHeight: 20.h,
-                        cursorWidth: 0.5,
-                        textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black, fontSize: 12.sp),
-                        textAlign: TextAlign.start,
-                        cursorColor: Colors.black,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.only(
-                              top: 2.h, left: 5.w, bottom: 18.h),
-                          border: InputBorder.none,
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ), //Invoice Amount
-              Padding(
-                padding: EdgeInsets.only(top: 30.sp),
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.w),
-                      child: Text(
-                        "Tax 5%",
-                        style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 121.w),
-                      child: Container(
-                        width: 45.w,
-                        height: 35.h,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5.r),
-                                topLeft: Radius.circular(5.r)),
-                            border:
-                                Border.all(color: Colors.black, width: 0.3)),
-                        child: Center(
-                          child: Text(
-                            "AED",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 15.sp,
-                                color: Colors.black),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 205.w,
-                      height: 35.h,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(5.r),
-                              bottomRight: Radius.circular(5.r)),
-                          border: Border.all(color: Colors.black, width: 0.3)),
-                      child: TextFormField(
-                        textInputAction: TextInputAction.next,
-                        controller: Tax,
-                        focusNode: taxFocusNode,
-                        onFieldSubmitted: (_) {
                           FocusScope.of(context)
                               .requestFocus(totalAmountFocusNode);
                         },
@@ -480,7 +529,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     )
                   ],
                 ),
-              ), //Tax 5%
+              ), //Invoice Amount
+
               Padding(
                 padding: EdgeInsets.only(top: 30.sp),
                 child: Row(
@@ -527,7 +577,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           border: Border.all(color: Colors.black, width: 0.3)),
                       child: TextFormField(
                         focusNode: totalAmountFocusNode,
-                        readOnly: true,
                         textInputAction: TextInputAction.next,
                         controller: Totalamount,
                         maxLines: 1,
@@ -565,6 +614,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             await firestore1.doc().set({
                               'id': id,
                               'Customer Name': customername.text,
+                              'Project': Project.text,
+                              'Payment Type': paymentType,
+                              'Emirate': emirate,
                               'TRN Number': TRN.text,
                               'Invoice Number': invoicenumber.text,
                               'Date': date.text,
@@ -591,7 +643,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           date.clear();
                           Invoiceamount.clear();
                           Totalamount.clear();
-                          Tax.clear();
+                          Project.clear();
+
                           setState(() {
                             showcontainer = false;
                             selectedcontainer = null;
@@ -610,28 +663,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10.w),
-                      child: InkWell(
-                        onTap: () {},
-                        child: Container(
-                          width: 65.w,
-                          height: 35.h,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5.r),
-                              color: Colors.grey[300]),
-                          child: Center(
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w400),
                             ),
                           ),
                         ),
@@ -677,6 +708,12 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           selectedcontainer = null;
                           showcontainer1 = false;
                         });
+                        customernamedue.clear();
+                        projectnamedue.clear();
+                        invoicenumberdue.clear();
+                        datedue.clear();
+                        lponumberdue.clear();
+                        amountdue.clear();
                       },
                       icon: Icon(
                         CupertinoIcons.xmark,
@@ -867,7 +904,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 138.w),
+                    padding: EdgeInsets.only(left: 130.w),
                     child: Container(
                       width: 250.w,
                       height: 35.h,
@@ -877,29 +914,39 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       child: Center(
                         child: TextFormField(
                           focusNode: datedueFocusNode,
-                          onFieldSubmitted: (_) {
-                            FocusScope.of(context)
-                                .requestFocus(lponumberduefocusnode);
+                          controller: datedue,
+                          readOnly: true, // Disable manual typing
+                          onTap: () async {
+                            FocusScope.of(context).requestFocus(FocusNode()); // Close keyboard
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+
+                            if (pickedDate != null) {
+                              String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                              datedue.text = formattedDate;
+                              FocusScope.of(context).requestFocus(lponumberduefocusnode);
+                            }
                           },
                           textInputAction: TextInputAction.next,
-                          controller: datedue,
                           maxLines: 1,
                           keyboardType: TextInputType.text,
                           cursorHeight: 20.h,
                           cursorWidth: 0.5,
                           textAlignVertical: TextAlignVertical.center,
-                          style:
-                              TextStyle(color: Colors.black, fontSize: 12.sp),
+                          style: TextStyle(color: Colors.black, fontSize: 12.sp),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(
-                                top: 2.h, left: 5.w, bottom: 18.h),
+                            contentPadding: EdgeInsets.only(top: 2.h, left: 5.w, bottom: 18.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
                           ),
-                        ),
+                        )
+                        ,
                       ),
                     ),
                   )
@@ -1089,33 +1136,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.w),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          showcontainer1 = false;
-                          selectedcontainer = null;
-                        });
-                      },
-                      child: Container(
-                        width: 65.w,
-                        height: 35.h,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5.r),
-                            color: Colors.grey[300]),
-                        child: Center(
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+
                 ],
               ),
             )
@@ -1128,8 +1149,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
   @override
   void initState() {
     super.initState();
-    Invoiceamount.addListener(_updateamount);
-    Tax.addListener(_updateamount);
+
     _loadData();
   }
 
@@ -1147,25 +1167,48 @@ class _PaymentenrollState extends State<Paymentenroll> {
       for (int i = 1; i <= 12; i++) i: MonthlyFinance(i)
     };
 
-    final sales = await firestore.collection('Sales').get();
-    for (var doc in sales.docs) {
-      final date = DateFormat('dd-MM-yyyy').parse(doc['Date']);
-      if (date.year == year) {
-        monthlyData[date.month]?.income +=
-            double.tryParse(doc['Total Amount']) ?? 0;
+    // Helper to parse date safely
+    DateTime? parseDate(dynamic value) {
+      if (value is String) {
+        try {
+          return DateFormat('dd-MM-yyyy').parse(value);
+        } catch (_) {
+          return null;
+        }
+      } else if (value is Timestamp) {
+        return value.toDate();
       }
+      return null;
     }
 
-    final expenseSources = ['Vat Admin Expense', 'Vat Purchase'];
-    for (var collection in expenseSources) {
-      final expenses = await firestore.collection(collection).get();
-      for (var doc in expenses.docs) {
-        final date = DateFormat('dd-MM-yyyy').parse(doc['Date']);
-        if (date.year == year) {
-          monthlyData[date.month]?.expenses +=
-              double.tryParse(doc['Total Amount']) ?? 0;
+    try {
+      final sales = await firestore.collection('Sales').get();
+      for (var doc in sales.docs) {
+        final date = parseDate(doc['Date']);
+        if (date != null && date.year == year) {
+          monthlyData[date.month]?.income +=
+              double.tryParse(doc['Total Amount'].toString()) ?? 0;
         }
       }
+
+      final expenseSources = [
+        'Vat Admin Expense',
+        'Vat Purchase',
+        'Vat Admin Expense Reyah',
+        'Vat Purchase Reyah'
+      ];
+      for (var collection in expenseSources) {
+        final expenses = await firestore.collection(collection).get();
+        for (var doc in expenses.docs) {
+          final date = parseDate(doc['Date']);
+          if (date != null && date.year == year) {
+            monthlyData[date.month]?.expenses +=
+                double.tryParse(doc['Total Amount'].toString()) ?? 0;
+          }
+        }
+      }
+    } catch (e) {
+      print("Error fetching financial data: $e");
     }
 
     return monthlyData;
@@ -1184,27 +1227,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
   }
 
   double get filteredProfit => filteredIncome - filteredExpenses;
-
-  void _updateamount() {
-    double invoiceamount = double.tryParse(Invoiceamount.text) ?? 0.00;
-
-    // Automatically calculate 5% tax
-    double tax = invoiceamount * 0.05;
-    Tax.text = tax.toStringAsFixed(2);
-
-    // Calculate total amount
-    double totalamount = invoiceamount + tax;
-    Totalamount.text = totalamount.toStringAsFixed(2);
-  }
-
-  void dispose() {
-    Invoiceamount.removeListener(_updateamount);
-    Tax.removeListener(_updateamount);
-
-    Invoiceamount.dispose();
-    Tax.dispose();
-    Totalamount.dispose();
-  }
 
   //function to add all total amount from sales
   Stream<double> totalAmountStream() {
@@ -1523,10 +1545,10 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           ),
                           SizedBox(height: 25.h),
                           Padding(
-                            padding: EdgeInsets.only(left: 20.w,bottom: 20.h),
+                            padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
                             child: Container(
                               width: 1000.w,
-                              height: 350.h,
+                              height: 380.h,
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.black)),
                               child: Stack(
@@ -1549,7 +1571,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                         style: TextStyle(
                                             fontSize: 14, color: Colors.grey),
                                       ),
-                                    ), Padding(
+                                    ),
+                                  Padding(
                                     padding: EdgeInsets.only(top: 315.sp),
                                     child: Row(
                                       children: [
@@ -1570,7 +1593,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                 fontSize: 12.sp,
                                                 color: Colors.black),
                                           ),
-                                        ), Padding(
+                                        ),
+                                        Padding(
                                           padding: EdgeInsets.only(left: 40.w),
                                           child: Container(
                                             width: 10.w,
@@ -1608,7 +1632,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
                               ),
                             ),
                           ),
-
                         ],
                       ),
                     );
@@ -1627,23 +1650,30 @@ class _PaymentenrollState extends State<Paymentenroll> {
   }
 
   Widget buildChart(Map<int, MonthlyFinance> data) {
+    if (data.isEmpty ||
+        data.values.every((m) => m.income == 0 && m.expenses == 0)) {
+      return Center(child: Text("No data available"));
+    }
+
     return BarChart(
       BarChartData(
         groupsSpace: 12,
-        barGroups: data.entries.map((entry) {
+        barGroups: data.entries
+            .where((entry) => entry.key >= 1 && entry.key <= 12)
+            .map((entry) {
           final month = entry.key;
           final value = entry.value;
           return BarChartGroupData(
             x: month,
             barRods: [
               BarChartRodData(
-                toY: value.income,
+                toY: value.income.clamp(0, double.infinity),
                 width: 10,
                 color: Colors.blue,
                 borderRadius: BorderRadius.zero,
               ),
               BarChartRodData(
-                toY: value.expenses,
+                toY: value.expenses.clamp(0, double.infinity),
                 width: 10,
                 color: Colors.orange,
                 borderRadius: BorderRadius.zero,
@@ -1657,6 +1687,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: (value, _) {
+                if (value.toInt() < 1 || value.toInt() > 12)
+                  return SizedBox.shrink();
                 final name =
                     DateFormat.MMM().format(DateTime(0, value.toInt()));
                 return Padding(
@@ -1672,9 +1704,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
               reservedSize: 40,
               getTitlesWidget: (value, _) {
                 return Padding(
-                  padding: const EdgeInsets.only(right: 5), // 👈 Padding 2
+                  padding: const EdgeInsets.only(right: 5),
                   child: Text(
-                    value.toInt().toString(), // 👈 Remove 'K'
+                    value.toInt().toString(),
                     style: TextStyle(fontSize: 10),
                     textAlign: TextAlign.right,
                   ),
@@ -1698,7 +1730,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
             strokeWidth: 1,
           ),
           getDrawingVerticalLine: (value) => FlLine(
-            color: Colors.transparent, // 👈 Remove month grid lines
+            color: Colors.transparent,
           ),
         ),
         borderData: FlBorderData(
@@ -1731,7 +1763,7 @@ class SummaryCard extends StatelessWidget {
     return Container(
       color: Colors.grey[200],
       width: 250.w,
-      height: 350.h,
+      height: 380.h,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

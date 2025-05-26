@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class Sales extends StatefulWidget {
   const Sales({super.key});
@@ -66,6 +70,355 @@ class _SalesState extends State<Sales> {
   void initState() {
     super.initState();
     _fetchsales(); // Load all sales at first
+  }
+
+  // pdf for creating reciept voucher
+  Future<void> _generateReceiptPDF(
+      Map<String, dynamic> salesData, String selectedCompany) async {
+    final pdf = pw.Document();
+    final image1 = pw.MemoryImage(
+      (await rootBundle.load('assets/Logo.png')).buffer.asUint8List(),
+    );
+    pw.Widget buildCompanyDetails() {
+      if (selectedCompany == 'al_maskan') {
+        return pw.Padding(
+            padding: pw.EdgeInsets.only(top: 40),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("AL MASKAN PLASTER & TILE CONT",
+                    style: pw.TextStyle(
+                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 3),
+                pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("United Arab Emirates",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("TRN 100342182100003",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("almaskandecor@gmail.com",
+                    style: pw.TextStyle(fontSize: 10)),
+              ],
+            ));
+      } else {
+        return pw.Padding(
+            padding: pw.EdgeInsets.only(top: 40),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
+                    style: pw.TextStyle(
+                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 3),
+                pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("United Arab Emirates",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("TRN 100342182100003",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("reyahalmaskan@gmail.com",
+                    style: pw.TextStyle(fontSize: 10)),
+              ],
+            ));
+      }
+    }
+    final formattedtotalAmount = NumberFormat("#,##0.00", "en_US")
+        .format(double.tryParse(salesData['Total Amount'].toString()) ?? 0);
+    final formattedinvoiceAmount = NumberFormat("#,##0.00", "en_US")
+        .format(double.tryParse(salesData['Invoice Amount'].toString()) ?? 0);
+
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        build: (pw.Context context) => pw.Padding(
+          padding: const pw.EdgeInsets.all(24),
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Padding(
+                      padding: pw.EdgeInsets.only(top: 20, left: 15),
+                      child: pw.Container(
+                          width: 180, height: 180, child: pw.Image(image1))),
+                  pw.SizedBox(width: 10),
+                  buildCompanyDetails()
+                ],
+              ),
+              pw.SizedBox(height: 12),
+              pw.Divider(
+                  endIndent: 25,
+                  indent: 25,
+                  thickness: 1.5,
+                  color: PdfColors.grey300),
+              pw.SizedBox(height: 25),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 230),
+                  child: pw.Text("PAYMENT RECEIPT",
+                      style: pw.TextStyle(
+                          fontSize: 13,
+                          fontWeight: pw.FontWeight.normal,
+                          color: PdfColors.black,
+                          decoration: pw.TextDecoration.underline))),
+              pw.SizedBox(height: 35),
+              pw.Row(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Row(children: [
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 40),
+                                child: pw.Text("Payment Date",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.grey,
+                                        fontSize: 12))),
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 65),
+                                child: pw.Column(
+                                    crossAxisAlignment:
+                                        pw.CrossAxisAlignment.start,
+                                    children: [
+                                      pw.Text(salesData["Date"],
+                                          style: pw.TextStyle(
+                                              fontWeight: pw.FontWeight.normal,
+                                              color: PdfColors.black,
+                                              fontSize: 10)),
+                                      pw.Container(
+                                          width: 200,
+                                          height: 0.5,
+                                          color: PdfColors.grey300)
+                                    ]))
+                          ]),
+                          pw.SizedBox(height: 20),
+                          pw.Row(children: [
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 40),
+                                child: pw.Text("Reference Number",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.grey,
+                                        fontSize: 12))),
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 40),
+                                child: pw.Column(
+                                    crossAxisAlignment:
+                                        pw.CrossAxisAlignment.start,
+                                    children: [
+                                      pw.Text("",
+                                          style: pw.TextStyle(
+                                              fontWeight: pw.FontWeight.normal,
+                                              color: PdfColors.black,
+                                              fontSize: 10)),
+                                      pw.Container(
+                                          width: 200,
+                                          height: 0.5,
+                                          color: PdfColors.grey300)
+                                    ]))
+                          ]),
+                          pw.SizedBox(height: 20),
+                          pw.Row(children: [
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 40),
+                                child: pw.Text("Payment Mode",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.grey,
+                                        fontSize: 12))),
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 60),
+                                child: pw.Column(
+                                    crossAxisAlignment:
+                                        pw.CrossAxisAlignment.start,
+                                    children: [
+                                      pw.Text(salesData['Payment Type'],
+                                          style: pw.TextStyle(
+                                              fontWeight: pw.FontWeight.normal,
+                                              color: PdfColors.black,
+                                              fontSize: 10)),
+                                      pw.Container(
+                                          width: 200,
+                                          height: 0.5,
+                                          color: PdfColors.grey300)
+                                    ]))
+                          ])
+                        ]),
+                    pw.SizedBox(width: 20),
+                    pw.Container(
+                        width: 120.w,
+                        height: 70.w,
+                        color: PdfColor.fromInt(0xFF7BC36A),
+                        child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 20, top: 20),
+                                child: pw.Text("Amount Received",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.normal,
+                                        fontSize: 10,
+                                        color: PdfColors.white)),
+                              ),
+                              pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 20, top: 4),
+                                  child: pw.Text(
+                                      "AED${formattedtotalAmount}",
+                                      style: pw.TextStyle(
+                                          fontWeight: pw.FontWeight.normal,
+                                          fontSize: 14,
+                                          color: PdfColors.white)))
+                            ]))
+                  ]),
+              pw.SizedBox(height: 60),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 40),
+                  child: pw.Text("Received From",
+                      style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: PdfColors.grey))),
+              pw.SizedBox(height: 10),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 40),
+                  child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(salesData['Customer Name'],
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold, fontSize: 10)),
+                        pw.SizedBox(height: 2),
+                        pw.Text(salesData['Project'],
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.normal,
+                                fontSize: 10)),
+                        pw.SizedBox(height: 2),
+                        pw.Text(salesData['Emirate'],
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.normal,
+                                fontSize: 10)),
+                        pw.SizedBox(height: 2),
+                        pw.Text("United Arab Emirates",
+                            style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.normal,
+                                fontSize: 10)),
+                        pw.SizedBox(height: 2)
+                      ])),
+              pw.SizedBox(height: 60),
+              pw.Divider(color: PdfColors.grey300),
+              pw.SizedBox(height: 40),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 40),
+                  child: pw.Text("Payment for",
+                      style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 12,
+                          color: PdfColors.black))),
+              pw.SizedBox(height: 15),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 40),
+                  child: pw.Container(
+                      height: 20,
+                      width: double.infinity,
+                      color: PdfColors.grey100,
+                      child: pw.Row(children: [
+                        pw.Padding(
+                            padding: pw.EdgeInsets.only(left: 6),
+                            child: pw.Container(
+                                width: 90,
+                                child: pw.Text("Invoice Number",
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)))),
+                        pw.SizedBox(width: 25),
+                        pw.Container(
+                            width: 90,
+                            child: pw.Text("Invoice Date",
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black))),
+                        pw.SizedBox(width: 50),
+                        pw.Container(
+                            width: 110,
+                            child: pw.Text("Invoice Amount",
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black))),
+                        pw.SizedBox(width: 25),
+                        pw.Container(
+                            width: 110,
+                            child: pw.Text("Payment Amount",
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black)))
+                      ]))),
+              pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 40, top: 10),
+                  child: pw.Container(
+                      height: 20,
+                      width: double.infinity,
+                      color: PdfColors.white,
+                      child: pw.Row(children: [
+                        pw.Padding(
+                            padding: pw.EdgeInsets.only(left: 6),
+                            child: pw.Container(
+                                width: 90,
+                                child: pw.Text(salesData['Invoice Number'],
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)))),
+                        pw.SizedBox(width: 25),
+                        pw.Container(
+                            width: 90,
+                            child: pw.Text(salesData['Date'],
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black))),
+                        pw.SizedBox(width: 50),
+                        pw.Container(
+                            width: 110,
+                            child: pw.Text(formattedinvoiceAmount,
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black))),
+                        pw.SizedBox(width: 25),
+                        pw.Container(
+                            width: 110,
+                            child: pw.Text(formattedtotalAmount,
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal,
+                                    color: PdfColors.black)))
+                      ]))),
+              pw.Divider(indent: 40, color: PdfColors.grey300),
+              pw.SizedBox(height: 60),
+              pw.Divider(color: PdfColors.grey300)
+            ],
+          ),
+        ),
+      ),
+    );
+
+    await Printing.layoutPdf(onLayout: (format) => pdf.save());
   }
 
   @override
@@ -244,63 +597,64 @@ class _SalesState extends State<Sales> {
             child: Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 20.w),
-                  child: Text(
-                    "Date",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 15.w),
+                  child: SizedBox(width: 125.w,
+                    child: Text(
+                      "Date",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 100.w),
-                  child: Text(
-                    "Customer Name",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 23.w),
+                  child: SizedBox(width: 360.w,
+                    child: Text(
+                      "Customer Name",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 240.w),
-                  child: Text(
-                    "Invoice#",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 25.w),
+                  child: SizedBox(width: 100.w,
+                    child: Text(
+                      "Invoice#",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 80.w),
-                  child: Text(
-                    "INV Amount",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 60.w),
+                  child: SizedBox(width: 130.w,
+                    child: Text(
+                      "INV Amount",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
+
                 Padding(
-                  padding: EdgeInsets.only(left: 80.w),
-                  child: Text(
-                    "VAT",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 80.w),
-                  child: Text(
-                    "Total Amount",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 65.w),
+                  child: SizedBox(width: 150.w,
+                    child: Text(
+                      "Total Amount",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 )
               ],
@@ -321,7 +675,7 @@ class _SalesState extends State<Sales> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 20.w),
-                            child: SizedBox(
+                            child:  SizedBox(
                               width: 125.w,
                               child: Text(
                                 sales['Date'] ?? '',
@@ -334,8 +688,8 @@ class _SalesState extends State<Sales> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 30.w),
-                            child: SizedBox(
-                              width: 380.w,
+                            child:  SizedBox(
+                              width: 360.w,
                               child: Text(
                                 sales['Customer Name'] ?? '',
                                 style: GoogleFonts.poppins(
@@ -346,8 +700,8 @@ class _SalesState extends State<Sales> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 40.w),
-                            child: SizedBox(
+                            padding: EdgeInsets.only(left: 25.w),
+                            child:  SizedBox(
                               width: 100.w,
                               child: Text(
                                 sales['Invoice Number'] ?? '',
@@ -359,8 +713,8 @@ class _SalesState extends State<Sales> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 80.w),
-                            child: SizedBox(
+                            padding: EdgeInsets.only(left: 60.w),
+                            child:  SizedBox(
                               width: 130.w,
                               child: Text(
                                 sales['Invoice Amount'] ?? '',
@@ -372,21 +726,9 @@ class _SalesState extends State<Sales> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 60.w),
+                            padding: EdgeInsets.only(left: 65.w),
                             child: SizedBox(
-                              width: 100.w,
-                              child: Text(
-                                sales['Tax'] ?? '',
-                                style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 12.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 40.w),
-                            child: SizedBox(
+
                               width: 150.w,
                               child: Text(
                                 sales['Total Amount'] ?? '',
@@ -396,6 +738,56 @@ class _SalesState extends State<Sales> {
                                     color: Colors.black),
                               ),
                             ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.w),
+                            child: PopupMenuButton(
+                                icon: Icon(
+                                  Icons.more_vert,
+                                  size: 15.sp,
+                                ),
+                                onSelected: (value) async {
+                                  if (value == 'download') {
+                                    final selectedCompany =
+                                        await showDialog<String>(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text("Select Company"),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ListTile(
+                                                title: Text("Al Maskan"),
+                                                onTap: () => Navigator.pop(
+                                                    context, 'al_maskan'),
+                                              ),
+                                              ListTile(
+                                                title: Text("Reyah Almaskan"),
+                                                onTap: () => Navigator.pop(
+                                                    context, 'reyah_almaskan'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+
+                                    if (selectedCompany != null) {
+                                      _generateReceiptPDF(
+                                        sales.data() as Map<String, dynamic>,
+                                        selectedCompany,
+                                      );
+                                    }
+                                  }
+                                },
+                                offset: const Offset(0, 60),
+                                itemBuilder: (context) => [
+                                      PopupMenuItem(
+                                        child: Text("Download Reciept Voucher"),
+                                        value: 'download',
+                                      )
+                                    ]),
                           )
                         ],
                       ),

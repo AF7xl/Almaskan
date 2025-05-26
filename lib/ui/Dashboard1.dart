@@ -1,7 +1,5 @@
 import 'package:almaskan/ui/Invoice.dart';
-
 import 'package:almaskan/ui/Taxinvoice1.dart';
-
 import 'package:almaskan/ui/quotation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -77,7 +75,7 @@ class _Dashboard2State extends State<Dashboard2> {
                       Quotation2(
                         id: widget.id,
                         name: widget.name,
-                        address: widget.address,
+                        address: widget.address ,
                       ),
                       invoice1(
                         id: widget.id,

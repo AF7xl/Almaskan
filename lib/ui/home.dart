@@ -3,14 +3,15 @@ import 'package:almaskan/ui/PaymentEnroll.dart';
 import 'package:almaskan/ui/Sales.dart';
 import 'package:almaskan/ui/VatAdmin.dart';
 import 'package:almaskan/ui/VatPurchase.dart';
+import 'package:almaskan/ui/vatadminReyah.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'DashboardMain.dart';
-import 'chart.dart';
+import 'Vatpurchasereyah.dart';
+
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -31,6 +32,9 @@ class _homeState extends State<home> {
     super.initState();
   }
 
+  bool isVatAdminExpanded = false;
+  bool isVatpurchaseExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +49,11 @@ class _homeState extends State<home> {
                 selectedTitleTextStyle: GoogleFonts.workSans(
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w400,
-                    color: Colors.white),unselectedTitleTextStyle:  GoogleFonts.workSans(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white),
+                    color: Colors.white),
+                unselectedTitleTextStyle: GoogleFonts.workSans(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white),
                 displayMode: SideMenuDisplayMode.auto,
                 backgroundColor: Colors.blueGrey[300],
                 showHamburger: true,
@@ -56,12 +61,12 @@ class _homeState extends State<home> {
               ),
               controller: sideMenuController,
               items: [
-                // Dashboard Menu Item
                 SideMenuItem(
-                    title: 'Payment',
-                    onTap: (index, controller) {
-                      pageController.jumpToPage(index);
-                    }),
+                  title: 'Payment',
+                  onTap: (index, controller) {
+                    pageController.jumpToPage(index);
+                  },
+                ),
                 SideMenuItem(
                   title: 'Dashboard',
                   onTap: (index, controller) {
@@ -69,38 +74,87 @@ class _homeState extends State<home> {
                   },
                 ),
                 SideMenuItem(
-                    title: 'Sales',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Sales()),
-                      );
-                    }),
+                  title: 'Sales',
+                  onTap: (index, controller) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Sales()),
+                    );
+                  },
+                ),
                 SideMenuItem(
-                    title: 'Overdue Payment',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Overduepayment()),
-                      );
-                    }),
+                  title: 'Overdue Payment',
+                  onTap: (index, controller) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Overduepayment()),
+                    );
+                  },
+                ),
+                // Parent Item
                 SideMenuItem(
-                    title: 'Vat Admin Expense',
+                  title: 'Vat Admin Expense',
+                  onTap: (index, controller) {
+                    setState(() {
+                      isVatAdminExpanded = !isVatAdminExpanded;
+                    });
+                  },
+                ),
+
+                // Conditionally shown sub-items
+                if (isVatAdminExpanded)
+                  SideMenuItem(
+                    title: '   └ Almaskan',
                     onTap: (index, controller) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Vatadmin()),
                       );
-                    }),
+                    },
+                  ),
+                if (isVatAdminExpanded)
+                  SideMenuItem(
+                    title: '   └ Reyah Almaskan',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Vatadminreyah()),
+                      );
+                    },
+                  ),
+
                 SideMenuItem(
-                    title: 'Vat Purchase',
+                  title: 'Vat Admin Purchase',
+                  onTap: (index, controller) {
+                    setState(() {
+                      isVatpurchaseExpanded = !isVatpurchaseExpanded;
+                    });
+                  },
+                ),
+
+                // Conditionally shown sub-items
+                if (isVatpurchaseExpanded)
+                  SideMenuItem(
+                    title: '   └ Almaskan',
                     onTap: (index, controller) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => Vatpurchase()),
                       );
-                    }),
+                    },
+                  ),
+                if (isVatpurchaseExpanded)
+                  SideMenuItem(
+                    title: '   └ Reyah Almaskan',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Vatpurchasereyah()),
+                      );
+                    },
+                  ),
               ],
             ),
           ),

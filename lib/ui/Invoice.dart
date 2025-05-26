@@ -1,115 +1,107 @@
 import 'package:almaskan/ui/Invpdf.dart';
-import 'package:almaskan/ui/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:number_to_words/number_to_words.dart';
 
-import '../Toast Message.dart';
+
 
 class invoice1 extends StatefulWidget {
   final String id;
   final String name;
   final String address;
   final String trn;
+  final Map<String, dynamic>? prefillData;
 
-  const invoice1(
-      {super.key,
-      required this.id,
-      required this.name,
-      required this.address,
-      required this.trn});
+  const invoice1({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.address,
+    required this.trn,
+    this.prefillData,
+  });
 
   @override
   State<invoice1> createState() => _invoice1State();
 }
 
 class _invoice1State extends State<invoice1> {
-  List<TextEditingController> description = [];
-  List<String> descriptionData = [];
-  final List<String> desoptions = [
-    'Supply and installation of 12.5mm thick regular gypsum board ceiling, ready for primer',
-    'Supply and installation of 9mm aqua panel cement board ceiling, ready for primer ',
-    'Supply and installation of ceiling frame for wooden ceiling including plywood support',
-    'Supply and installation of 10x10mm shadow gap',
-    'Supply and installation of  precast gypsym  light cove bulkhead (150mm)',
-    'Supply and installation of  precast gypsym  light cove bulkhead (100mm)',
-    'Supply and installation of gypsum board bulkhead on staircase area',
-    'Supply and installation of  curtain pelmet with 18mm plywood backing.',
-    'Supply and installation of light cove curtain pelmet with 18mm plywood backing.',
-    'Installation of trimless track light frame',
-    'Installation of trimless light frame',
-    'Supply and installation of 12.5mm thick regular gypsum board ceiling, ready for primer',
-    'Supply and installation of 12.5mm thick moisture  resistant gypsum board ceiling, ready for primer',
-    'Supply and installation of ceiling frame for wooden ceiling including plywood support',
-    'Supply and installation of 10x10mm shadow gap',
-    'Supply and installation of 12mm groove',
-    'Supply and installation of  precast gypsym  light cove bulkhead (200mm)',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail AA',
-    'Supply and installation of  precast gypsym  light cove bulkhead - Detail BB',
-    'Supply and installation of  precast gypsym  light cove bulkhead (550mm)',
-    'Supply and installation of  precast gypsym  light cove bulkhead (300mm)',
-    'Supply and installation of gypsum board bulkhead on staircase area',
-    'Supply and installation of gypsum board bulkhead',
-    'Supply and installation of  curtain pelmet with 18mm plywood backing.(150mm)',
-    'Supply and installation of light cove curtain pelmet with 18mm plywood backing.(150mm)',
-    'Supply and installation of 18mm plywood backing for chandlier',
-    'Installation of trimless track light frame',
-    'Installation of trimless light frame',
-    'Supply and installation of 12.5mm thick regular gypsum board ceiling, ready for primer',
-    'Supply and installation of 12.5mm thick moisture  resistant gypsum board ceiling, ready for primer',
-    'Supply and installation of ceiling frame for wooden ceiling including plywood support',
-    'Supply and installation of 10x10mm shadow gap',
-    'Supply and installation of 12mm groove',
-    'Supply and installation of  precast gypsym  light cove bulkhead (150mm)',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail AA',
-    'Supply and installation of  precast gypsym  light cove bulkhead - Detail BB',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead with 18mm plywood support - Detail CC',
-    'Supply and installation of gypsum board bulkhead (Detail CC)',
-    'Supply and installation of  precast gypsym  light cove bulkhead - Detail DD',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail EE',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail FF',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail GG',
-    'Supply and installation of  curved precast gypsym  light cove bulkhead - Detail HH',
-    'Supply and installation of precast gypsym  light cove bulkhead with 18mm plywood support - Detail II',
-    'Supply and installation of gypsum board bulkhead (Detail II)',
-    'Supply and installation of precast gypsym  light cove bulkhead with 18mm plywood support - Detail JJ',
-    'Supply and installation of gypsum board bulkhead (Detail JJ)',
-    'Supply and installation of gypsum board bulkhead (Detail KK)',
-    'Supply and installation of gypsum board bulkhead',
-    'Supply and installation of  curtain pelmet with 18mm plywood backing.(150mm)',
-    'Supply and installation of 18mm plywood backing for chandlier',
-    'Installation of trimless track light frame',
-    'Installation of trimless light frame',
-  ];
 
-  final List<String> unitoptions = ['Lm', 'Sqm', 'Nos', 'Rm', 'L/s'];
-  final List<String> nbqoptions = [
-    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum  work  as per the drawing.',
-    'With refer to your enquiry for the above project, please find below our best quote for supply and Installation of gypsum work  as per Site discussion.',
-    'With refer to your enquiry for the above project, please find below our best quote for material '
-  ];
-  String selectednbq = '';
+
+  List<String> desoptions = [];
+  final desfirestore = FirebaseFirestore.instance
+      .collection("Suggestions")
+      .doc("AqpEzHc1d4HIUWsj6NpR")
+      .collection("SuggestionsData") // optional for clarity
+      .doc("dessuggestion");
+
+  List<String> unitoptions = [];
+  final unitfirestore = FirebaseFirestore.instance
+      .collection("Suggestions")
+      .doc("AqpEzHc1d4HIUWsj6NpR")
+      .collection("SuggestionsData") // optional for clarity
+      .doc("unitsuggestion");
+
+  List<String> nbqoptions = [];
+  final nbqfirestore = FirebaseFirestore.instance
+      .collection("Suggestions")
+      .doc("AqpEzHc1d4HIUWsj6NpR")
+      .collection("SuggestionsData") // optional for clarity
+      .doc("nbqoptions");
+
   List<TextEditingController> rateControllers = [];
   List<TextEditingController> qtyControllers = [];
   List<TextEditingController> amountControllers = [];
   List<TextEditingController> sno = [];
+  List<TextEditingController> description = [];
+  List<TextEditingController> unit = [];
 
   List<String> snodata = [];
   List<String> qtydata = [];
   List<String> unitdata = [];
   List<String> ratedata = [];
   List<String> amountdata = [];
-  List<TextEditingController> unit = [];
+  List<String> descriptionData = [];
+
   TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
-  TextEditingController kindatt = TextEditingController();
+  TextEditingController lpoqtn = TextEditingController();
   TextEditingController project = TextEditingController();
   TextEditingController nbq = TextEditingController();
-
+  TextEditingController discountcontroller = TextEditingController();
   TextEditingController totalamountinname = TextEditingController();
   TextEditingController naq = TextEditingController();
+
+  List<double> originalQty = [];
+  List<TextEditingController> percentageControllers = [];
+
+  String selectednbq = '';
+
+  List<TextEditingController> headerControllers = [];
+  List<Map<String, dynamic>> formStructure = [];
+
+
+  bool showPercentageFields = false;
+  String selectedCompany = 'Reyah Al Maskan';
+  bool isDiscountEnabled = false;
+
+  //function to add header text
+  void addNewHeader() {
+    setState(() {
+      final controller = TextEditingController();
+      headerControllers.add(controller);
+      formStructure.add({
+        'type': 'header',
+        'controller': controller,
+      });
+      rebuildRows();
+    });
+  }
 
   int rowCount = 1;
   double subtotal = 0.0;
@@ -123,52 +115,127 @@ class _invoice1State extends State<invoice1> {
   @override
   void initState() {
     super.initState();
-    rowCount = index; // Start with 1 row
-    initializeControllers(); // Initialize controllers for the first row
+    if (widget.prefillData != null) {
+      loadPrefillData(widget.prefillData!);
+    }
+    fetchnbqSuggestions();
+    fetchdescSuggestions();
+    fetchunitSuggestions();
+  }
+
+  void fetchnbqSuggestions() async {
+    final docSnapshot = await nbqfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      nbqoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
+  void fetchdescSuggestions() async {
+    final docSnapshot = await desfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      desoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
+  void fetchunitSuggestions() async {
+    final docSnapshot = await unitfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      unitoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
+//function to load data from quotation
+  void loadPrefillData(Map<String, dynamic> data) {
+    invno.text = data['invno'] ?? '';
+    date.text = data['date'] ?? '';
+    lpoqtn.text = data['lpoqtn#'] ?? '';
+    project.text = data['project'] ?? '';
+    nbq.text = data['nbq'] ?? '';
+    selectednbq = data['nbq'] ?? '';
+    naq.text = data['naq'] ?? '';
+    totalamountinname.text = data['totalamountinname'] ?? '';
+    discountcontroller.text = data['discount'] ?? '';
+
+    subtotal = data['subtotal'] ?? 0.0;
+    discount =
+        double.tryParse(data['discount'] ?? '0') ?? 0.0; // ensure numeric
+    taxableAmount =
+        data['taxableAmount'] ?? (subtotal - discount); // ✅ Add this
+    vat = data['vat'] ?? 0.0;
+    totalAmount = data['totalAmount'] ?? 0.0;
+
+    List<Map<String, dynamic>> items =
+        List<Map<String, dynamic>>.from(data['lineItems']);
+    for (var item in items) {
+      if (item['type'] == 'header') {
+        final controller = TextEditingController(text: item['text']);
+        headerControllers.add(controller);
+        formStructure.add({
+          'type': 'header',
+          'controller': controller,
+        });
+      } else if (item['type'] == 'row') {
+        final i = description.length;
+
+        final sn = TextEditingController(text: item['sno']);
+        final desc = TextEditingController(text: item['description']);
+        final qty = TextEditingController(text: item['quantity']);
+        final unitc = TextEditingController(text: item['unit']);
+        final rate = TextEditingController(text: item['rate']);
+        final amount = TextEditingController(text: item['amount']);
+        final percentage = TextEditingController();
+
+        sno.add(sn);
+        description.add(desc);
+        qtyControllers.add(qty);
+        unit.add(unitc);
+        rateControllers.add(rate);
+        amountControllers.add(amount);
+        percentageControllers.add(percentage);
+
+        rate.addListener(() => calculateAmount(i));
+        qty.addListener(() => calculateAmount(i));
+
+        formStructure.add({
+          'type': 'row',
+          'index': i,
+        });
+      }
+    }
+
+    rebuildRows();
   }
 
   void initializeControllers({bool addNewRow = true}) {
-    if (addNewRow) {
-      // Add new controllers for the newly added row
-      final rateController = TextEditingController();
-      final qtyController = TextEditingController();
-      final amountController = TextEditingController();
-      final sn = TextEditingController();
-      final desc = TextEditingController();
-      final uni = TextEditingController();
+    final rateController = TextEditingController();
+    final qtyController = TextEditingController();
+    final amountController = TextEditingController();
+    final snController = TextEditingController();
+    final descController = TextEditingController();
+    final unitController = TextEditingController();
+    final percentageController = TextEditingController();
 
-      // Add these new controllers to the respective lists
-      rateControllers.add(rateController);
-      qtyControllers.add(qtyController);
-      amountControllers.add(amountController);
-      sno.add(sn);
+    rateControllers.add(rateController);
+    qtyControllers.add(qtyController);
+    amountControllers.add(amountController);
+    sno.add(snController);
+    description.add(descController);
+    unit.add(unitController);
+    percentageControllers.add(percentageController);
 
-      description.add(desc);
-
-      unit.add(uni);
-
-      // Add listeners to calculate amount (use the correct index)
-      final index = rateControllers.length - 1; // Index of the newly added row
-      rateController.addListener(() => calculateAmount(index));
-      qtyController.addListener(() => calculateAmount(index));
-    } else {
-      // Initialize controllers for the first row
-      rateControllers.clear();
-      qtyControllers.clear();
-      amountControllers.clear();
-
-      final rateController = TextEditingController();
-      final qtyController = TextEditingController();
-      final amountController = TextEditingController();
-
-      rateControllers.add(rateController);
-      qtyControllers.add(qtyController);
-      amountControllers.add(amountController);
-
-      // Add listeners to calculate amount
-      rateController.addListener(() => calculateAmount(0));
-      qtyController.addListener(() => calculateAmount(0));
-    }
+    rateController
+        .addListener(() => calculateAmount(rateControllers.length - 1));
+    qtyController
+        .addListener(() => calculateAmount(rateControllers.length - 1));
   }
 
   void calculateAmount(int index) {
@@ -203,16 +270,96 @@ class _invoice1State extends State<invoice1> {
     taxableAmount = subtotal - discount;
     vat = taxableAmount * 0.05;
     totalAmount = taxableAmount + vat;
-    setState(() {}); // Update UI
+
+    // Convert amount to words and update the controller
+    final totalInt = totalAmount.floor(); // Dirhams
+    final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
+
+    String amountInWords = NumberToWord().convert('en-in', totalInt) + 'dirhams';
+
+    if (totalFils > 0) {
+      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
+    }
+
+    amountInWords += ' only';
+
+    // Capitalize first letter
+    totalamountinname.text =
+        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+
+    setState(() {});
   }
 
+
   List<Widget> rows = []; // List to store each row
+  void rebuildRows() {
+    rows.clear();
+
+    for (int i = 0; i < formStructure.length; i++) {
+      final item = formStructure[i];
+      if (item['type'] == 'header') {
+        final controller = item['controller'] as TextEditingController;
+
+        rows.add(
+          Padding(
+            padding: EdgeInsets.only(top: 15.h, left: 15.w, right: 70.w),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.r),
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 5.w),
+                        child: TextFormField(
+                          controller: controller,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration.collapsed(
+                              hintText: ' Header Title',
+                              hintStyle:
+                                  TextStyle(fontWeight: FontWeight.w300)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.cancel_outlined, color: Colors.black),
+                  onPressed: () {
+                    setState(() {
+                      formStructure.removeAt(i);
+                      rebuildRows();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (item['type'] == 'row') {
+        final index = item['index'] as int;
+        rows.add(buildRow(index));
+      }
+    }
+  }
 
   void addNewRow() {
     setState(() {
-      rowCount++; // Increment rowCount
-      initializeControllers(addNewRow: true); // Add controllers for the new row
-      rows.add(buildRow(rowCount - 1)); // Add the new row widget
+      initializeControllers(addNewRow: true);
+      final index = description.length - 1;
+      formStructure.add({
+        'type': 'row',
+        'index': index,
+      });
+      rebuildRows();
     });
   }
 
@@ -220,6 +367,7 @@ class _invoice1State extends State<invoice1> {
     return Padding(
       padding: EdgeInsets.only(top: 15.h),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // SNo Field
           Padding(
@@ -246,10 +394,10 @@ class _invoice1State extends State<invoice1> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                  OutlineInputBorder(borderSide: BorderSide.none),
+                      OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -297,51 +445,135 @@ class _invoice1State extends State<invoice1> {
                     maxLines: null,
                     decoration: InputDecoration(
                       contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                       border: InputBorder.none,
                       enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                     ),
                     style: TextStyle(color: Colors.black, fontSize: 15.sp),
                     cursorColor: Colors.black,
                   );
-                },
+                },optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4,
+                    child: Container(
+                      width: 500.w,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final option = options.elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              onSelected(option);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                              child: Text(option),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
               ),
             ),
           ),
           // Qty Field
           Padding(
             padding: EdgeInsets.only(left: 15.w),
-            child: Container(
-              width: 80.w,
-              height: 60.h,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(5.r),
-              ),
-              child: TextFormField(
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (value) {
-                  qtydata.add(value);
-                },
-                controller: qtyControllers[index],
-                maxLines: null,
-                keyboardType: TextInputType.number,
-                cursorHeight: 25.h,
-                textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                textAlign: TextAlign.start,
-                cursorColor: Colors.black,
-                decoration: InputDecoration(
-                  contentPadding:
-                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
-                  border: InputBorder.none,
-                  enabledBorder:
-                  OutlineInputBorder(borderSide: BorderSide.none),
+            child: Column(
+              children: [
+                // Quantity container
+                Container(
+                  margin: EdgeInsets.only(bottom: 3.h),
+                  width: 80.w,
+                  height: 60.h,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(5.r),
+                  ),
+                  child: TextFormField(
+                    controller: qtyControllers[index],
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final parsed = double.tryParse(value) ?? 0.0;
+                      if (originalQty.length <= index) {
+                        originalQty.add(parsed);
+                      } else {
+                        originalQty[index] = parsed;
+                      }
+                      // You might want to clear % field or reset any related value here if needed
+                    },
+                    decoration: InputDecoration(
+                      contentPadding:
+                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      border: InputBorder.none,
+                    ),
+                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                  ),
                 ),
-              ),
+
+                // Percentage container below quantity container
+                if (showPercentageFields)
+                  Container(
+                    width: 80.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(5.r),
+                    ),
+                    child: TextFormField(
+                      controller: percentageControllers[index],
+                      decoration: InputDecoration(
+                        hintText: '%',
+                        contentPadding:
+                            EdgeInsets.only(left: 5.w, bottom: 10.h),
+                        border: InputBorder.none,
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        final percent = double.tryParse(value) ?? 0.0;
+
+                        if (originalQty.length <= index) {
+                          originalQty.add(
+                              double.tryParse(qtyControllers[index].text) ??
+                                  0.0);
+                        } else if (originalQty[index] == 0.0) {
+                          originalQty[index] =
+                              double.tryParse(qtyControllers[index].text) ??
+                                  0.0;
+                        }
+
+                        final modified = originalQty[index] * (percent / 100);
+
+                        // Instead of directly changing text here, consider updating qtyControllers text
+                        // with a small delay or inside setState to avoid input conflicts:
+
+                        // For example:
+                        Future.microtask(() {
+                          qtyControllers[index].text =
+                              modified.toStringAsFixed(2);
+                          qtyControllers[index].selection =
+                              TextSelection.fromPosition(
+                            TextPosition(
+                                offset: qtyControllers[index].text.length),
+                          );
+                        });
+                      },
+                      style: TextStyle(fontSize: 13.sp),
+                    ),
+                  ),
+              ],
             ),
           ),
+
           // Unit Field
           Padding(
             padding: EdgeInsets.only(left: 15.w),
@@ -385,15 +617,42 @@ class _invoice1State extends State<invoice1> {
                     maxLines: null,
                     decoration: InputDecoration(
                       contentPadding:
-                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                       border: InputBorder.none,
                       enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                          OutlineInputBorder(borderSide: BorderSide.none),
                     ),
                     style: TextStyle(color: Colors.black, fontSize: 15.sp),
                     cursorColor: Colors.black,
                   );
-                },
+                },optionsViewBuilder: (context, onSelected, options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    elevation: 4,
+                    child: Container(
+                      width: 70.w,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final option = options.elementAt(index);
+                          return InkWell(
+                            onTap: () {
+                              onSelected(option);
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                              child: Text(option),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }
               ),
             ),
           ),
@@ -422,10 +681,10 @@ class _invoice1State extends State<invoice1> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                  OutlineInputBorder(borderSide: BorderSide.none),
+                      OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -458,48 +717,145 @@ class _invoice1State extends State<invoice1> {
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   contentPadding:
-                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                      EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                  OutlineInputBorder(borderSide: BorderSide.none),
+                      OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
           ),
           // Remove Row Icon
+          // Remove Row Icon
+          IconButton(
+            icon: Icon(Icons.cancel_outlined, color: Colors.black),
+            onPressed: () {
+              setState(() {
+                // Find the correct form structure item to remove
+                final itemIndex = formStructure.indexWhere(
+                    (item) => item['type'] == 'row' && item['index'] == index);
+
+                if (itemIndex != -1) {
+                  // Remove the row data
+                  sno.removeAt(index);
+                  description.removeAt(index);
+                  qtyControllers.removeAt(index);
+                  unit.removeAt(index);
+                  rateControllers.removeAt(index);
+                  amountControllers.removeAt(index);
+
+                  // Remove from form structure
+                  formStructure.removeAt(itemIndex);
+
+                  // Update indices of remaining rows
+                  for (var item in formStructure) {
+                    if (item['type'] == 'row' && item['index'] > index) {
+                      item['index'] = item['index'] - 1;
+                    }
+                  }
+
+                  rebuildRows();
+                  calculateSubtotal();
+                }
+              });
+            },
+          ),
         ],
       ),
     );
   }
 
-  void collectFormData() {
-    snodata.clear();
-    descriptionData.clear();
-    unitdata.clear();
-    ratedata.clear();
-    qtydata.clear();
-    amountdata.clear();
+  List<Map<String, dynamic>> lineItems = [];
 
-    for (int i = 0; i < rowCount; i++) {
-      snodata.add(sno[i].text);
-      descriptionData.add(description[i].text);
-      unitdata.add(unit[i].text);
-      ratedata.add(rateControllers[i].text);
-      qtydata.add(qtyControllers[i].text);
-      amountdata.add(amountControllers[i].text);
+  void collectFormData() {
+    lineItems.clear();
+
+    for (final item in formStructure) {
+      if (item['type'] == 'header') {
+        final controller = item['controller'] as TextEditingController;
+        if (controller.text.trim().isNotEmpty) {
+          lineItems.add({
+            'type': 'header',
+            'text': controller.text.trim(),
+          });
+        }
+      } else if (item['type'] == 'row') {
+        final i = item['index'] as int;
+        if (description[i].text.trim().isNotEmpty) {
+          lineItems.add({
+            'type': 'row',
+            'sno': sno[i].text.trim(),
+            'description': description[i].text.trim(),
+            'unit': unit[i].text.trim(),
+            'rate': rateControllers[i].text.trim(),
+            'quantity': qtyControllers[i].text.trim(),
+            'amount': amountControllers[i].text.trim(),
+            'percentage': percentageControllers[i].text.trim(),
+          });
+        }
+      }
     }
   }
 
+  String? selectedDocumentId;
+
+  void clearForm() {
+    setState(() {
+      // Clear all controllers
+      for (var controller in description) controller.dispose();
+      for (var controller in rateControllers) controller.dispose();
+      for (var controller in qtyControllers) controller.dispose();
+      for (var controller in amountControllers) controller.dispose();
+      for (var controller in sno) controller.dispose();
+      for (var controller in unit) controller.dispose();
+      for (var controller in headerControllers) controller.dispose();
+
+      // Clear all lists
+      description.clear();
+      rateControllers.clear();
+      qtyControllers.clear();
+      amountControllers.clear();
+      sno.clear();
+      unit.clear();
+      headerControllers.clear();
+      formStructure.clear();
+      rows.clear();
+
+      // Reset other fields
+      invno.clear();
+      date.clear();
+      lpoqtn.clear();
+      project.clear();
+      nbq.clear();
+      naq.clear();
+      totalamountinname.clear();
+      selectednbq = '';
+
+      // Reset calculations
+      subtotal = 0.0;
+      discount = 0.0;
+      taxableAmount = 0.0;
+      vat = 0.0;
+      totalAmount = 0.0;
+    });
+  }
+
   Widget build(BuildContext context) {
-    final firestore = FirebaseFirestore.instance
+    final quotationRef = FirebaseFirestore.instance
         .collection("Clients")
         .doc(widget.id)
         .collection("invoice");
-    final firestor = FirebaseFirestore.instance
-        .collection("Clients")
-        .doc(widget.id)
-        .collection("invoice").snapshots();
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
+        titleSpacing: 1,
+        toolbarHeight: 60.h,
+        title: Text(
+          "Create Invoice",
+          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
@@ -543,7 +899,7 @@ class _invoice1State extends State<invoice1> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
+                                OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
@@ -577,8 +933,43 @@ class _invoice1State extends State<invoice1> {
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
-                          textInputAction: TextInputAction.next,
                           controller: date,
+                          readOnly: true,
+                          // Make the field non-editable so only date picker is used
+                          onTap: () async {
+                            FocusScope.of(context)
+                                .requestFocus(FocusNode()); // Prevent keyboard
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101),
+                              builder: (context, child) {
+                                return Theme(
+                                  data: Theme.of(context).copyWith(
+                                    colorScheme: ColorScheme.light(
+                                      primary: Colors.deepPurple,
+                                      onPrimary: Colors.white,
+                                      onSurface: Colors.black,
+                                    ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.deepPurple,
+                                      ),
+                                    ),
+                                  ),
+                                  child: child!,
+                                );
+                              },
+                            );
+
+                            if (pickedDate != null) {
+                              String formattedDate =
+                                  DateFormat('dMMMyyyy').format(pickedDate);
+                              date.text = formattedDate;
+                            }
+                          },
+                          textInputAction: TextInputAction.next,
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
@@ -591,12 +982,13 @@ class _invoice1State extends State<invoice1> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: '',
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: 'Select date',
                             hintStyle: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 16,
-                                color: Colors.black),
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       )
@@ -611,7 +1003,7 @@ class _invoice1State extends State<invoice1> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
-                          "Kind Att",
+                          "# LPO / QTN ",
                           style: TextStyle(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
@@ -626,12 +1018,12 @@ class _invoice1State extends State<invoice1> {
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           textInputAction: TextInputAction.next,
-                          controller: kindatt,
+                          controller: lpoqtn,
                           maxLines: null,
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -639,7 +1031,7 @@ class _invoice1State extends State<invoice1> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
+                                OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
@@ -687,7 +1079,7 @@ class _invoice1State extends State<invoice1> {
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
+                                OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
                             hintStyle: TextStyle(
                                 fontWeight: FontWeight.w300,
@@ -720,7 +1112,7 @@ class _invoice1State extends State<invoice1> {
                       ),
                       Container(
                         width: 790.w,
-                        height: 60.h,
+                        height: 70.h,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
@@ -741,9 +1133,16 @@ class _invoice1State extends State<invoice1> {
                           fieldViewBuilder: (BuildContext context,
                               TextEditingController textEditingController,
                               FocusNode focusNode,
-                              VoidCallback) {
+                              VoidCallback onFieldSubmitted) {
+                            // Sync text initially
+                            textEditingController.text = nbq.text;
+
+                            // Sync both ways
+                            textEditingController.addListener(() {
+                              nbq.text = textEditingController.text;
+                            });
+
                             return TextFormField(
-                              textInputAction: TextInputAction.next,
                               controller: textEditingController,
                               focusNode: focusNode,
                               maxLines: null,
@@ -752,6 +1151,7 @@ class _invoice1State extends State<invoice1> {
                                   selectednbq = v;
                                 });
                               },
+                              textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.multiline,
                               cursorHeight: 25.h,
                               textAlignVertical: TextAlignVertical.center,
@@ -766,12 +1166,40 @@ class _invoice1State extends State<invoice1> {
                                     borderSide: BorderSide.none),
                                 hintText: "",
                                 hintStyle: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    fontSize: 16,
-                                    color: Colors.black),
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
                               ),
                             );
-                          },
+                          },optionsViewBuilder: (context, onSelected, options) {
+                          return Align(
+                            alignment: Alignment.topLeft,
+                            child: Material(
+                              elevation: 4,
+                              child: Container(
+                                width: 790.w,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  shrinkWrap: true,
+                                  itemCount: options.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final option = options.elementAt(index);
+                                    return InkWell(
+                                      onTap: () {
+                                        onSelected(option);
+                                      },
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                        child: Text(option),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                         ),
                       )
                     ],
@@ -780,111 +1208,154 @@ class _invoice1State extends State<invoice1> {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(left: 850.w, top: 15.h),
-              child: ElevatedButton(
-                onPressed: () {
-                  addNewRow();
-                },
-                child: Container(
-                  width: 150.w,
-                  height: 45.h,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
-                      color: Colors.black),
-                  child: Center(
-                    child: Text(
-                      "ADD ROW",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white),
+              padding: EdgeInsets.only(top: 15.h),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 865.w),
+                    child: InkWell(
+                      onTap: () {
+                        addNewRow();
+                      },
+                      child: Container(
+                        width: 130.w,
+                        height: 35.h,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5.r),
+                                bottomLeft: Radius.circular(5.r)),
+                            color: Colors.grey[200]),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.w),
+                              child: Icon(
+                                Icons.add_circle,
+                                color: Colors.blue,
+                                size: 15.sp,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.w),
+                              child: Text(
+                                "Add New Row",
+                                style: GoogleFonts.workSans(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 3.w),
+                    child: Container(
+                      width: 35.w,
+                      height: 35.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(5.r),
+                            bottomRight: Radius.circular(5.r),
+                          ),
+                          color: Colors.grey[200]),
+                      child: PopupMenuButton<String>(
+                        icon: Icon(
+                          CupertinoIcons.chevron_down,
+                          size: 12.sp,
+                          color: Colors.grey[600],
+                        ),
+                        onSelected: (value) {
+                          if (value == 'header') {
+                            addNewHeader();
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          PopupMenuItem<String>(
+                            value: 'header',
+                            child: Text(
+                              "Add New Header",
+                              style: GoogleFonts.workSans(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 15.sp,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.w),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: showPercentageFields,
+                          onChanged: (value) {
+                            setState(() {
+                              showPercentageFields = value!;
+                              rebuildRows();
+                            });
+                          },
+                        ),
+                        Text(
+                          "% Invoice",
+                          style: GoogleFonts.workSans(fontSize: 13.sp),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w),
               child: Container(
-                width: 1060.w,
-                height: (70 * rowCount).h,
+                width: 1100.w,
+                height: 500.h, // Fixed scrollable height
                 decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black),
-                    borderRadius: BorderRadius.circular(8.r),
-                    color: Colors.white),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.h),
-                        child: Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 15.w),
-                              child: Text(
-                                "SNo",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 40.w),
-                              child: Text(
-                                "Description",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 440.w),
-                              child: Text(
-                                "qty",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 60.w),
-                              child: Text(
-                                "Unit",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 70.w),
-                              child: Text(
-                                "Rate",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 70.w),
-                              child: Text(
-                                "Amount",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 15.sp,
-                                    color: Colors.black),
-                              ),
-                            )
-                          ],
+                  border: Border.all(color: Colors.black),
+                  borderRadius: BorderRadius.circular(8.r),
+                  color: Colors.white,
+                ),
+                child: ListView(
+                  padding: EdgeInsets.only(top: 20.h),
+                  children: [
+                    Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 15.w),
+                          child: Text("SNo", style: TextStyle(fontSize: 15.sp)),
                         ),
-                      ),
-                      ...rows
-                    ],
-                  ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 40.w),
+                          child: Text("Description",
+                              style: TextStyle(fontSize: 15.sp)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 440.w),
+                          child: Text("qty", style: TextStyle(fontSize: 15.sp)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 60.w),
+                          child:
+                              Text("Unit", style: TextStyle(fontSize: 15.sp)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 70.w),
+                          child:
+                              Text("Rate", style: TextStyle(fontSize: 15.sp)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 70.w),
+                          child:
+                              Text("Amount", style: TextStyle(fontSize: 15.sp)),
+                        ),
+                      ],
+                    ),
+                    ...rows, // this should grow correctly as you add rows
+                  ],
                 ),
               ),
             ),
@@ -906,17 +1377,20 @@ class _invoice1State extends State<invoice1> {
                   Padding(
                     padding: EdgeInsets.only(left: 5.w),
                     child: Container(
-                        width: 250.w,
-                        height: 40.h,
+                        width: 200.w,
+                        height: 50.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Text(
-                          subtotal.toStringAsFixed(2),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 18.sp,
-                              color: Colors.black),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                          child: Text(
+                            "\$ ${subtotal.toStringAsFixed(2)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18.sp,
+                                color: Colors.black),
+                          ),
                         )),
                   )
                 ],
@@ -928,29 +1402,50 @@ class _invoice1State extends State<invoice1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 750.w, top: 10.h),
-                    child: Text(
-                      "Discount",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black),
+                    padding: EdgeInsets.only(left: 720.w, top: 10.h),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: isDiscountEnabled,
+                          onChanged: (value) {
+                            setState(() {
+                              isDiscountEnabled = value!;
+                              if (!isDiscountEnabled) {
+                                discount = 0.0;
+                                discountcontroller.clear();
+                                calculateTotal(); // Ensure total is recalculated
+                              }
+                            });
+                          },
+                        ),
+                        Text(
+                          "Discount",
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 8.w),
                     child: Container(
-                      width: 250.w,
-                      height: 40.h,
+                      width: 200.w,
+                      height: 60.h,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
+                        enabled: isDiscountEnabled,
                         onChanged: (value) {
                           discount = double.tryParse(value) ?? 0.0;
                           calculateTotal();
                         },
-                        maxLines: null,textInputAction: TextInputAction.next,
+                        maxLines: null,
+                        controller: discountcontroller,
+                        textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
@@ -958,11 +1453,17 @@ class _invoice1State extends State<invoice1> {
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
+                          prefixText: '\$ ',
+                          prefixStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
@@ -990,19 +1491,22 @@ class _invoice1State extends State<invoice1> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 5.w),
+                    padding: EdgeInsets.only(left: 12.w),
                     child: Container(
-                        width: 250.w,
-                        height: 40.h,
+                        width: 200.w,
+                        height: 50.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Text(
-                          taxableAmount.toStringAsFixed(2),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 18.sp,
-                              color: Colors.black),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                          child: Text(
+                            "\$ ${taxableAmount.toStringAsFixed(2)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18.sp,
+                                color: Colors.black),
+                          ),
                         )),
                   )
                 ],
@@ -1026,17 +1530,20 @@ class _invoice1State extends State<invoice1> {
                   Padding(
                     padding: EdgeInsets.only(left: 5.w),
                     child: Container(
-                        width: 250.w,
-                        height: 40.h,
+                        width: 200.w,
+                        height: 50.h,
                         decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Text(
-                          vat.toStringAsFixed(1),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 18.sp,
-                              color: Colors.black),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                          child: Text(
+                            "\$ ${vat.toStringAsFixed(2)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 18.sp,
+                                color: Colors.black),
+                          ),
                         )),
                   )
                 ],
@@ -1060,17 +1567,20 @@ class _invoice1State extends State<invoice1> {
                   Padding(
                     padding: EdgeInsets.only(left: 5.w),
                     child: Container(
-                        width: 250.w,
-                        height: 40.h,
+                        width: 200.w,
+                        height: 50.h,
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.red),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Text(
-                          totalAmount.toStringAsFixed(2),
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18.sp),
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                          child: Text(
+                            "\$ ${totalAmount.toStringAsFixed(2)}",
+                            style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18.sp),
+                          ),
                         )),
                   )
                 ],
@@ -1091,10 +1601,10 @@ class _invoice1State extends State<invoice1> {
                   Padding(
                     padding: EdgeInsets.only(top: 15.h),
                     child: Container(
-                      width: 790.w,
-                      height: 40.h,
+                      width: 500.w,
+                      height: 60.h,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         textInputAction: TextInputAction.next,
@@ -1111,7 +1621,7 @@ class _invoice1State extends State<invoice1> {
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                              OutlineInputBorder(borderSide: BorderSide.none),
                         ),
                       ),
                     ),
@@ -1134,14 +1644,15 @@ class _invoice1State extends State<invoice1> {
                   Padding(
                     padding: EdgeInsets.only(top: 15.h),
                     child: Container(
-                      width: 790.w,
-                      height: 40.h,
+                      width: 500.w,
+                      height: 100.h,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: Colors.black),
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: naq,
-                        maxLines: null,textInputAction: TextInputAction.done,
+                        maxLines: null,
+                        textInputAction: TextInputAction.done,
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
@@ -1153,7 +1664,7 @@ class _invoice1State extends State<invoice1> {
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
+                              OutlineInputBorder(borderSide: BorderSide.none),
                           hintStyle: TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
@@ -1166,132 +1677,435 @@ class _invoice1State extends State<invoice1> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: 25.h),
+              padding: EdgeInsets.only(top: 25.h, bottom: 15.h),
               child: StreamBuilder<QuerySnapshot>(
-                  stream: firestor,
-                  builder: (context, snapshot) {
-                    return Row(
+                stream: FirebaseFirestore.instance
+                    .collection("Clients")
+                    .doc(widget.id)
+                    .collection("invoice")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return CircularProgressIndicator();
+
+                  var docs = snapshot.data!.docs;
+                  final invoiceMap = {
+                    for (var doc in docs)
+                      doc['inv no']?.toString() ?? 'Unknown': doc.id
+                  };
+
+                  return Padding(
+                    padding: EdgeInsets.only(left: 20.w),
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 12,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 500.w),
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                collectFormData();
-                                final id = DateTime.now()
-                                    .microsecondsSinceEpoch
-                                    .toString();
-                                try {
-                                  await firestore.doc(id).set({
-                                    'id': id,
-                                    'project': project.text,
-                                    'kindatt': kindatt.text,
-                                    'date': date.text,
-                                    'Inv no': invno.text,
-                                    'note before quote': selectednbq,
-                                    'sno': snodata,
-                                    'description': descriptionData,
-                                    'unit': unitdata,
-                                    'rate': ratedata,
-                                    'quantity': qtydata,
-                                    'amount': amountdata,
-                                    'subtotal': subtotal.toString(),
-                                    'discount': discount.toString(),
-                                    'taxable amount': taxableAmount.toString(),
-                                    'vat': vat.toStringAsFixed(2),
-                                    'total amount': totalAmount.toString(),
-                                    'total amount in name':
-                                    totalamountinname.text,
-                                    'note after quote': naq.text,'trn':widget.trn
-                                  });
-                                  ToastMessage()
-                                      .toastmessage(message: 'Quotation Added');
-                                } catch (e) {
-                                  ToastMessage()
-                                      .toastmessage(message: e.toString());
-                                }
-                              },
-                              child: Text("Save")),
+                        SizedBox(
+                          width: 300,
+                          // Give a fixed width to prevent stretching
+                          child: DropdownSearch<String>(
+                            asyncItems: (String? filter) async {
+                              return invoiceMap.keys
+                                  .where((key) =>
+                                      filter == null ||
+                                      key
+                                          .toLowerCase()
+                                          .contains(filter.toLowerCase()))
+                                  .toList();
+                            },
+                            popupProps: PopupProps.menu(
+                              showSearchBox: true,
+                              searchFieldProps: TextFieldProps(
+                                decoration: InputDecoration(
+                                    hintText: "Search by INV No"),
+                              ),
+                            ),
+                            dropdownDecoratorProps: DropDownDecoratorProps(
+                              dropdownSearchDecoration: InputDecoration(
+                                labelText: "Select Invooice to Edit",
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            // In the onChanged callback of DropdownSearch<String>:
+                            // In the onChanged callback of DropdownSearch<String>:
+                            onChanged: (invNo) async {
+                              if (invNo == null) return;
+
+                              final selectedId = invoiceMap[invNo];
+                              if (selectedId == null) return;
+
+                              try {
+                                final selectedDoc = docs
+                                    .firstWhere((doc) => doc.id == selectedId);
+                                final data =
+                                    selectedDoc.data() as Map<String, dynamic>;
+
+                                // Clear existing data
+                                clearForm();
+
+                                setState(() {
+                                  selectedDocumentId = selectedDoc.id;
+                                  selectedDocumentId = selectedDoc.id;
+                                  invno.text = data['inv no'] ?? '';
+                                  date.text = data['date'] ?? '';
+                                  lpoqtn.text = data['lpoqtn#'] ?? '';
+                                  project.text = data['project'] ?? '';
+                                  nbq.text = data['note before quote'] ?? '';
+                                  selectednbq = data['note before quote'] ?? '';
+                                  naq.text = data['note after quote'] ?? '';
+                                  totalamountinname.text =
+                                      data['total amount in name'] ?? '';
+
+                                  // Convert numeric values
+                                  subtotal = (data['subtotal'] is String)
+                                      ? double.tryParse(
+                                              data['subtotal'] ?? '0') ??
+                                          0.0
+                                      : (data['subtotal']?.toDouble() ?? 0.0);
+
+                                  discount = (data['discount'] is String)
+                                      ? double.tryParse(
+                                              data['discount'] ?? '0') ??
+                                          0.0
+                                      : (data['discount']?.toDouble() ?? 0.0);
+                                  discountcontroller.text = discount.toString();
+
+                                  taxableAmount = (data[
+                                          'taxable amount'] is String)
+                                      ? double.tryParse(
+                                              data['taxable amount'] ?? '0') ??
+                                          0.0
+                                      : (data['taxable amount']?.toDouble() ??
+                                          0.0);
+
+                                  vat = (data['vat'] is String)
+                                      ? double.tryParse(data['vat'] ?? '0') ??
+                                          0.0
+                                      : (data['vat']?.toDouble() ?? 0.0);
+
+                                  totalAmount = (data['total amount'] is String)
+                                      ? double.tryParse(
+                                              data['total amount'] ?? '0') ??
+                                          0.0
+                                      : (data['total amount']?.toDouble() ??
+                                          0.0);
+
+                                  // Rebuild line items
+                                  if (data['lineItems'] != null &&
+                                      data['lineItems'] is List) {
+                                    for (var item in data['lineItems']) {
+                                      if (item['type'] == 'header') {
+                                        final controller =
+                                            TextEditingController(
+                                                text: item['text'] ?? '');
+                                        headerControllers.add(controller);
+                                        formStructure.add({
+                                          'type': 'header',
+                                          'controller': controller,
+                                        });
+                                      } else if (item['type'] == 'row') {
+                                        // Add new row and get its index
+                                        addNewRow();
+                                        final index = description.length - 1;
+
+                                        // Set values for the new row
+                                        sno[index].text =
+                                            item['sno']?.toString() ?? '';
+                                        description[index].text =
+                                            item['description']?.toString() ??
+                                                '';
+                                        qtyControllers[index].text =
+                                            item['quantity']?.toString() ?? '';
+                                        unit[index].text =
+                                            item['unit']?.toString() ?? '';
+                                        rateControllers[index].text =
+                                            item['rate']?.toString() ?? '';
+                                        amountControllers[index].text =
+                                            item['amount']?.toString() ?? '';
+                                      }
+                                    }
+                                  }
+                                });
+
+                                // Force rebuild of rows
+                                rebuildRows();
+                              } catch (e) {
+                                print('Error loading quotation: $e');
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(
+                                          'Failed to load quotation: ${e.toString()}')),
+                                );
+                              }
+                            },
+                          ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: ElevatedButton(
-                              onPressed: () {
-                                collectFormData();
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Invpdf(
-                                      invno: invno.text,
-                                      trn:widget.trn,
-                                      date: date.text,
-                                      kindatt: kindatt.text,
-                                      project: project.text,
-                                      nbq: selectednbq,
-                                      sno: snodata,
-                                      amount: amountdata,
-                                      description: descriptionData,
-                                      discount: discount.toString(),
-                                      naq: naq.text,
-                                      qty: qtydata,
-                                      unit: unitdata,
-                                      rate: ratedata,
-                                      subtotal: subtotal.toString(),
-                                      taxableamount: taxableAmount.toString(),
-                                      vat: vat.toString(),
-                                      totalamount: totalAmount.toString(),
-                                      totalamountinname: totalamountinname.text,
-                                      name: widget.name,
-                                      address: widget.address,
+                          padding: EdgeInsets.only(left: 100.w),
+                          child: InkWell(
+                            onTap: () async {
+                              collectFormData();
+                              final id = DateTime.now()
+                                  .microsecondsSinceEpoch
+                                  .toString();
+                              try {
+                                await quotationRef.doc(id).set({
+                                  'id': id,
+                                  'project': project.text,
+                                  'lpoqtn#': lpoqtn.text,
+                                  'date': date.text,
+                                  'inv no': invno.text,
+                                  'note before quote': nbq.text,
+                                  'lineItems': lineItems,
+                                  'subtotal': subtotal.toString(),
+                                  'discount': discount.toString(),
+                                  'taxable amount': taxableAmount.toString(),
+                                  'vat': vat.toString(),
+                                  'total amount': totalAmount.toString(),
+                                  'total amount in name':
+                                      totalamountinname.text,
+                                  'note after quote': naq.text
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Invoice Saved'),
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    // optional for a floating snackbar
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
+                                    margin: EdgeInsets.all(
+                                        30), // only works with floating behavior
                                   ),
                                 );
-                              },
-                              child: Text("Preview")),
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to save ${e}'),
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: Colors.black54,
+                                    behavior: SnackBarBehavior.floating,
+                                    // optional for a floating snackbar
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    margin: EdgeInsets.all(
+                                        30), // only works with floating behavior
+                                  ),
+                                );
+                              }
+                            },
+                            child: Container(
+                              width: 65.w,
+                              height: 35.h,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.r),
+                                  color: Colors.lightBlue[600]),
+                              child: Center(
+                                child: Text(
+                                  "Save",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 20.w),
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                collectFormData();
-                                try {
-                                  final snapshotData = await firestore.get();
-                                  if (snapshotData.docs.isNotEmpty) {
-                                    final lastDoc = snapshotData.docs.last;
-                                    await firestore.doc(lastDoc.id).update({
-                                      'project': project.text,
-                                      'kindatt': kindatt.text,
-                                      'date': date.text,
-                                      'inv no': invno.text,
-                                      'note before quote': nbq.text,
-                                      'sno': snodata,
-                                      'description': descriptionData,
-                                      'unit': unitdata,
-                                      'rate': ratedata,
-                                      'quantity': qtydata,
-                                      'amount': amountdata,
-                                      'subtotal': subtotal.toString(),
-                                      'discount': discount.toString(),
-                                      'taxable amount':
-                                      taxableAmount.toString(),
-                                      'vat': vat.toString(),
-                                      'total amount': totalAmount.toString(),
-                                      'total amount in name':
-                                      totalamountinname.text,
-                                      'note after quote': naq.text
-                                    });
-                                    ToastMessage().toastmessage(
-                                        message: 'Quotation Updated');
-                                  }
-                                } catch (e) {
-                                  ToastMessage()
-                                      .toastmessage(message: e.toString());
-                                }
+                        InkWell(
+                          onTap: () async {
+                            String? selected = await showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                String tempSelectedCompany = selectedCompany;
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(3.r)),
+                                  title: Text('Select Company'),
+                                  content: StatefulBuilder(
+                                    builder: (context, setState) {
+                                      return DropdownButtonFormField<String>(
+                                        value: tempSelectedCompany,
+                                        items: ['Reyah Al Maskan', 'Al Maskan']
+                                            .map((company) {
+                                          return DropdownMenuItem(
+                                            value: company,
+                                            child: Text(company),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            tempSelectedCompany = value!;
+                                          });
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // cancel
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context,
+                                            tempSelectedCompany); // return selected
+                                      },
+                                      child: Text("Continue"),
+                                    ),
+                                  ],
+                                );
                               },
-                              child: Text("Update")),
+                            );
+
+                            if (selected != null) {
+                              selectedCompany = selected;
+                              collectFormData();
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Invpdf(
+                                    invno: invno.text,
+                                    date: date.text,
+                                    lpoqtn: lpoqtn.text,
+                                    project: project.text,
+                                    nbq: nbq.text,
+                                    discount: discount.toString(),
+                                    naq: naq.text,
+                                    lineItems: lineItems,
+                                    subtotal: subtotal.toStringAsFixed(2),
+                                    taxableamount:
+                                        taxableAmount.toStringAsFixed(2),
+                                    vat: vat.toStringAsFixed(2),
+                                    totalamount: totalAmount.toStringAsFixed(2),
+                                    totalamountinname: totalamountinname.text,
+                                    name: widget.name,
+                                    address: widget.address,
+                                    id: widget.id,
+                                    trn: widget.trn,
+                                    invoiceId: '',
+                                    selectedCompany: selectedCompany,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: 65.w,
+                            height: 35.h,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5.r),
+                              color: Colors.green,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Preview",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
+                        InkWell(
+                          onTap: () async {
+                            if (selectedDocumentId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Please select a document to update'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black54,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      15), // only works with floating behavior
+                                ),
+                              );
+                            }
+                            collectFormData();
+                            try {
+                              await quotationRef
+                                  .doc(selectedDocumentId)
+                                  .update({
+                                'project': project.text,
+                                'lpoqtn#': lpoqtn.text,
+                                'date': date.text,
+                                'inv no': invno.text,
+                                'note before quote': nbq.text,
+                                'lineItems': lineItems,
+                                'subtotal': subtotal.toString(),
+                                'discount': discountcontroller.text,
+                                'taxable amount': taxableAmount.toString(),
+                                'vat': vat.toString(),
+                                'total amount': totalAmount.toString(),
+                                'total amount in name': totalamountinname.text,
+                                'note after quote': naq.text
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Invoice Updated'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.green,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      30), // only works with floating behavior
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to update ${e}'),
+                                  duration: Duration(seconds: 2),
+                                  backgroundColor: Colors.black54,
+                                  behavior: SnackBarBehavior.floating,
+                                  // optional for a floating snackbar
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  margin: EdgeInsets.all(
+                                      30), // only works with floating behavior
+                                ),
+                              );
+                            }
+                          },
+                          child: Container(
+                            width: 65.w,
+                            height: 35.h,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5.r),
+                                color: Colors.red[900]),
+                            child: Center(
+                              child: Text(
+                                "Update",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          ),
+                        )
                       ],
-                    );
-                  }),
+                    ),
+                  );
+                },
+              ),
             )
           ],
         ),

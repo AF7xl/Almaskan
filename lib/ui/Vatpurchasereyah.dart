@@ -8,27 +8,32 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class Vatadmin extends StatefulWidget {
-  const Vatadmin({super.key});
+class Vatpurchasereyah extends StatefulWidget {
+  const Vatpurchasereyah({super.key});
 
   @override
-  State<Vatadmin> createState() => _VatadminState();
+  State<Vatpurchasereyah> createState() => _VatpurchasereyahState();
 }
 
-class _VatadminState extends State<Vatadmin> {
-  List<String> Invoptions = [];
-  final Invfirestore = FirebaseFirestore.instance
+class _VatpurchasereyahState extends State<Vatpurchasereyah> {
+  List<String> Invnooptions = [];
+  final Invnofirestore = FirebaseFirestore.instance
       .collection("Suggestions")
       .doc("AqpEzHc1d4HIUWsj6NpR")
       .collection("SuggestionsData") // optional for clarity
-      .doc("Invoptions");
-  List<String> Accoptions = [];
-  final ACCfirestore = FirebaseFirestore.instance
+      .doc("Invnooptions");
+  List<String> Supplieroption = [];
+  final Supplierfirestore = FirebaseFirestore.instance
       .collection("Suggestions")
       .doc("AqpEzHc1d4HIUWsj6NpR")
       .collection("SuggestionsData") // optional for clarity
-      .doc("Accoptions");
-
+      .doc("Supplieroptions");
+  List<String> Projectoption = [];
+  final Projectfirestore = FirebaseFirestore.instance
+      .collection("Suggestions")
+      .doc("AqpEzHc1d4HIUWsj6NpR")
+      .collection("SuggestionsData") // optional for clarity
+      .doc("Projectoption");
 
   final currentdate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
@@ -38,7 +43,7 @@ class _VatadminState extends State<Vatadmin> {
       File('assets/Logo.png').readAsBytesSync(),
     );
     final image1 = pw.MemoryImage(
-      File('assets/Logo.png').readAsBytesSync(),
+      File('assets/logoin.png').readAsBytesSync(),
     );
     final headerStyle = pw.TextStyle(
       fontWeight: pw.FontWeight.bold,
@@ -62,15 +67,12 @@ class _VatadminState extends State<Vatadmin> {
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Text("AL MASKAN PLASTER & TILE CONT",
+                          pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
                               style: pw.TextStyle(
                                   fontSize: 10,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.SizedBox(height: 3),
-                          pw.Text("Industrial-8",
-                              style: pw.TextStyle(fontSize: 10)),
-                          pw.SizedBox(height: 3),
-                          pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
+                          pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
                           pw.SizedBox(height: 3),
                           pw.Text("United Arab Emirates",
                               style: pw.TextStyle(fontSize: 10)),
@@ -81,148 +83,169 @@ class _VatadminState extends State<Vatadmin> {
                           pw.Text("0508089505",
                               style: pw.TextStyle(fontSize: 10)),
                           pw.SizedBox(height: 3),
-                          pw.Text("almaskandecor@gmail.com",
+                          pw.Text("reyahalmaskan@gmail.com",
                               style: pw.TextStyle(fontSize: 10)),
                         ],
-                      )
-                    ]),
-                pw.SizedBox(height: 10),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 200),
-                    child: pw.Text(
-                      "Vat Admin Expense",
-                      style: pw.TextStyle(
-                        fontSize: 15,
-                        fontWeight: pw.FontWeight.bold,
-                        decoration: pw.TextDecoration.underline,
                       ),
-                    )),
-                pw.SizedBox(height: 20),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 400),
-                  child: pw.Text("Date: $currentdate",
-                      style: pw.TextStyle(
-                          fontSize: 10, fontWeight: pw.FontWeight.normal)),
-                ),
-                pw.SizedBox(height: 20),
+                      pw.SizedBox(height: 10),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 200),
+                          child: pw.Text(
+                            "Vat Purchase",
+                            style: pw.TextStyle(
+                              fontSize: 15,
+                              fontWeight: pw.FontWeight.bold,
+                              decoration: pw.TextDecoration.underline,
+                            ),
+                          )),
+                      pw.SizedBox(height: 20),
+                      pw.Padding(
+                        padding: pw.EdgeInsets.only(left: 400),
+                        child: pw.Text("Date: $currentdate",
+                            style: pw.TextStyle(
+                                fontSize: 10,
+                                fontWeight: pw.FontWeight.normal)),
+                      ),
+                      pw.SizedBox(height: 20),
 
-                // Header Row
-                pw.Container(
-                  width: double.infinity,
-                  height: 20,
-                  color: PdfColors.red800,
-                  child: pw.Row(
-                    children: [
-                      pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 20),
-                          child: pw.SizedBox(
-                              width: 50,
-                              child: pw.Text("Date", style: headerStyle))),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child: pw.Text("Invoice", style: headerStyle)),
+                      // Header Row
+                      pw.Container(
+                        width: double.infinity,
+                        height: 20,
+                        color: PdfColors.red800,
+                        child: pw.Row(
+                          children: [
+                            pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 50,
+                                    child:
+                                        pw.Text("Date", style: headerStyle))),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 70,
+                                  child: pw.Text("Invoice no",
+                                      style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 80,
+                                  child:
+                                      pw.Text("Supplier", style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 12),
+                              child: pw.SizedBox(
+                                  width: 70,
+                                  child:
+                                      pw.Text("Project", style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 5),
+                              child: pw.SizedBox(
+                                  width: 75,
+                                  child: pw.Text("Invoice Amount",
+                                      style: headerStyle)),
+                            ),
+                            pw.Padding(
+                              padding: pw.EdgeInsets.only(left: 6),
+                              child: pw.SizedBox(
+                                  width: 30,
+                                  child: pw.Text("Tax", style: headerStyle)),
+                            ),
+                            pw.SizedBox(
+                                width: 70,
+                                child: pw.Text("Total Amount",
+                                    style: headerStyle)),
+                          ],
+                        ),
                       ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child: pw.Text("Account", style: headerStyle)),
-                      ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 5),
-                        child: pw.SizedBox(
-                            width: 80,
-                            child:
-                                pw.Text("Invoice Amount", style: headerStyle)),
-                      ),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 6),
-                        child: pw.SizedBox(
-                            width: 50,
-                            child: pw.Text("Tax", style: headerStyle)),
-                      ),
-                      pw.SizedBox(
-                          width: 80,
-                          child: pw.Text("Total Amount", style: headerStyle)),
-                    ],
-                  ),
-                ),
 
-                // Data rows
-                ...filteredData.map((data) {
-                  return pw.Container(
-                    width: double.infinity,
-                    height: 25,
-                    color: filteredData.indexOf(data) % 2 == 0
-                        ? PdfColors.grey100
-                        : PdfColors.white,
-                    child: pw.Row(
-                      children: [
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 20),
-                          child: pw.SizedBox(
-                              width: 50,
-                              child: pw.Text(data['Date'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Invoice'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Account'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 5),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Invoice Amount'] ?? '',
-                                  style: textstyle)),
-                        ),
-                        pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 10),
-                            child: pw.SizedBox(
-                                width: 50,
-                                child: pw.Text(data['Tax'] ?? '',
-                                    style: textstyle))),
-                        pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 10),
-                          child: pw.SizedBox(
-                              width: 80,
-                              child: pw.Text(data['Total Amount'] ?? '',
-                                  style: textstyle)),
-                        ),
-                      ],
-                    ),
-                  );
-                }).toList(),
+                      // Data rows
+                      ...filteredData.map((data) {
+                        return pw.Container(
+                          width: double.infinity,
+                          height: 25,
+                          color: filteredData.indexOf(data) % 2 == 0
+                              ? PdfColors.grey100
+                              : PdfColors.white,
+                          child: pw.Row(
+                            children: [
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 50,
+                                    child: pw.Text(data['Date'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 5),
+                                child: pw.SizedBox(
+                                    width: 75,
+                                    child: pw.Text(data['Invoice no'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 1),
+                                child: pw.SizedBox(
+                                    width: 90,
+                                    child: pw.Text(data['Supplier'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 2),
+                                child: pw.SizedBox(
+                                    width: 75,
+                                    child: pw.Text(data['Project'] ?? '',
+                                        style: textstyle)),
+                              ),
+                              pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 2),
+                                  child: pw.SizedBox(
+                                      width: 50,
+                                      child: pw.Text(
+                                          data['Invoice Amount'] ?? '',
+                                          style: textstyle))),
+                              pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 32),
+                                  child: pw.SizedBox(
+                                      width: 25,
+                                      child: pw.Text(data['Tax'] ?? '',
+                                          style: textstyle))),
+                              pw.Padding(
+                                padding: pw.EdgeInsets.only(left: 6),
+                                child: pw.SizedBox(
+                                    width: 40,
+                                    child: pw.Text(data['Total Amount'] ?? '',
+                                        style: textstyle)),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
 
-                pw.SizedBox(height: 20),
-                pw.Divider(),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Invoice Amount: $totalInvoice",
-                        style: pw.TextStyle(fontSize: 10))),
-                pw.SizedBox(height: 2),
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Tax (5%):           $totalTax",
-                        style: pw.TextStyle(fontSize: 10))),
-                pw.SizedBox(height: 2),
+                      pw.SizedBox(height: 20),
+                      pw.Divider(),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 350),
+                          child: pw.Text("Invoice Amount: $totalInvoice",
+                              style: pw.TextStyle(fontSize: 10))),
+                      pw.SizedBox(height: 2),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 350),
+                          child: pw.Text("Tax (5%):           $totalTax",
+                              style: pw.TextStyle(fontSize: 10))),
+                      pw.SizedBox(height: 2),
 
-                pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 320),
-                    child: pw.Text("Total Amount:     $totalAmount",
-                        style: pw.TextStyle(fontSize: 10))),
+                      pw.Padding(
+                          padding: pw.EdgeInsets.only(left: 350),
+                          child: pw.Text("Total Amount:     $totalAmount",
+                              style: pw.TextStyle(fontSize: 10))),
+
+                      pw.SizedBox(height: 30),
+                    ])
               ],
           footer: (pw.Context context) {
             return pw.Column(
@@ -242,13 +265,16 @@ class _VatadminState extends State<Vatadmin> {
   }
 
   TextEditingController date = TextEditingController();
-  TextEditingController invoice = TextEditingController();
-  TextEditingController account = TextEditingController();
+  TextEditingController invoiceno = TextEditingController();
+  TextEditingController supplier = TextEditingController();
+  TextEditingController project = TextEditingController();
   TextEditingController invoiceamount = TextEditingController();
   TextEditingController tax = TextEditingController();
   TextEditingController totalamount = TextEditingController();
-  String selectedInv = '';
-  String selectedAcc = '';
+  String selectedInvno = '';
+  String selectedSupplier = '';
+  String selectedProject = '';
+
   DateTime? _startDate;
   DateTime? _endDate;
   final DateFormat _formatter = DateFormat('dd-MM-yyyy');
@@ -258,37 +284,45 @@ class _VatadminState extends State<Vatadmin> {
   double totalAmount = 0;
 
   List<Map<String, dynamic>> filteredData = [];
-
   bool showfiltercontainer = false;
-  final firestore = FirebaseFirestore.instance.collection('Vat Admin Expense');
+  final firestore = FirebaseFirestore.instance.collection('Vat Purchase Reyah');
 
   void initState() {
     super.initState();
     invoiceamount.addListener(_updatetotal);
     tax.addListener(_updatetotal);
     _fetchFilteredData();
-    fetchInvSuggestions();
-    fetchAccSuggestions();
+    fetchInvnoSuggestions();
+    fetchSupplierSuggestion();
+    fetchprojectsuggestion();
   }
-  void fetchInvSuggestions() async {
-    final docSnapshot = await Invfirestore.get();
+  void fetchInvnoSuggestions() async {
+    final docSnapshot = await Invnofirestore.get();
 
     if (docSnapshot.exists) {
       final data = docSnapshot.data();
-      Invoptions = List<String>.from(data?['suggestions'] ?? []);
+      Invnooptions = List<String>.from(data?['suggestions'] ?? []);
       setState(() {}); // Trigger rebuild so Autocomplete sees updates
     }
   }
-  void fetchAccSuggestions() async {
-    final docSnapshot = await ACCfirestore.get();
+  void fetchSupplierSuggestion() async {
+    final docSnapshot = await Supplierfirestore.get();
 
     if (docSnapshot.exists) {
       final data = docSnapshot.data();
-      Accoptions = List<String>.from(data?['suggestions'] ?? []);
+      Supplieroption = List<String>.from(data?['suggestions'] ?? []);
       setState(() {}); // Trigger rebuild so Autocomplete sees updates
     }
   }
+  void fetchprojectsuggestion() async {
+    final docSnapshot = await Projectfirestore.get();
 
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      Projectoption = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
   void _updatetotal() {
     double invoiceAmountValue = double.tryParse(invoiceamount.text) ?? 0.00;
 
@@ -331,7 +365,7 @@ class _VatadminState extends State<Vatadmin> {
 
   Future<void> _fetchFilteredData() async {
     final snapshot =
-        await FirebaseFirestore.instance.collection('Vat Admin Expense').get();
+        await FirebaseFirestore.instance.collection('Vat Purchase Reyah').get();
 
     final dateFormat = DateFormat('dd-MM-yyyy');
     final List<Map<String, dynamic>> loadedData = [];
@@ -378,18 +412,18 @@ class _VatadminState extends State<Vatadmin> {
     });
   }
 
-  //edit container
   void _editcontainer(
       BuildContext context, String docId, Map<String, dynamic> data) {
     final date = TextEditingController(text: data['Date']);
-    final invoice = TextEditingController(text: data['Invoice']);
-    final account = TextEditingController(text: data['Account']);
+    final invoiceno = TextEditingController(text: data['Invoice no']);
+    final supplier = TextEditingController(text: data['Supplier']);
+    final project = TextEditingController(text: data['Project']);
     final invoiceamount = TextEditingController(text: data['Invoice Amount']);
     final tax = TextEditingController(text: data['Tax']);
     final totalamount = TextEditingController(text: data['Total Amount']);
 
-    // Listen to invoice amount changes
-    invoiceamount.addListener(() {
+    // Function to calculate 5% VAT
+    void calculateVAT() {
       final value = double.tryParse(invoiceamount.text);
       if (value != null) {
         final vat = value * 0.05;
@@ -400,15 +434,18 @@ class _VatadminState extends State<Vatadmin> {
         tax.text = '';
         totalamount.text = '';
       }
-    });
+    }
+
+    // Listen to invoice amount changes
+    invoiceamount.addListener(calculateVAT);
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text("Edit Entry"),
-        content: SizedBox(
-          width: 400,
-          height: 350,
+        content: Container(
+          width: 400.w,
+          height: 390.h,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -419,21 +456,25 @@ class _VatadminState extends State<Vatadmin> {
                   decoration: const InputDecoration(labelText: "Date"),
                 ),
                 TextField(
-                  controller: invoice,
+                  controller: invoiceno,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: "Invoice"),
+                  decoration: const InputDecoration(labelText: "Invoice no"),
                 ),
                 TextField(
-                  controller: account,
+                  controller: supplier,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: "Account"),
+                  decoration: const InputDecoration(labelText: "Supplier"),
+                ),
+                TextField(
+                  controller: project,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(labelText: "Project"),
                 ),
                 TextField(
                   controller: invoiceamount,
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
-                  decoration:
-                      const InputDecoration(labelText: "Invoice Amount"),
+                  decoration: const InputDecoration(labelText: "Invoice Amount"),
                 ),
                 TextField(
                   controller: tax,
@@ -456,34 +497,20 @@ class _VatadminState extends State<Vatadmin> {
           ),
           ElevatedButton(
             onPressed: () async {
-              try {
-                await FirebaseFirestore.instance
-                    .collection('Vat Admin Expense')
-                    .doc(docId)
-                    .update({
-                  'Date': date.text,
-                  'Invoice': invoice.text,
-                  'Account': account.text,
-                  'Invoice Amount': invoiceamount.text,
-                  'Tax': tax.text,
-                  'Total Amount': totalamount.text,
-                });
-
-                Navigator.pop(context, true);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Updated Successfully"),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 2),
-                ));
-
-                _fetchFilteredData();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("Error: $e"),
-                  backgroundColor: Colors.red,
-                  duration: Duration(seconds: 3),
-                ));
-              }
+              await FirebaseFirestore.instance
+                  .collection('Vat Purchase Reyah')
+                  .doc(docId)
+                  .update({
+                'Date': date.text,
+                'Invoice no': invoiceno.text,
+                'Supplier': supplier.text,
+                'Project': project.text,
+                'Invoice Amount': invoiceamount.text,
+                'Tax': tax.text,
+                'Total Amount': totalamount.text,
+              });
+              Navigator.pop(context);
+              _fetchFilteredData(); // Refresh
             },
             child: const Text("Save"),
           ),
@@ -491,6 +518,7 @@ class _VatadminState extends State<Vatadmin> {
       ),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -507,7 +535,7 @@ class _VatadminState extends State<Vatadmin> {
               color: Colors.black,
             )),
         title: Text(
-          "Vat Adminexpense",
+          "Vat Purchase Reyah",
           style:
               GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
         ),
@@ -573,20 +601,16 @@ class _VatadminState extends State<Vatadmin> {
                                 child: Center(
                                   child: TextFormField(
                                     controller: date,
-                                    readOnly: true,
-                                    // Prevents keyboard from appearing
+                                    readOnly: true, // Prevents keyboard from appearing
                                     onTap: () async {
-                                      DateTime? pickedDate =
-                                          await showDatePicker(
+                                      DateTime? pickedDate = await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime(2100),
                                       );
                                       if (pickedDate != null) {
-                                        String formattedDate =
-                                            DateFormat('dd-MM-yyyy')
-                                                .format(pickedDate);
+                                        String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
                                         date.text = formattedDate;
                                       }
                                     },
@@ -614,7 +638,8 @@ class _VatadminState extends State<Vatadmin> {
                                       ),
                                       hintText: 'Select Date',
                                     ),
-                                  ),
+                                  )
+                                  ,
                                 ),
                               )
                             ],
@@ -627,343 +652,12 @@ class _VatadminState extends State<Vatadmin> {
                             children: [
                               Padding(
                                 padding: EdgeInsets.only(top: 7.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Invoice",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12.sp,
-                                          color: Colors.black),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 5.w),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              TextEditingController _InvsuggestionController =
-                                              TextEditingController();
-                                              return AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(4.r)),
-                                                title: Text("Add INV Suggestion"),
-                                                insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
-                                                // Controls width and height
-                                                content: SizedBox(
-                                                  width: 400.w, // Custom width
-                                                  height: 90.h, // Custom height
-                                                  child: TextFormField(
-                                                    controller: _InvsuggestionController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                      "Enter your Suggestion here...",
-                                                      border: OutlineInputBorder(),
-                                                    ),
-                                                    maxLines: null,
-                                                    expands: true,
-                                                    // Expands to fill the height
-                                                    keyboardType:
-                                                    TextInputType.multiline,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close dialog
-                                                    },
-                                                    child: Text("Cancel"),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () async {
-                                                      final suggestion =
-                                                      _InvsuggestionController.text.trim();
-                                                      if (suggestion.isEmpty) return;
-
-                                                      try {
-                                                        await Invfirestore.update({
-                                                          'suggestions':
-                                                          FieldValue.arrayUnion(
-                                                              [suggestion])
-                                                        }).catchError((_) async {
-                                                          await Invfirestore.set({
-                                                            'suggestions': [suggestion]
-                                                          });
-                                                        });
-
-                                                        Navigator.of(context).pop();
-                                                        fetchInvSuggestions(); // Refresh the local list
-
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Suggestion Saved'),
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                            backgroundColor:
-                                                            Colors.green,
-                                                            behavior: SnackBarBehavior
-                                                                .floating,
-                                                            shape:
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
-                                                            ),
-                                                            margin: EdgeInsets.all(15),
-                                                          ),
-                                                        );
-                                                      } catch (e) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Failed to Save: $e'),
-                                                            backgroundColor: Colors.red,
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Text("Add"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child:
-                                        Icon(Icons.add_circle, color: Colors.blue,size: 15.sp,),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                width: 130.w,
-                                height: 40.h,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
-                                child: Autocomplete(
-                                  optionsBuilder: (TextEditingValue textEditingValue) {
-                                    if (textEditingValue.text.isEmpty) {
-                                      return const Iterable<String>.empty();
-                                    }
-                                    return Invoptions.where((String option) {
-                                      return option.toLowerCase().contains(
-                                          textEditingValue.text.toLowerCase());
-                                    });
-                                  },
-                                  onSelected: (String selection) {
-                                    invoice.text = selection;
-                                    selectedInv = selection;
-                                  },
-                                  fieldViewBuilder: (BuildContext context,
-                                      TextEditingController textEditingController,
-                                      FocusNode focusNode,
-                                      VoidCallback onFieldSubmitted) {
-                                    // Sync text initially
-                                    textEditingController.text = invoice.text;
-
-                                    // Sync both ways
-                                    textEditingController.addListener(() {
-                                      invoice.text = textEditingController.text;
-                                    });
-
-                                    return TextFormField(
-                                      controller: textEditingController,
-                                      focusNode: focusNode,
-                                      maxLines: null,
-                                      onFieldSubmitted: (v) {
-                                        setState(() {
-                                          selectedInv = v;
-                                        });
-                                      },
-                                      textInputAction: TextInputAction.next,
-                                      keyboardType: TextInputType.multiline,
-                                      cursorHeight: 25.h,
-                                      textAlignVertical: TextAlignVertical.center,
-                                      style: TextStyle(color: Colors.black),
-                                      textAlign: TextAlign.start,
-                                      cursorColor: Colors.black45,
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                            top: 2.h, left: 5.w, bottom: 15.h),
-                                        border: InputBorder.none,
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide.none),
-                                        hintText: "",
-                                        hintStyle: TextStyle(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 16,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    );
-                                  },optionsViewBuilder: (context, onSelected, options) {
-                                  return Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Material(
-                                      elevation: 4,
-                                      child: Container(
-                                        width: 130.w,
-                                        child: ListView.builder(
-                                          padding: EdgeInsets.zero,
-                                          shrinkWrap: true,
-                                          itemCount: options.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            final option = options.elementAt(index);
-                                            return InkWell(
-                                              onTap: () {
-                                                onSelected(option);
-                                              },
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                                                child: Text(option),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 5.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 7.h),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Account",
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 12.sp,
-                                          color: Colors.black),
-                                    ), Padding(
-                                      padding: EdgeInsets.only(left: 5.w),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              TextEditingController _AccsuggestionController =
-                                              TextEditingController();
-                                              return AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(4.r)),
-                                                title: Text("Add Acc Suggestion"),
-                                                insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
-                                                // Controls width and height
-                                                content: SizedBox(
-                                                  width: 400.w, // Custom width
-                                                  height: 90.h, // Custom height
-                                                  child: TextFormField(
-                                                    controller: _AccsuggestionController,
-                                                    decoration: InputDecoration(
-                                                      hintText:
-                                                      "Enter your Suggestion here...",
-                                                      border: OutlineInputBorder(),
-                                                    ),
-                                                    maxLines: null,
-                                                    expands: true,
-                                                    // Expands to fill the height
-                                                    keyboardType:
-                                                    TextInputType.multiline,
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop(); // Close dialog
-                                                    },
-                                                    child: Text("Cancel"),
-                                                  ),
-                                                  ElevatedButton(
-                                                    onPressed: () async {
-                                                      final suggestion =
-                                                      _AccsuggestionController.text.trim();
-                                                      if (suggestion.isEmpty) return;
-
-                                                      try {
-                                                        await ACCfirestore.update({
-                                                          'suggestions':
-                                                          FieldValue.arrayUnion(
-                                                              [suggestion])
-                                                        }).catchError((_) async {
-                                                          await ACCfirestore.set({
-                                                            'suggestions': [suggestion]
-                                                          });
-                                                        });
-
-                                                        Navigator.of(context).pop();
-                                                        fetchAccSuggestions(); // Refresh the local list
-
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Suggestion Saved'),
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                            backgroundColor:
-                                                            Colors.green,
-                                                            behavior: SnackBarBehavior
-                                                                .floating,
-                                                            shape:
-                                                            RoundedRectangleBorder(
-                                                              borderRadius:
-                                                              BorderRadius.circular(
-                                                                  8),
-                                                            ),
-                                                            margin: EdgeInsets.all(15),
-                                                          ),
-                                                        );
-                                                      } catch (e) {
-                                                        ScaffoldMessenger.of(context)
-                                                            .showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                                'Failed to Save: $e'),
-                                                            backgroundColor: Colors.red,
-                                                            duration:
-                                                            Duration(seconds: 2),
-                                                          ),
-                                                        );
-                                                      }
-                                                    },
-                                                    child: Text("Add"),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child:
-                                        Icon(Icons.add_circle, color: Colors.blue,size: 15.sp,),
-                                      ),
-                                    )
-                                  ],
+                                child: Text(
+                                  "Invoice no",
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
                                 ),
                               ),
                               Container(
@@ -973,30 +667,30 @@ class _VatadminState extends State<Vatadmin> {
                                     borderRadius: BorderRadius.circular(4.r),
                                     border: Border.all(color: Colors.black)),
                                 child: Center(
-                                  child: Autocomplete(
+                                  child:  Autocomplete(
                                     optionsBuilder: (TextEditingValue textEditingValue) {
                                       if (textEditingValue.text.isEmpty) {
                                         return const Iterable<String>.empty();
                                       }
-                                      return Accoptions.where((String option) {
+                                      return Invnooptions.where((String option) {
                                         return option.toLowerCase().contains(
                                             textEditingValue.text.toLowerCase());
                                       });
                                     },
                                     onSelected: (String selection) {
-                                      account.text = selection;
-                                      selectedAcc = selection;
+                                      invoiceno.text = selection;
+                                      selectedInvno = selection;
                                     },
                                     fieldViewBuilder: (BuildContext context,
                                         TextEditingController textEditingController,
                                         FocusNode focusNode,
                                         VoidCallback onFieldSubmitted) {
                                       // Sync text initially
-                                      textEditingController.text = account.text;
+                                      textEditingController.text = invoiceno.text;
 
                                       // Sync both ways
                                       textEditingController.addListener(() {
-                                        account.text = textEditingController.text;
+                                        invoiceno.text = textEditingController.text;
                                       });
 
                                       return TextFormField(
@@ -1005,7 +699,7 @@ class _VatadminState extends State<Vatadmin> {
                                         maxLines: null,
                                         onFieldSubmitted: (v) {
                                           setState(() {
-                                            selectedAcc = v;
+                                            selectedInvno = v;
                                           });
                                         },
                                         textInputAction: TextInputAction.next,
@@ -1060,6 +754,226 @@ class _VatadminState extends State<Vatadmin> {
                                   ),
                                 ),
                               )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 5.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 7.h),
+                                child: Text(
+                                  "Supplier",
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                width: 130.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: Center(
+                                  child: Autocomplete<String>(
+                                    optionsBuilder: (TextEditingValue textEditingValue) {
+                                      if (textEditingValue.text.isEmpty) {
+                                        return const Iterable<String>.empty();
+                                      }
+                                      return Supplieroption.where((String option) {
+                                        return option
+                                            .toLowerCase()
+                                            .contains(textEditingValue.text.toLowerCase());
+                                      });
+                                    },
+                                    onSelected: (String selection) {
+                                      supplier.text = selection;
+                                      selectedSupplier = selection;
+                                    },
+                                    fieldViewBuilder: (BuildContext context,
+                                        TextEditingController textEditingController,
+                                        FocusNode focusNode,
+                                        VoidCallback onFieldSubmitted) {
+                                      if (textEditingController.text.isEmpty) {
+                                        textEditingController.text = supplier.text;
+                                      }
+
+                                      textEditingController.addListener(() {
+                                        supplier.text = textEditingController.text;
+                                      });
+
+                                      return TextFormField(
+                                        controller: textEditingController,
+                                        focusNode: focusNode,
+                                        maxLines: 1,
+                                        textInputAction: TextInputAction.next,
+                                        keyboardType: TextInputType.text,
+                                        cursorHeight: 25.h,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        style: TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.start,
+                                        cursorColor: Colors.black45,
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                                          border: InputBorder.none,
+                                          enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                                          hintText: "Enter supplier...",
+                                          hintStyle: TextStyle(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 16,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 4,
+                                          child: Container(
+                                            width: 130.w,
+                                            child: ListView.builder(
+                                              padding: EdgeInsets.zero,
+                                              shrinkWrap: true,
+                                              itemCount: options.length,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final option = options.elementAt(index);
+                                                return InkWell(
+                                                  onTap: () {
+                                                    onSelected(option);
+                                                  },
+                                                  child: Padding(
+                                                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                    child: Text(option),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 5.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 7.h),
+                                child: Text(
+                                  "Project",
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              Container(
+                                width: 130.w,
+                                height: 40.h,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  border: Border.all(color: Colors.black),
+                                ),
+                                child: Center(
+                                  child: Autocomplete<String>(
+                                    optionsBuilder: (TextEditingValue textEditingValue) {
+                                      if (textEditingValue.text.isEmpty) {
+                                        return const Iterable<String>.empty();
+                                      }
+                                      return Projectoption.where((String option) {
+                                        return option
+                                            .toLowerCase()
+                                            .contains(textEditingValue.text.toLowerCase());
+                                      });
+                                    },
+                                    onSelected: (String selection) {
+                                      project.text = selection;
+                                      selectedProject = selection;
+                                    },
+                                    fieldViewBuilder: (BuildContext context,
+                                        TextEditingController textEditingController,
+                                        FocusNode focusNode,
+                                        VoidCallback onFieldSubmitted) {
+                                      if (textEditingController.text.isEmpty) {
+                                        textEditingController.text = project.text;
+                                      }
+
+                                      textEditingController.addListener(() {
+                                        project.text = textEditingController.text;
+                                      });
+
+                                      return TextFormField(
+                                        controller: textEditingController,
+                                        focusNode: focusNode,
+                                        maxLines: 1,
+                                        textInputAction: TextInputAction.next,
+                                        keyboardType: TextInputType.text,
+                                        cursorHeight: 25.h,
+                                        textAlignVertical: TextAlignVertical.center,
+                                        style: TextStyle(color: Colors.black),
+                                        textAlign: TextAlign.start,
+                                        cursorColor: Colors.black45,
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                                          border: InputBorder.none,
+                                          hintText: "",
+                                          hintStyle: TextStyle(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    optionsViewBuilder: (context, onSelected, options) {
+                                      return Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Material(
+                                          elevation: 4,
+                                          child: Container(
+                                            width: 130.w, // Fixed width for dropdown
+                                            child: ListView.builder(
+                                              padding: EdgeInsets.zero,
+                                              itemCount: options.length,
+                                              shrinkWrap: true,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                final option = options.elementAt(index);
+                                                return InkWell(
+                                                  onTap: () {
+                                                    onSelected(option);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                    child: Text(option),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              )
+
                             ],
                           ),
                         ),
@@ -1215,15 +1129,17 @@ class _VatadminState extends State<Vatadmin> {
                               await firestore.doc(id).set({
                                 id: id,
                                 'Date': date.text,
-                                'Invoice': invoice.text,
-                                'Account': account.text,
+                                'Invoice no': invoiceno.text,
+                                'Supplier': supplier.text,
+                                'Project': project.text,
                                 'Invoice Amount': invoiceamount.text,
                                 'Tax': tax.text,
                                 'Total Amount': totalamount.text
                               });
                               date.clear();
-                              invoice.clear();
-                              account.clear();
+                              invoiceno.clear();
+                              supplier.clear();
+                              project.clear();
                               invoiceamount.clear();
                               tax.clear();
                               totalamount.clear();
@@ -1382,78 +1298,84 @@ class _VatadminState extends State<Vatadmin> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 15.w),
-                  child: SizedBox(
-                    width: 110.w,
+                  child: SizedBox(width: 98.w,
                     child: Text(
                       "Date",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           color: Colors.black),
                     ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 25.w),
-                  child: SizedBox(
-                    width: 150.w,
+                  padding: EdgeInsets.only(left: 15.w),
+                  child: SizedBox(width: 135.w,
                     child: Text(
-                      "Invoice",
+                      "Invoice no",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
-                          color: Colors.black),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 50.w),
-                  child: SizedBox(
-                    width: 160.w,
-                    child: Text(
-                      "Account",
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           color: Colors.black),
                     ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 50.w),
-                  child: SizedBox(
-                    width: 160.w,
+                  child: SizedBox(width: 130.w,
                     child: Text(
-                      "Invoice Amount",
+                      "Supplier",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
-                          color: Colors.black),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 50.w),
-                  child: SizedBox(
-                    width: 90.w,
-                    child: Text(
-                      "Tax",
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           color: Colors.black),
                     ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 40.w),
-                  child: SizedBox(
-                    width: 150.w,
+                  child: SizedBox(width: 120.w,
+                    child: Text(
+                      "Project",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.sp,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 30.w),
+                  child: SizedBox(width: 130.w,
+                    child: Text(
+                      "Invoice Amount",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.sp,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 55.w),
+                  child: SizedBox(width: 70.w,
+                    child: Text(
+                      "Tax",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.sp,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 40.w),
+                  child: SizedBox(width: 120.w,
                     child: Text(
                       "Total Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 16.sp,
                           color: Colors.black),
                     ),
                   ),
@@ -1478,7 +1400,7 @@ class _VatadminState extends State<Vatadmin> {
                             padding: EdgeInsets.only(left: 20.w),
                             child: Center(
                               child: SizedBox(
-                                width: 110.w,
+                                width: 98.w,
                                 child: Text(
                                   data['Date'],
                                   style: GoogleFonts.poppins(
@@ -1490,12 +1412,12 @@ class _VatadminState extends State<Vatadmin> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 25.w),
+                            padding: EdgeInsets.only(left: 12.w),
                             child: Center(
                               child: SizedBox(
-                                width: 150.w,
+                                width: 135.w,
                                 child: Text(
-                                  data['Invoice'],
+                                  data['Invoice no'],
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -1505,12 +1427,12 @@ class _VatadminState extends State<Vatadmin> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 50.w),
+                            padding: EdgeInsets.only(left: 52.w),
                             child: Center(
                               child: SizedBox(
                                 width: 160.w,
                                 child: Text(
-                                  data['Account'],
+                                  data['Supplier'],
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
@@ -1520,7 +1442,22 @@ class _VatadminState extends State<Vatadmin> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 50.w),
+                            padding: EdgeInsets.only(left: 5.w),
+                            child: Center(
+                              child: SizedBox(
+                                width: 160.w,
+                                child: Text(
+                                  data['Project'],
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 12.sp,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 2.w),
                             child: Center(
                               child: SizedBox(
                                 width: 120.w,
@@ -1535,7 +1472,7 @@ class _VatadminState extends State<Vatadmin> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 90.w),
+                            padding: EdgeInsets.only(left: 60.w),
                             child: Center(
                               child: SizedBox(
                                 width: 90.w,
@@ -1550,7 +1487,7 @@ class _VatadminState extends State<Vatadmin> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 45.w),
+                            padding: EdgeInsets.only(left: 25 .w),
                             child: Center(
                               child: SizedBox(
                                 width: 120.w,
@@ -1571,7 +1508,7 @@ class _VatadminState extends State<Vatadmin> {
                                   final docid = data['id'];
                                   if (value == 'delete') {
                                     await FirebaseFirestore.instance
-                                        .collection('Vat Admin Expense')
+                                        .collection('Vat Purchase Reyah')
                                         .doc(docid)
                                         .delete();
 
@@ -1613,7 +1550,7 @@ class _VatadminState extends State<Vatadmin> {
             child: Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 570.w),
+                  padding: EdgeInsets.only(left: 720.w),
                   child: Container(
                     width: 120.w,
                     height: 35.h,
@@ -1633,7 +1570,7 @@ class _VatadminState extends State<Vatadmin> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 75.w),
+                  padding: EdgeInsets.only(left: 30.w),
                   child: Container(
                     width: 120.w,
                     height: 35.h,
@@ -1653,7 +1590,7 @@ class _VatadminState extends State<Vatadmin> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 55.w),
+                  padding: EdgeInsets.only(left: 20.w),
                   child: Container(
                     width: 120.w,
                     height: 35.h,

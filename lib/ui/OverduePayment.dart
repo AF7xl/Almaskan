@@ -61,163 +61,299 @@ Future<List<OverduePaymentModel>> Fetchoverduepayment() async {
 class _OverduepaymentState extends State<Overduepayment> {
   final currentdate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-  Future<void> generatePdf() async {
+  Future<void> generatePdf(String selectedCompany) async {
     final pdf = pw.Document();
-    final image = pw.MemoryImage(File('assets/header.png').readAsBytesSync());
-    final image1 = pw.MemoryImage(File('assets/logoin.png').readAsBytesSync());
+    final image = pw.MemoryImage(File('assets/Logo.png').readAsBytesSync());
+    final sign = pw.MemoryImage(File('assets/sign.png').readAsBytesSync());
     final amount = getTotalAmount();
+    pw.Widget buildCompanyDetails() {
+      if (selectedCompany == 'almaskan') {
+        return pw.Padding(
+            padding: pw.EdgeInsets.only(top: 40),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("AL MASKAN PLASTER & TILE CONT",
+                    style: pw.TextStyle(
+                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 3),
+                pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("United Arab Emirates",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("TRN 100342182100003",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("almaskandecor@gmail.com",
+                    style: pw.TextStyle(fontSize: 10)),
+              ],
+            ));
+      } else {
+        return pw.Padding(
+            padding: pw.EdgeInsets.only(top: 40),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
+                    style: pw.TextStyle(
+                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 3),
+                pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("United Arab Emirates",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("TRN 100342182100003",
+                    style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
+                pw.SizedBox(height: 3),
+                pw.Text("reyahalmaskan@gmail.com",
+                    style: pw.TextStyle(fontSize: 10)),
+              ],
+            ));
+      }
+    }
 
+    final formattedAmount =
+        NumberFormat('#,##0.00').format(double.tryParse(amount) ?? 0);
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) => [
-          pw.Image(image),
-          pw.SizedBox(height: 10),
-          pw.Padding(
-            padding: pw.EdgeInsets.only(left: 200),
-            child: pw.Text(
-              "Overdue Payment",
-              style: pw.TextStyle(
-                fontSize: 15,
-                fontWeight: pw.FontWeight.bold,
-                decoration: pw.TextDecoration.underline,
-              ),
-            ),
-          ),
-          pw.SizedBox(height: 20),
-          pw.Padding(
-            padding: pw.EdgeInsets.only(left: 400),
-            child: pw.Text("Date: $currentdate",
-                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.normal)),
-          ),
-          pw.SizedBox(height: 20),
-          pw.Text("Dear Sir/Madam",
-              style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 5),
-          pw.Text(
-            "We kindly request you to release the outstanding payments related to the below mentioned LPOs at your earliest convenience.",
-            style: pw.TextStyle(fontSize: 10),
-          ),
-          pw.SizedBox(height: 8),
+          pageFormat: PdfPageFormat.a4,
+          margin: pw.EdgeInsets.zero,
+          build: (pw.Context context) => [
+                pw.Padding(
+                    padding: const pw.EdgeInsets.all(22),
+                    child: pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Padding(
+                              padding: pw.EdgeInsets.only(top: 20),
+                              child: pw.Container(
+                                  width: 160,
+                                  height: 160,
+                                  child: pw.Image(image))),
 
-          // Table Header
-          pw.Container(
-            width: double.infinity,
-            height: 20,
-            color: PdfColors.red800,
-            child: pw.Row(
-              children: [
+                          buildCompanyDetails(), pw.SizedBox(height: 10),
+                          pw.Padding(
+                            padding: pw.EdgeInsets.only(left: 200),
+                            child: pw.Text(
+                              "Overdue Payment",
+                              style: pw.TextStyle(
+                                fontSize: 15,
+                                fontWeight: pw.FontWeight.bold,
+                                decoration: pw.TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          pw.SizedBox(height: 20),
+                          pw.Padding(
+                            padding: pw.EdgeInsets.only(left: 450),
+                            child: pw.Text("Date: $currentdate",
+                                style: pw.TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: pw.FontWeight.normal)),
+                          ),
+                          pw.SizedBox(height: 20),
+                          pw.Text("Dear Sir/Madam",
+                              style: pw.TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: pw.FontWeight.bold)),
+                          pw.SizedBox(height: 5),
+                          pw.Text(
+                            "We kindly request you to release the outstanding payments related to the below mentioned LPOs at your earliest convenience.",
+                            style: pw.TextStyle(fontSize: 10),
+                          ),
+                          pw.SizedBox(height: 8),
+
+                          // Table Header
+                          pw.Container(
+                            width: double.infinity,
+                            height: 20,
+                            color: selectedCompany == 'almaskan'
+                                ? PdfColors.black
+                                : PdfColor.fromInt(0xFFC62828),
+                            child: pw.Row(
+                              children: [
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 10),
+                                  child: pw.Text("Date", style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 31),
+                                  child: pw.Text("Customer Name",
+                                      style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 78),
+                                  child:
+                                      pw.Text("Invoice#", style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 13),
+                                  child: pw.Text("LPO#", style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 42),
+                                  child: pw.Text("Project Name",
+                                      style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 59),
+                                  child: pw.Text("Total Amount",
+                                      style: _headerStyle),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                          // Table Body
+                          ...filteredPayments.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final payment = entry.value;
+                            return pw.Container(
+                                width: double.infinity,
+                                height: 25,
+                                color: index % 2 == 0
+                                    ? PdfColors.grey100
+                                    : PdfColors.white,
+                                child: pw.Padding(
+                                    padding: pw.EdgeInsets.only(top: 5),
+                                    child: pw.Row(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 10),
+                                          child: pw.SizedBox(
+                                            width: 50,
+                                            height: 20,
+                                            child: pw.Text(payment.date,
+                                                style: pw.TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight:
+                                                      pw.FontWeight.normal,
+                                                  color: PdfColors.black,
+                                                )),
+                                          ),
+                                        ),
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 5),
+                                          child: pw.SizedBox(
+                                            width: 150,
+                                            height: 20,
+                                            child: pw.Text(payment.customerName,
+                                                style: pw.TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight:
+                                                      pw.FontWeight.normal,
+                                                  color: PdfColors.black,
+                                                )),
+                                          ),
+                                        ),
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 5),
+                                          child: pw.SizedBox(
+                                            width: 35,
+                                            height: 20,
+                                            child:
+                                                pw.Text(payment.invoiceNumber,
+                                                    style: pw.TextStyle(
+                                                      fontSize: 9,
+                                                      fontWeight:
+                                                          pw.FontWeight.normal,
+                                                      color: PdfColors.black,
+                                                    )),
+                                          ),
+                                        ),
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 15),
+                                          child: pw.SizedBox(
+                                            width: 65,
+                                            height: 20,
+                                            child: pw.Text(payment.lpoNumber,
+                                                style: pw.TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight:
+                                                      pw.FontWeight.normal,
+                                                  color: PdfColors.black,
+                                                )),
+                                          ),
+                                        ),
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 5),
+                                          child: pw.SizedBox(
+                                            width: 120,
+                                            height: 20,
+                                            child: pw.Text(payment.projectName,
+                                                style: pw.TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight:
+                                                      pw.FontWeight.normal,
+                                                  color: PdfColors.black,
+                                                )),
+                                          ),
+                                        ),
+                                        pw.Padding(
+                                          padding: pw.EdgeInsets.only(left: 5),
+                                          child: pw.SizedBox(
+                                            width: 80,
+                                            height: 20,
+                                            child: pw.Text(
+                                                NumberFormat('#,##0.00').format(
+                                                    double.tryParse(payment
+                                                            .totalAmount) ??
+                                                        0),
+                                                style: pw.TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight:
+                                                      pw.FontWeight.normal,
+                                                  color: PdfColors.black,
+                                                )),
+                                          ),
+                                        ),
+                                      ],
+                                    )));
+                          }).toList(),
+
+                          pw.Divider(color: PdfColors.black, indent: 385),
+                          pw.SizedBox(height: 5),
+                          pw.Padding(
+                            padding: pw.EdgeInsets.only(left: 385),
+                            child: pw.Container(
+                                width: 200,
+                                height: 25,
+                                color: PdfColors.grey300,
+                                child: pw.Padding(padding: pw.EdgeInsets.only(top: 5,left: 3),child: pw.Text(
+                                    "Total Amount : ${formattedAmount}AED ",
+                                    style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold)))),
+                          ),
+                        ])),
+                pw.SizedBox(height: 20),
+                pw.Container(width: 160, height: 160, child: pw.Image(sign)),
                 pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 5),
-                  child: pw.Text("Date", style: _headerStyle),
-                ),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 35),
-                  child: pw.Text("Customer Name", style: _headerStyle),
-                ),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
-                  child: pw.Text("Invoice#", style: _headerStyle),
-                ),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 30),
-                  child: pw.Text("LPO#", style: _headerStyle),
-                ),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 30),
-                  child: pw.Text("Project Name", style: _headerStyle),
-                ),
-                pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
-                  child: pw.Text("Total Amount", style: _headerStyle),
-                ),
+                    padding: pw.EdgeInsets.only(left: 22),
+                    child: pw.Text("Authorized Signature",
+                        style: pw.TextStyle(
+                            fontSize: 10, fontWeight: pw.FontWeight.normal)))
               ],
-            ),
-          ),
-
-          // Table Body
-          ...filteredPayments.asMap().entries.map((entry) {
-            final index = entry.key;
-            final payment = entry.value;
-            return pw.Container(
-              width: double.infinity,
-              height: 25,
-              color: index % 2 == 0 ? PdfColors.grey100 : PdfColors.white,
-              child: pw.Padding(padding: pw.EdgeInsets.only(top: 5),child: pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                children: [
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 5),
-                    child: pw.SizedBox(
-                      width: 50,
-                      child: pw.Text(payment.date, style: _rowStyle),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 8),
-                    child: pw.SizedBox(
-                      width: 110,
-                      child: pw.Text(payment.customerName, style: _rowStyle),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 12),
-                    child: pw.SizedBox(
-                      width: 35,
-                      child: pw.Text(payment.invoiceNumber, style: _rowStyle),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 28),
-                    child: pw.SizedBox(
-                      width: 40,
-                      child: pw.Text(payment.lpoNumber, style: _rowStyle),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 20),
-                    child: pw.SizedBox(
-                      width: 90,
-                      child: pw.Text(payment.projectName, style: _rowStyle),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: pw.EdgeInsets.only(left: 20),
-                    child: pw.SizedBox(
-                      width: 50,
-                      child: pw.Text(payment.totalAmount, style: _rowStyle),
-                    ),
-                  ),
-                ],
-              ))
+          footer: (pw.Context context) {
+            return pw.Column(
+              children: [
+                pw.Divider(
+                    thickness: 1.5,
+                    color: PdfColors.grey,
+                    endIndent: 22,
+                    indent: 22),
+                pw.SizedBox(height: 40)
+              ],
             );
-          }).toList(),
-
-          pw.Divider(color: PdfColors.black, indent: 350),
-          pw.SizedBox(height: 10),
-          pw.Padding(
-            padding: pw.EdgeInsets.only(left: 350),
-            child: pw.Text("Total Amount :   $amount",
-                style: pw.TextStyle(fontSize: 9)),
-          ),
-          pw.SizedBox(height: 35),
-          pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(
-                "Thank You & Regards\n\nYours Faithfully,\n\nAl Maskan",
-                style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
-              ),
-              pw.Container(
-                width: 90,
-                height: 90,
-                child: pw.Image(image1, fit: pw.BoxFit.contain),
-              ),
-            ],
-          ),
-        ],
-      ),
+          }),
     );
 
     await Printing.layoutPdf(onLayout: (format) => pdf.save());
@@ -229,13 +365,6 @@ class _OverduepaymentState extends State<Overduepayment> {
     fontSize: 10,
     color: PdfColors.white,
   );
-
-  final _rowStyle = pw.TextStyle(
-    fontSize: 8,
-    fontWeight: pw.FontWeight.normal,
-    color: PdfColors.black,
-  );
-
 
   List<OverduePaymentModel> allPayments = [];
   List<OverduePaymentModel> filteredPayments = [];
@@ -258,7 +387,8 @@ class _OverduepaymentState extends State<Overduepayment> {
       filteredPayments = allPayments.where((payment) {
         return payment.customerName.toLowerCase().contains(query) ||
             payment.invoiceNumber.toLowerCase().contains(query) ||
-            payment.lpoNumber.toLowerCase().contains(query);
+            payment.lpoNumber.toLowerCase().contains(query) ||
+            payment.projectName.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -280,7 +410,8 @@ class _OverduepaymentState extends State<Overduepayment> {
       filteredPayments = updatedList.where((payment) {
         return payment.customerName.toLowerCase().contains(query) ||
             payment.invoiceNumber.toLowerCase().contains(query) ||
-            payment.lpoNumber.toLowerCase().contains(query);
+            payment.lpoNumber.toLowerCase().contains(query) ||
+            payment.projectName.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -390,13 +521,76 @@ class _OverduepaymentState extends State<Overduepayment> {
                 Padding(
                   padding: EdgeInsets.only(top: 30.h, left: 20.w),
                   child: InkWell(
-                      onTap: () {
-                        generatePdf();
-                      },
-                      child: Text(
-                        "Generate PDF",
-                        style: TextStyle(color: Colors.red),
-                      )),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(backgroundColor: Colors.white,
+                            title: Text("Choose Company"),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    generatePdf("almaskan");
+                                  },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white, // A rich violet color
+                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 6,
+
+                              ),
+                                  child:  Text(
+                                    "Al maskan",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    generatePdf("reyah_almaskan");
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white, // A rich violet color
+                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 6,
+
+                                  ),
+                                  child: Text(
+                                    "Reyah Almaskan",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w300,
+                                      color: Colors.black,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Text(
+                      "Generate PDF",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 530.w),
@@ -444,62 +638,80 @@ class _OverduepaymentState extends State<Overduepayment> {
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w),
-                  child: Text(
-                    "Date",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  child: SizedBox(
+                    width: 125.w,
+                    child: Text(
+                      "Date",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 90.w),
-                  child: Text(
-                    "Customer Name",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 10.w),
+                  child: SizedBox(
+                    width: 220.w,
+                    child: Text(
+                      "Customer Name",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 160.w),
-                  child: Text(
-                    "Invoice#",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 75.w),
+                  child: SizedBox(
+                    width: 100.w,
+                    child: Text(
+                      "Invoice#",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 58.w),
+                  child: SizedBox(
+                    width: 60.w,
+                    child: Text(
+                      "LPO#",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 60.w),
-                  child: Text(
-                    "LPO#",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  child: SizedBox(
+                    width: 150.w,
+                    child: Text(
+                      "Project Name",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(left: 70.w),
-                  child: Text(
-                    "Project Name",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 80.w),
-                  child: Text(
-                    "Total Amount",
-                    style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18.sp,
-                        color: Colors.black),
+                  padding: EdgeInsets.only(left: 60.w),
+                  child: SizedBox(
+                    width: 130.w,
+                    child: Text(
+                      "Total Amount",
+                      style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 18.sp,
+                          color: Colors.black),
+                    ),
                   ),
                 )
               ],
@@ -549,7 +761,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 40.w),
+                            padding: EdgeInsets.only(left: 10.w),
                             child: Center(
                               child: SizedBox(
                                 width: 60.w,
@@ -564,7 +776,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 70.w),
+                            padding: EdgeInsets.only(left: 80.w),
                             child: Center(
                               child: SizedBox(
                                 width: 90.w,
@@ -579,7 +791,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 45.w),
+                            padding: EdgeInsets.only(left: 30.w),
                             child: Center(
                               child: SizedBox(
                                 width: 210.w,
@@ -594,7 +806,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 40.w),
+                            padding: EdgeInsets.only(left: 5.w),
                             child: Center(
                               child: SizedBox(
                                 width: 90.w,

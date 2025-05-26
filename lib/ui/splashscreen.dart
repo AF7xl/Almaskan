@@ -31,7 +31,7 @@ class _splashscreenState extends State<splashscreen>
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(backgroundColor: Colors.white,
       body: Column(
         children: [
           Padding(
