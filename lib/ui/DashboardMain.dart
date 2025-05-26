@@ -288,7 +288,7 @@ class _DashboardState extends State<Dashboard> {
                             shrinkWrap: true,
                             padding: EdgeInsets.only(
                                 top: 25.h, left: 20.w, right: 20.w),
-                            childAspectRatio: 378.w / 202.h,
+                            childAspectRatio: 378.w / 250.h,
                             physics: NeverScrollableScrollPhysics(),
                             children: List.generate(snapshot.data!.docs.length,
                                 (index) {

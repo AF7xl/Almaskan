@@ -704,12 +704,12 @@ class _OverduepaymentState extends State<Overduepayment> {
                 Padding(
                   padding: EdgeInsets.only(left: 60.w),
                   child: SizedBox(
-                    width: 130.w,
+                    width: 170.w,
                     child: Text(
                       "Total Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
-                          fontSize: 18.sp,
+                          fontSize: 15.sp,
                           color: Colors.black),
                     ),
                   ),

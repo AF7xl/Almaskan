@@ -1424,7 +1424,7 @@ class _VatadminState extends State<Vatadmin> {
                   child: SizedBox(
                     width: 160.w,
                     child: Text(
-                      "Invoice Amount",
+                      "Inv Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
@@ -1450,7 +1450,7 @@ class _VatadminState extends State<Vatadmin> {
                   child: SizedBox(
                     width: 150.w,
                     child: Text(
-                      "Total Amount",
+                      "Tot Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,

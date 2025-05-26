@@ -915,9 +915,11 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         child: TextFormField(
                           focusNode: datedueFocusNode,
                           controller: datedue,
-                          readOnly: true, // Disable manual typing
+                          readOnly: true,
+                          // Disable manual typing
                           onTap: () async {
-                            FocusScope.of(context).requestFocus(FocusNode()); // Close keyboard
+                            FocusScope.of(context)
+                                .requestFocus(FocusNode()); // Close keyboard
                             DateTime? pickedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -926,9 +928,11 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             );
 
                             if (pickedDate != null) {
-                              String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                              String formattedDate =
+                                  DateFormat('dd-MM-yyyy').format(pickedDate);
                               datedue.text = formattedDate;
-                              FocusScope.of(context).requestFocus(lponumberduefocusnode);
+                              FocusScope.of(context)
+                                  .requestFocus(lponumberduefocusnode);
                             }
                           },
                           textInputAction: TextInputAction.next,
@@ -937,16 +941,18 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           cursorHeight: 20.h,
                           cursorWidth: 0.5,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black, fontSize: 12.sp),
+                          style:
+                              TextStyle(color: Colors.black, fontSize: 12.sp),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(top: 2.h, left: 5.w, bottom: 18.h),
+                            contentPadding: EdgeInsets.only(
+                                top: 2.h, left: 5.w, bottom: 18.h),
                             border: InputBorder.none,
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
                           ),
-                        )
-                        ,
+                        ),
                       ),
                     ),
                   )
@@ -1136,7 +1142,6 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             )
@@ -1287,7 +1292,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           locale: 'en_AE', symbol: 'AED ', decimalDigits: 2);
                       overduetotaltext = formatter.format(snapshot.data);
                     }
-                    return SingleChildScrollView(
+                    return LayoutBuilder(builder: (context, constraints){return SingleChildScrollView(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -1310,183 +1315,153 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   width: 550.w,
                                   height: 200.h,
                                   decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.r),
-                                      border: Border.all(
-                                          color: Colors.grey, width: 0.5)),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    border: Border.all(color: Colors.grey, width: 0.5),
+                                  ),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
+                                      // Top Header with "Total Receivables" and Dropdown
                                       Container(
-                                          width: 550.w,
-                                          height: 60.h,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(8.r),
-                                                topRight: Radius.circular(8.r)),
-                                            color: Colors.grey[300],
+                                        width: 550.w,
+                                        height: 60.h,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(8.r),
+                                            topRight: Radius.circular(8.r),
                                           ),
-                                          child: Row(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 10.w),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    tooglecontainer1();
-                                                  },
-                                                  child: Text(
-                                                    "Total Recievables",
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 20.sp,
-                                                        color: Colors.black),
+                                          color: Colors.grey[300],
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(left: 10.w),
+                                              child: InkWell(
+                                                onTap: tooglecontainer1,
+                                                child: Text(
+                                                  "Total Receivables",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 20.sp,
+                                                    color: Colors.black,
                                                   ),
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 185.w),
-                                                child: Expanded(
-                                                  child: DropdownButton<String>(
-                                                      dropdownColor:
-                                                          Colors.white,
-                                                      hint: Text(
-                                                        "ADD PAYMENT",
-                                                        style: GoogleFonts
-                                                            .workSans(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                fontSize:
-                                                                    15.sp),
+                                            ),
+                                            Spacer(),
+                                            Padding(
+                                              padding: EdgeInsets.only(right: 10.w),
+                                              child: DropdownButton<String>(
+                                                dropdownColor: Colors.white,
+                                                hint: Text(
+                                                  "ADD PAYMENT",
+                                                  style: GoogleFonts.workSans(
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 15.sp,
+                                                  ),
+                                                ),
+                                                icon: Icon(
+                                                  Icons.add_circle_rounded,
+                                                  size: 20.sp,
+                                                  color: Colors.blue,
+                                                ),
+                                                value: selectedcontainer,
+                                                items: [
+                                                  DropdownMenuItem(
+                                                    value: "Container 1",
+                                                    child: Text("New Payment"),
+                                                  ),
+                                                  DropdownMenuItem(
+                                                    value: "Container 2",
+                                                    child: Text("OVERDUE"),
+                                                  ),
+                                                ],
+                                                onChanged: (value) {
+                                                  setState(() {
+                                                    selectedcontainer = value!;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // Data Rows: CURRENT and OVERDUE
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            // Current Column
+                                            Expanded(
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 20.w, top: 25.h),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      "CURRENT",
+                                                      style: GoogleFonts.workSans(
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 15.sp,
+                                                        color: Colors.lightBlue,
                                                       ),
-                                                      icon: Icon(
-                                                        Icons
-                                                            .add_circle_rounded,
-                                                        size: 15.sp,
-                                                        color: Colors.blue,
+                                                    ),
+                                                    SizedBox(height: 5.h),
+                                                    Text(
+                                                      totalText,
+                                                      style: GoogleFonts.workSans(
+                                                        fontSize: 18.sp,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Colors.black,
                                                       ),
-                                                      value: selectedcontainer,
-                                                      items: [
-                                                        DropdownMenuItem(
-                                                          child: Text(
-                                                            "New Payment",
-                                                            style: TextStyle(),
-                                                          ),
-                                                          value: "Container 1",
-                                                        ),
-                                                        DropdownMenuItem(
-                                                          child:
-                                                              Text("OVERDUE"),
-                                                          value: "Container 2",
-                                                        ),
-                                                      ],
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          selectedcontainer =
-                                                              value!;
-                                                        });
-                                                      }),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                            ],
-                                          )),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 20.h, top: 25.h),
-                                                  child: Text(
-                                                    "CURRENT",
-                                                    style: GoogleFonts.workSans(
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        fontSize: 15.sp,
-                                                        color:
-                                                            Colors.lightBlue),
-                                                  ),
-                                                ),
-                                                Row(
+                                            ),
+
+                                            // Divider
+                                            Container(
+                                              width: 1.w,
+                                              height: 100.h,
+                                              color: Colors.grey,
+                                            ),
+
+                                            // Overdue Column
+                                            Expanded(
+                                              child: Padding(
+                                                padding: EdgeInsets.only(left: 20.w, top: 25.h),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 20.w, top: 5),
-                                                      child: Text(
-                                                        totalText,
-                                                        style: GoogleFonts
-                                                            .workSans(
-                                                                fontSize: 18.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Colors
-                                                                    .black),
+                                                    Text(
+                                                      "OVERDUE",
+                                                      style: GoogleFonts.workSans(
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 15.sp,
+                                                        color: Colors.orange,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5.h),
+                                                    Text(
+                                                      overduetotaltext,
+                                                      style: GoogleFonts.workSans(
+                                                        fontSize: 18.sp,
+                                                        fontWeight: FontWeight.w500,
+                                                        color: Colors.black,
                                                       ),
                                                     ),
                                                   ],
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                left: 50.w, top: 15.h),
-                                            child: Container(
-                                                width: 1.w,
-                                                height: 100.w,
-                                                color: Colors.grey),
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Padding(
-                                                  padding: EdgeInsets.only(
-                                                      left: 20.h, top: 25.h),
-                                                  child: Text(
-                                                    "OVERDUE",
-                                                    style: GoogleFonts.workSans(
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        fontSize: 15.sp,
-                                                        color: Colors.orange),
-                                                  ),
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 20.w, top: 5),
-                                                      child: Text(
-                                                        overduetotaltext,
-                                                        style: GoogleFonts
-                                                            .workSans(
-                                                                fontSize: 18.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Colors
-                                                                    .black),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
+                                )
+                                ,
                               ],
                             ),
                           ),
@@ -1509,7 +1484,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   value: selectedYear,
                                   items: availableYears
                                       .map((year) => DropdownMenuItem(
-                                          value: year, child: Text('$year')))
+                                      value: year, child: Text('$year')))
                                       .toList(),
                                   onChanged: (year) {
                                     if (year != null) {
@@ -1530,10 +1505,10 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   DropdownMenuItem(
                                       value: null, child: Text("All Months")),
                                   ...months.map((m) => DropdownMenuItem(
-                                        value: m,
-                                        child: Text(DateFormat.MMMM()
-                                            .format(DateTime(0, m))),
-                                      ))
+                                    value: m,
+                                    child: Text(DateFormat.MMMM()
+                                        .format(DateTime(0, m))),
+                                  ))
                                 ],
                                 onChanged: (month) {
                                   setState(() {
@@ -1556,12 +1531,11 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   if (selectedMonth == null)
                                     Padding(
                                       padding: EdgeInsets.only(top: 15.h),
-                                      child: Container(
-                                          width: 745.w,
-                                          height: 300.h,
-                                          child: Expanded(
-                                              child:
-                                                  buildChart(monthlyFinance))),
+                                      child: SizedBox(
+                                        width: 745.w,
+                                        height: 300.h,
+                                        child: buildChart(monthlyFinance),
+                                      ),
                                     )
                                   else
                                     Container(
@@ -1624,8 +1598,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                       label: selectedMonth == null
                                           ? 'Overall Summary'
                                           : DateFormat.MMMM().format(
-                                                  DateTime(0, selectedMonth!)) +
-                                              ' Summary',
+                                          DateTime(0, selectedMonth!)) +
+                                          ' Summary',
                                     ),
                                   )
                                 ],
@@ -1634,7 +1608,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           ),
                         ],
                       ),
-                    );
+                    );});
                   });
             }),
         if (selectedcontainer == "Container 1")

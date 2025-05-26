@@ -1669,7 +1669,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   padding: EdgeInsets.only(left: 30.w),
                   child: SizedBox(width: 130.w,
                     child: Text(
-                      "Invoice Amount",
+                      "Inv Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
@@ -1693,7 +1693,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   padding: EdgeInsets.only(left: 40.w),
                   child: SizedBox(width: 120.w,
                     child: Text(
-                      "Total Amount",
+                      "Tot Amount",
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
