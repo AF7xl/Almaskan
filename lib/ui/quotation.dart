@@ -6,7 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:number_to_words/number_to_words.dart';
+
 import 'Invoice.dart';
 import 'Quotationpdf.dart';
 
@@ -79,8 +79,15 @@ class _Quotation2State extends State<Quotation2> {
 
   List<TextEditingController> headerControllers = [];
   List<Map<String, dynamic>> formStructure = [];
+  List<bool> isAmountManuallyEdited = [];
+
   bool isDiscountEnabled = false;
+  bool isVatEnabled = false;
   String selectedCompany = 'Reyah Al Maskan';
+
+  double parseSafe(String input) {
+    return double.tryParse(input.replaceAll(',', '').trim()) ?? 0.0;
+  }
 
   //function to add header text
   void addNewHeader() {
@@ -121,6 +128,17 @@ class _Quotation2State extends State<Quotation2> {
     }
   }
 
+  Future<bool> doesQtnNoExist(String qtnNo) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection("Clients")
+        .doc(widget.id)
+        .collection("quotation")
+        .where('qtn no', isEqualTo: qtnNo)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
   void fetchdescSuggestions() async {
     final docSnapshot = await desfirestore.get();
 
@@ -130,6 +148,87 @@ class _Quotation2State extends State<Quotation2> {
       setState(() {}); // Trigger rebuild so Autocomplete sees updates
     }
   }
+
+  double roundDecimalOnly(double value) {
+    final intPart = value.floor();
+    final decimal = value - intPart;
+
+    if (decimal == 0.0) {
+      return value; // No change if already whole number
+    } else if (decimal >= 0.5) {
+      return intPart + 1.0; // Round up
+    } else {
+      return intPart.toDouble(); // Round down
+    }
+  }
+
+  void insertRowAfter(int formIndex) {
+    setState(() {
+      // Create controllers for new row
+      final rateController = TextEditingController();
+      final qtyController = TextEditingController();
+      final amountController = TextEditingController();
+      final sn = TextEditingController();
+      final desc = TextEditingController();
+      final uni = TextEditingController();
+
+      // Find the next row index relative to formStructure
+      // (needed to insert controllers at correct place)
+      int insertAtRowIndex = 0;
+      for (var j = 0; j <= formIndex; j++) {
+        if (formStructure[j]['type'] == 'row') {
+          insertAtRowIndex++;
+        }
+      }
+
+      // Insert controllers at the correct place
+      rateControllers.insert(insertAtRowIndex, rateController);
+      qtyControllers.insert(insertAtRowIndex, qtyController);
+      amountControllers.insert(insertAtRowIndex, amountController);
+      sno.insert(insertAtRowIndex, sn);
+      description.insert(insertAtRowIndex, desc);
+      unit.insert(insertAtRowIndex, uni);
+      isAmountManuallyEdited.insert(insertAtRowIndex, false);
+
+      // Add listeners
+      rateController.addListener(() => calculateAmount(insertAtRowIndex));
+      qtyController.addListener(() => calculateAmount(insertAtRowIndex));
+
+      // Insert into formStructure
+      formStructure.insert(formIndex + 1, {
+        'type': 'row',
+        'index': insertAtRowIndex,
+      });
+
+      // Reindex all rows in formStructure
+      int rowCounter = 0;
+      for (var item in formStructure) {
+        if (item['type'] == 'row') {
+          item['index'] = rowCounter;
+          rowCounter++;
+        }
+      }
+
+      rebuildRows();
+    });
+  }
+
+
+  void insertHeaderAfter(int formIndex) {
+    setState(() {
+      final controller = TextEditingController();
+      headerControllers.add(controller);
+
+      formStructure.insert(formIndex + 1, {
+        'type': 'header',
+        'controller': controller,
+      });
+
+      rebuildRows();
+    });
+  }
+
+
 
   void fetchunitSuggestions() async {
     final docSnapshot = await unitfirestore.get();
@@ -155,6 +254,8 @@ class _Quotation2State extends State<Quotation2> {
       rateControllers.add(rateController);
       qtyControllers.add(qtyController);
       amountControllers.add(amountController);
+      isAmountManuallyEdited.add(false);
+
       sno.add(sn);
 
       description.add(desc);
@@ -178,6 +279,7 @@ class _Quotation2State extends State<Quotation2> {
       rateControllers.add(rateController);
       qtyControllers.add(qtyController);
       amountControllers.add(amountController);
+      isAmountManuallyEdited.add(false);
 
       // Add listeners to calculate amount
       rateController.addListener(() => calculateAmount(0));
@@ -186,26 +288,26 @@ class _Quotation2State extends State<Quotation2> {
   }
 
   void calculateAmount(int index) {
-    final rateText = rateControllers[index].text;
-    final qtyText = qtyControllers[index].text;
-
-    if (rateText.isNotEmpty && qtyText.isNotEmpty) {
-      final rate = double.tryParse(rateText) ?? 0.0;
-      final qty = double.tryParse(qtyText) ?? 0.0;
+    // Only recalculate if not manually overridden
+    if (index < isAmountManuallyEdited.length &&
+        !isAmountManuallyEdited[index]) {
+      final rate = parseSafe(rateControllers[index].text);
+      final qty = parseSafe(qtyControllers[index].text);
       final amount = rate * qty;
+
       setState(() {
-        // Update the corresponding amount controller for the row
         amountControllers[index].text = amount.toStringAsFixed(2);
       });
 
-      calculateSubtotal(); // Recalculate subtotal after updating the amount
+      calculateSubtotal();
     }
   }
 
   void calculateSubtotal() {
     List<double> amounts = amountControllers
-        .map((controller) => double.tryParse(controller.text) ?? 0.0)
+        .map((controller) => parseSafe(controller.text))
         .toList();
+
     print(amounts);
     setState(() {
       subtotal = amounts.fold(0, (sum, item) => sum + item);
@@ -214,29 +316,104 @@ class _Quotation2State extends State<Quotation2> {
   }
 
   void calculateTotal() {
+    discount = parseSafe(discountcontroller.text);
     taxableAmount = subtotal - discount;
-    vat = taxableAmount * 0.05;
-    totalAmount = taxableAmount + vat;
 
-    // Convert amount to words and update the controller
-    final totalInt = totalAmount.floor(); // Dirhams
-    final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
-
-    String amountInWords =
-        NumberToWord().convert('en-in', totalInt) + 'dirhams';
-
-    if (totalFils > 0) {
-      amountInWords +=
-          ' and ${NumberToWord().convert('en-in', totalFils)} fils';
+    if (isVatEnabled) {
+      vat = taxableAmount * 0.05;
+    } else {
+      vat = 0.0;
     }
 
-    amountInWords += ' only';
+    totalAmount = roundDecimalOnly(taxableAmount + vat);
 
-    // Capitalize first letter
-    totalamountinname.text =
-        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+
+    String amountInWords = convertNumberToWords(totalAmount);
+    totalamountinname.text = amountInWords;
 
     setState(() {});
+  }
+
+  String convertNumberToWords(double amount) {
+    final int dirhams = amount.floor();
+    final int fils = ((amount - dirhams) * 100).round();
+
+    String dirhamsWords = _convertIntegerToWords(dirhams);
+    String filsWords = fils > 0 ? _convertIntegerToWords(fils) : '';
+
+    String result = '$dirhamsWords dirhams';
+    if (fils > 0) {
+      result += ' and $filsWords fils';
+    }
+    result += ' only.';
+
+    // Capitalize the first letter
+    return result[0].toUpperCase() + result.substring(1).toLowerCase();
+  }
+
+  String _convertIntegerToWords(int number) {
+    if (number == 0) return 'zero';
+
+    final List<String> ones = [
+      '',
+      'one',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'ten',
+      'eleven',
+      'twelve',
+      'thirteen',
+      'fourteen',
+      'fifteen',
+      'sixteen',
+      'seventeen',
+      'eighteen',
+      'nineteen'
+    ];
+
+    final List<String> tens = [
+      '',
+      '',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety'
+    ];
+
+    String words = '';
+
+    if (number >= 1000000) {
+      words += '${_convertIntegerToWords(number ~/ 1000000)} million ';
+      number %= 1000000;
+    }
+    if (number >= 1000) {
+      words += '${_convertIntegerToWords(number ~/ 1000)} thousand ';
+      number %= 1000;
+    }
+    if (number >= 100) {
+      words += '${_convertIntegerToWords(number ~/ 100)} hundred ';
+      number %= 100;
+    }
+    if (number >= 20) {
+      words += tens[number ~/ 10];
+      if (number % 10 != 0) {
+        words += '-${ones[number % 10]}';
+      }
+    } else if (number > 0) {
+      words += ones[number];
+    }
+
+    return words.trim();
   }
 
   void rebuildRows() {
@@ -270,9 +447,9 @@ class _Quotation2State extends State<Quotation2> {
                             color: Colors.black,
                           ),
                           decoration: InputDecoration.collapsed(
-                              hintText: ' Header Title',
-                              hintStyle:
-                                  TextStyle(fontWeight: FontWeight.w300)),
+                            hintText: ' Header Title',
+                            hintStyle: TextStyle(fontWeight: FontWeight.w300),
+                          ),
                         ),
                       ),
                     ),
@@ -287,11 +464,32 @@ class _Quotation2State extends State<Quotation2> {
                     });
                   },
                 ),
+                IconButton(
+                  icon: Icon(Icons.add_circle_outline, color: Colors.green),
+                  onPressed: () async {
+                    final choice = await showMenu<String>(
+                      context: context,
+                      position: RelativeRect.fromLTRB(100, 100, 0, 0),
+                      items: [
+                        PopupMenuItem(value: 'row', child: Text('Add Row')),
+                        PopupMenuItem(value: 'header', child: Text('Add Header')),
+                      ],
+                    );
+
+                    if (choice == 'row') {
+                      insertRowAfter(i); // use header’s formStructure index
+                    } else if (choice == 'header') {
+                      insertHeaderAfter(i);
+                    }
+                  },
+                ),
+
               ],
             ),
           ),
         );
-      } else if (item['type'] == 'row') {
+      }
+      else if (item['type'] == 'row') {
         final index = item['index'] as int;
         rows.add(buildRow(index));
       }
@@ -599,6 +797,9 @@ class _Quotation2State extends State<Quotation2> {
                 readOnly: false,
                 controller: amountControllers[index],
                 onChanged: (value) {
+                  if (index < isAmountManuallyEdited.length) {
+                    isAmountManuallyEdited[index] = true;
+                  }
                   calculateSubtotal();
                 },
                 maxLines: null,
@@ -649,6 +850,34 @@ class _Quotation2State extends State<Quotation2> {
               });
             },
           ),
+          IconButton(
+            icon: Icon(Icons.add_circle_outline, color: Colors.green),
+            onPressed: () async {
+              final choice = await showMenu<String>(
+                context: context,
+                position: RelativeRect.fromLTRB(100, 100, 0, 0),
+                items: [
+                  PopupMenuItem(value: 'row', child: Text('Add Row')),
+                  PopupMenuItem(value: 'header', child: Text('Add Header')),
+                ],
+              );
+
+              final formIndex = formStructure.indexWhere(
+                    (item) => item['type'] == 'row' && item['index'] == index,
+              );
+
+              if (formIndex == -1) return;
+
+              if (choice == 'row') {
+                insertRowAfter(formIndex);
+              } else if (choice == 'header') {
+                insertHeaderAfter(formIndex);
+              }
+            },
+          ),
+
+
+
         ],
       ),
     );
@@ -910,7 +1139,7 @@ class _Quotation2State extends State<Quotation2> {
 
                             if (pickedDate != null) {
                               String formattedDate =
-                                  DateFormat('dMMMyyyy').format(pickedDate);
+                                  DateFormat('d/MMM/yyyy').format(pickedDate);
                               date.text = formattedDate;
                             }
                           },
@@ -1790,34 +2019,49 @@ class _Quotation2State extends State<Quotation2> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 770.w, top: 10.h),
-                    child: Text(
-                      "Vat 5%",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black),
+                    padding: EdgeInsets.only(left: 720.w, top: 10.h),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: isVatEnabled,
+                          onChanged: (value) {
+                            setState(() {
+                              isVatEnabled = value!;
+                              calculateTotal(); // Recalculate if VAT is toggled
+                            });
+                          },
+                        ),
+                        Text(
+                          "Vat 5%",
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 7.w),
-                    child: Container(
-                        width: 200.w,
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
-                          child: Text(
-                            "\$ ${vat.toStringAsFixed(2)}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18.sp,
-                                color: Colors.black),
-                          ),
-                        )),
-                  )
+                  if (isVatEnabled)
+                    Padding(
+                      padding: EdgeInsets.only(left: 30.w),
+                      child: Container(
+                          width: 200.w,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.r)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                            child: Text(
+                              "\$ ${vat.toStringAsFixed(2)}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18.sp,
+                                  color: Colors.black),
+                            ),
+                          )),
+                    )
                 ],
               ),
             ),
@@ -2206,6 +2450,15 @@ class _Quotation2State extends State<Quotation2> {
                                             item['rate']?.toString() ?? '';
                                         amountControllers[index].text =
                                             item['amount']?.toString() ?? '';
+                                        isAmountManuallyEdited.add(
+                                            (item['rate'] == null ||
+                                                    item['rate']
+                                                        .toString()
+                                                        .isEmpty) &&
+                                                (item['quantity'] == null ||
+                                                    item['quantity']
+                                                        .toString()
+                                                        .isEmpty));
                                       }
                                     }
                                   }
@@ -2213,6 +2466,8 @@ class _Quotation2State extends State<Quotation2> {
 
                                 // Force rebuild of rows
                                 rebuildRows();
+                                calculateSubtotal();
+                                calculateTotal();
                               } catch (e) {
                                 print('Error loading quotation: $e');
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -2229,16 +2484,48 @@ class _Quotation2State extends State<Quotation2> {
                           child: InkWell(
                             onTap: () async {
                               collectFormData();
+                              final qtnNo = qtnno.text.trim();
+
+                              if (qtnNo.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("QTN No cannot be empty")),
+                                );
+                                return;
+                              }
+
+                              final exists = await doesQtnNoExist(qtnNo);
+
+                              if (exists) {
+                                // Show warning
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Duplicate QTN No"),
+                                    content: Text(
+                                        "A quote with QTN No '$qtnNo' already exists."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text("OK"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                return; // Don't continue
+                              }
+
                               final id = DateTime.now()
                                   .microsecondsSinceEpoch
                                   .toString();
+
                               try {
                                 await quotationRef.doc(id).set({
                                   'id': id,
                                   'project': project.text,
                                   'kindatt': kindatt.text,
                                   'date': date.text,
-                                  'qtn no': qtnno.text,
+                                  'qtn no': qtnNo,
                                   'note before quote': nbq.text,
                                   'lineItems': lineItems,
                                   'subtotal': subtotal.toString(),
@@ -2252,34 +2539,17 @@ class _Quotation2State extends State<Quotation2> {
                                   'termsandcondition':
                                       termsandconditioncontroller.text
                                 });
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Quote Saved'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.green,
-                                    behavior: SnackBarBehavior.floating,
-                                    // optional for a floating snackbar
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    margin: EdgeInsets.all(
-                                        15), // only works with floating behavior
-                                  ),
+                                      content: Text("Quote Saved"),
+                                      backgroundColor: Colors.green),
                                 );
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('Failed to Save ${e}'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.green,
-                                    behavior: SnackBarBehavior.floating,
-                                    // optional for a floating snackbar
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    margin: EdgeInsets.all(
-                                        15), // only works with floating behavior
-                                  ),
+                                      content: Text("Failed to Save: $e"),
+                                      backgroundColor: Colors.red),
                                 );
                               }
                             },

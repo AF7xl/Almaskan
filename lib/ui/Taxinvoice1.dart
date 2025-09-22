@@ -75,24 +75,119 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
     }
   }
 
+  Future<bool> doesINVNoExist(String invoiceno) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection("Clients")
+        .doc(widget.id)
+        .collection("Taxinvoice")
+        .where('inv no', isEqualTo: invoiceno)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
+  double roundDecimalOnly(double value) {
+    final intPart = value.floor();
+    final decimal = value - intPart;
+
+    if (decimal == 0.0) {
+      return value; // No change if already whole number
+    } else if (decimal >= 0.5) {
+      return intPart + 1.0; // Round up
+    } else {
+      return intPart.toDouble(); // Round down
+    }
+  }
+
   void calculatetotal() {
     vat = advance * 0.05;
-    total = advance + vat;
+    total = roundDecimalOnly(advance + vat);
 
-    final totalInt = total.floor();
-    final totalFils = ((total - totalInt) * 100).round();
+    String amountInWords = convertNumberToWords(total);
+    totalamountinname.text = amountInWords;
+    setState(() {});
+  }
 
-    String amountInWords =
-        NumberToWord().convert('en-in', totalInt) + 'dirhams';
+  String convertNumberToWords(double amount) {
+    final int dirhams = amount.floor();
+    final int fils = ((amount - dirhams) * 100).round();
 
-    if (totalFils > 0) {
-      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
+    String dirhamsWords = _convertIntegerToWords(dirhams);
+    String filsWords = fils > 0 ? _convertIntegerToWords(fils) : '';
+
+    String result = '$dirhamsWords dirhams';
+    if (fils > 0) {
+      result += ' and $filsWords fils';
+    }
+    result += ' only.';
+
+    // Capitalize the first letter
+    return result[0].toUpperCase() + result.substring(1).toLowerCase();
+  }
+
+  String _convertIntegerToWords(int number) {
+    if (number == 0) return 'zero';
+
+    final List<String> ones = [
+      '',
+      'one',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'ten',
+      'eleven',
+      'twelve',
+      'thirteen',
+      'fourteen',
+      'fifteen',
+      'sixteen',
+      'seventeen',
+      'eighteen',
+      'nineteen'
+    ];
+
+    final List<String> tens = [
+      '',
+      '',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety'
+    ];
+
+    String words = '';
+
+    if (number >= 1000000) {
+      words += '${_convertIntegerToWords(number ~/ 1000000)} million ';
+      number %= 1000000;
+    }
+    if (number >= 1000) {
+      words += '${_convertIntegerToWords(number ~/ 1000)} thousand ';
+      number %= 1000;
+    }
+    if (number >= 100) {
+      words += '${_convertIntegerToWords(number ~/ 100)} hundred ';
+      number %= 100;
+    }
+    if (number >= 20) {
+      words += tens[number ~/ 10];
+      if (number % 10 != 0) {
+        words += '-${ones[number % 10]}';
+      }
+    } else if (number > 0) {
+      words += ones[number];
     }
 
-    amountInWords += ' only';
-
-    totalamountinname.text =
-        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+    return words.trim();
   }
 
   @override
@@ -104,22 +199,21 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   }
 
   final List<Map<String, dynamic>> paymentOptions = [
-    {'label': '30% Advance', 'value': 30.0, 'id': 1},
-    {'label': '50% Advance', 'value': 50.0, 'id': 2},
-    {'label': '50% Final Payment', 'value': 50.0, 'id': 3},
-    {'label': '50% Work In Progress', 'value': 50.0, 'id': 4},
-    {'label': '10% Final Payment', 'value': 10.0, 'id': 5},
-    {'label': '60% Work In Progress', 'value': 60.0, 'id': 6},
+    {'label': 'Advance', 'id': 1},
+    {'label': 'Final Payment', 'id': 2},
+    {'label': 'Work In Progress', 'id': 3},
   ];
+
 
   double? selectedPercentage;
 
   void updateAdvanceAmount() {
     double subtotal = double.tryParse(subtotalController.text) ?? 0;
-    double percentage = selectedPercentage ?? 0;
-    double advance = (subtotal * percentage) / 100;
-    advanceController.text = advance.toStringAsFixed(2);
+    double percentage = double.tryParse(advancepercent.text) ?? 0;
+    double advanceVal = (subtotal * percentage) / 100;
+    advanceController.text = advanceVal.toStringAsFixed(2);
   }
+
 
   int? selectedpaymentId;
 
@@ -230,7 +324,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
 
                             if (pickedDate != null) {
                               String formattedDate =
-                                  DateFormat('dMMMyyyy').format(pickedDate);
+                                  DateFormat('d/MMM/yyyy').format(pickedDate);
                               date.text = formattedDate;
                             }
                           },
@@ -536,43 +630,65 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   ]),
                   TableRow(children: [
                     Padding(
-                        padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                        child: DropdownButtonFormField<int>(
-                          hint: Text("Select Payment Method"),
-                          items: paymentOptions.map((option) {
-                            return DropdownMenuItem<int>(
-                              value: option['id'],
-                              child: Text(option['label']),
-                            );
-                          }).toList(),
-                          onChanged: (id) {
-                            var selectedOption = paymentOptions
-                                .firstWhere((opt) => opt['id'] == id);
-                            setState(() {
-                              selectedpaymentId = id;
-                              selectedPercentage = selectedOption['value'];
-                              updateAdvanceAmount();
-                            });
-                          },
-                          value: selectedpaymentId,
-                        )),
+                      padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                      child: Row(
+                        children: [
+                          // Dropdown for type
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              hint: Text("Select Payment Type"),
+                              items: paymentOptions.map((option) {
+                                return DropdownMenuItem<int>(
+                                  value: option['id'],
+                                  child: Text(option['label']),
+                                );
+                              }).toList(),
+                              onChanged: (id) {
+                                setState(() {
+                                  selectedpaymentId = id;
+                                  updateAdvanceAmount(); // recalc
+                                });
+                              },
+                              value: selectedpaymentId,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          // % input
+                          Container(
+                            width: 80,
+                            child: TextFormField(
+                              controller: advancepercent,
+                              decoration: InputDecoration(
+                                hintText: "%",
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (val) {
+                                setState(() {
+                                  updateAdvanceAmount();
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        textInputAction: TextInputAction.next,
                         controller: advanceController,
                         textAlign: TextAlign.left,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w400, fontSize: 15.sp),
+                        style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
                   ]),
+
                   TableRow(
                     children: [
                       Padding(
@@ -633,7 +749,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         child: Padding(
                           padding: EdgeInsets.only(top: 10.h, left: 20.w),
                           child: Text(
-                            total.toString(),
+                            total.toStringAsFixed(2),
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w800,
@@ -834,6 +950,36 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         ),
                         InkWell(
                           onTap: () async {
+                            final invNo = invno.text.trim();
+
+                            if (invNo.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text("INV No cannot be empty")),
+                              );
+                              return;
+                            }
+                            final exists = await doesINVNoExist(invNo);
+
+                            if (exists) {
+                              // Show warning
+                              showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text("Duplicate INV No"),
+                                  content: Text(
+                                      "A quote with INV NO '${invno.text}' already exists."),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              return; // Don't continue
+                            }
+
                             final id = DateTime.now()
                                 .microsecondsSinceEpoch
                                 .toString();
@@ -848,6 +994,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                 'inv no': invno.text,
                                 'date': date.text,
                                 'payment': selectedPayment['label'],
+                                'advance percent': advancepercent.text,
                                 'LpoQtn#': lpoqtn.text,
                                 'project': project.text,
                                 'note before quote': nbq.text,
@@ -969,7 +1116,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                     invno: invno.text,
                                     date: date.text,
                                     lpoqtn: lpoqtn.text,
-                                    advancepercent: advancepercent.text,
+
                                     project: project.text,
                                     nbq: nbq.text,
                                     subtotal: subtotalController.text,
@@ -981,12 +1128,11 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                     name: widget.name,
                                     address: widget.address,
                                     trn: widget.trn,
+                                    advancepercent: advancepercent.text,
                                     payment: paymentOptions.firstWhere(
-                                            (opt) =>
-                                                opt['id'] == selectedpaymentId,
-                                            orElse: () =>
-                                                {'label': ''})['label'] ??
-                                        '',
+                                            (opt) => opt['id'] == selectedpaymentId,
+                                        orElse: () => {'label': ''})['label'] ?? '',
+
                                     selectedCompany: selectedCompany,
                                   ),
                                 ),

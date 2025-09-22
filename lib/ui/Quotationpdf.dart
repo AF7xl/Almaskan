@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -100,6 +101,16 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
     return value != null && value != 0.0;
   }
 
+  bool isvatVisible(String? vat) {
+    if (vat == null) return false;
+    final cleaned = vat.trim();
+    if (cleaned.isEmpty) return false;
+
+    // Try parsing to double
+    final value = double.tryParse(cleaned);
+    return value != null && value != 0.0;
+  }
+
   Future<String> generatePdf() async {
     final pdf = pw.Document();
 
@@ -111,12 +122,14 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
       (await rootBundle.load('assets/sign.png')).buffer.asUint8List(),
     );
     final showDiscount = isDiscountVisible(widget.discount);
+    final showvat = isvatVisible(widget.vat);
+    final formatCurrency = NumberFormat('#,##0.00', 'en_US');
     pw.Widget buildCompanyDetails() {
       if (widget.selectedCompany == 'Al Maskan') {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text("AL MASKAN PLASTER & TILE CONT",
+            pw.Text("AL MASKAN PLASTER & TILE CONT L.L.C.SP",
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 3),
@@ -176,7 +189,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                       width: 160,
                                       height: 160,
                                       child: pw.Image(image))),
-                              pw.SizedBox(width: 310),
+                              pw.SizedBox(width: 298),
                               pw.Column(
                                   crossAxisAlignment:
                                       pw.CrossAxisAlignment.start,
@@ -194,7 +207,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                             style: pw.TextStyle(
                                                 fontWeight:
                                                     pw.FontWeight.normal,
-                                                fontSize: 11)))
+                                                fontSize: 10)))
                                   ])
                             ]),
                         pw.SizedBox(height: 10),
@@ -212,15 +225,22 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                             fontWeight: pw.FontWeight.normal,
                                             fontSize: 10)),
                                     pw.SizedBox(height: 3),
-                                    pw.Text(widget.name,
-                                        style: pw.TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: pw.FontWeight.bold)),
-                                    pw.Text(widget.address,
-                                        style: pw.TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: pw.FontWeight.normal,
-                                            letterSpacing: 0.5)),
+                                    pw.Container(
+                                        width: 300,
+                                        child: pw.Text(widget.name,
+                                            style: pw.TextStyle(
+                                                fontSize: 11,
+                                                fontWeight:
+                                                    pw.FontWeight.bold))),
+                                    pw.SizedBox(height: 3),
+                                    pw.Container(
+                                        width: 200,
+                                        child: pw.Text(widget.address,
+                                            style: pw.TextStyle(
+                                                fontSize: 10,
+                                                fontWeight:
+                                                    pw.FontWeight.normal,
+                                                letterSpacing: 0.5))),
                                     pw.SizedBox(height: 3),
                                     pw.Text("United Arab Emirates",
                                         style: pw.TextStyle(
@@ -228,33 +248,100 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                             fontWeight: pw.FontWeight.normal,
                                             letterSpacing: 0.5)),
                                   ]),
-                              pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 250),
-                                  child: pw.Column(
-                                      crossAxisAlignment:
-                                          pw.CrossAxisAlignment.start,
-                                      children: [
-                                        pw.Text("Quote Date : ${widget.date}",
-                                            style: pw.TextStyle(
+                              pw.Column(
+                                  crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                  children: [
+                                    pw.Row(
+                                        crossAxisAlignment:
+                                            pw.CrossAxisAlignment.start,
+                                        children: [
+                                          pw.Padding(
+                                              padding:
+                                                  pw.EdgeInsets.only(left: 105),
+                                              child: pw.Container(
+                                                  alignment:
+                                                      pw.Alignment.centerRight,
+                                                  width: 50,
+                                                  child: pw.Text("Quote Date :",
+                                                      style: pw.TextStyle(
+                                                        fontWeight: pw
+                                                            .FontWeight.normal,
+                                                        fontSize: 8,
+                                                      )))),
+                                          pw.Container(
+                                              alignment:
+                                                  pw.Alignment.centerRight,
+                                              width: 90,
+                                              child: pw.Text(widget.date,
+                                                  style: pw.TextStyle(
+                                                    fontWeight:
+                                                        pw.FontWeight.normal,
+                                                    fontSize: 8,
+                                                  )))
+                                        ]),
+                                    pw.SizedBox(height: 5),
+                                    pw.Row(
+                                        crossAxisAlignment:
+                                            pw.CrossAxisAlignment.start,
+                                        children: [
+                                          pw.Padding(
+                                              padding:
+                                                  pw.EdgeInsets.only(left: 85),
+                                              child: pw.Container(
+                                                  alignment:
+                                                      pw.Alignment.centerRight,
+                                                  width: 70,
+                                                  child: pw.Text("kind attn :",
+                                                      style: pw.TextStyle(
+                                                        fontWeight: pw
+                                                            .FontWeight.normal,
+                                                        fontSize: 8,
+                                                      )))),
+                                          pw.Container(
+                                              alignment:
+                                                  pw.Alignment.centerRight,
+                                              width: 90,
+                                              child: pw.Text(widget.kindatt,
+                                                  style: pw.TextStyle(
+                                                    fontWeight:
+                                                        pw.FontWeight.normal,
+                                                    fontSize: 8,
+                                                  )))
+                                        ]),
+                                    pw.SizedBox(height: 5),
+                                    pw.Row(
+                                        crossAxisAlignment:
+                                            pw.CrossAxisAlignment.start,
+                                        children: [
+                                          pw.Padding(
+                                              padding:
+                                                  pw.EdgeInsets.only(left: 105),
+                                              child: pw.Container(
+                                                  alignment:
+                                                      pw.Alignment.centerRight,
+                                                  width: 50,
+                                                  child: pw.Text("Project :",
+                                                      style: pw.TextStyle(
+                                                        fontWeight: pw
+                                                            .FontWeight.normal,
+                                                        fontSize: 8,
+                                                      )))),
+                                          pw.Container(
+                                            width: 90,
+                                            child: pw.Text(
+                                              widget.project,
+                                              textAlign: pw.TextAlign.right,
+                                              // This aligns the text inside
+                                              style: pw.TextStyle(
                                                 fontWeight:
                                                     pw.FontWeight.normal,
-                                                fontSize: 9,
-                                                letterSpacing: 0.5)),
-                                        pw.SizedBox(height: 3),
-                                        pw.Text("kind att : ${widget.kindatt}",
-                                            style: pw.TextStyle(
-                                                fontSize: 9,
-                                                fontWeight:
-                                                    pw.FontWeight.normal,
-                                                letterSpacing: 0.5)),
-                                        pw.SizedBox(height: 3),
-                                        pw.Text("Project : ${widget.project}",
-                                            style: pw.TextStyle(
-                                                fontSize: 9,
-                                                fontWeight:
-                                                    pw.FontWeight.normal,
-                                                letterSpacing: 0.5))
-                                      ]))
+                                                fontSize: 8,
+                                              ),
+                                            ),
+                                          )
+                                        ])
+                                  ])
                             ]),
 
                         pw.SizedBox(height: 10),
@@ -277,60 +364,82 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                   0xFFC62828), // Reyah default red
                           child: pw.Row(
                             children: [
-                              pw.SizedBox(width: 5),
-                              pw.Expanded(
-                                flex: 1,
-                                child: pw.Text("#",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        fontSize: 10,
-                                        color: PdfColors.white)),
+                              pw.Container(
+                                width: 30,
+                                alignment: pw.Alignment.center,
+                                child: pw.Text(
+                                  "#",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
-                              pw.SizedBox(width: 3),
-                              pw.Expanded(
-                                flex: 5,
-                                child: pw.Text("Description",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.white,
-                                        fontSize: 10)),
+                              pw.SizedBox(width: 20),
+                              pw.Container(
+                                width: 200,
+                                alignment: pw.Alignment.centerLeft,
+                                child: pw.Text(
+                                  "Description",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
-                              pw.SizedBox(width: 5),
-                              pw.Expanded(
-                                flex: 1,
-                                child: pw.Text("Qty",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.white,
-                                        fontSize: 10)),
+                              pw.SizedBox(width: 70),
+                              pw.Container(
+                                width: 30,
+                                alignment: pw.Alignment.center,
+                                child: pw.Text(
+                                  "Qty",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
-                              pw.SizedBox(width: 5),
-                              pw.Expanded(
-                                flex: 1,
-                                child: pw.Text("Unit",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.white,
-                                        fontSize: 10)),
+                              pw.SizedBox(width: 25),
+                              pw.Container(
+                                width: 30,
+                                alignment: pw.Alignment.center,
+                                child: pw.Text(
+                                  "Unit",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
-                              pw.SizedBox(width: 5),
-                              pw.Expanded(
-                                flex: 1,
-                                child: pw.Text("Rate",
-                                    style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold,
-                                      color: PdfColors.white,
-                                      fontSize: 10,
-                                    )),
+                              pw.SizedBox(width: 30),
+                              pw.Container(
+                                width: 40,
+                                alignment: pw.Alignment.center,
+                                child: pw.Text(
+                                  "Rate",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
-                              pw.SizedBox(width: 5),
-                              pw.Expanded(
-                                flex: 1,
-                                child: pw.Text("Amount",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold,
-                                        color: PdfColors.white,
-                                        fontSize: 10)),
+                              pw.SizedBox(width: 15),
+                              pw.Container(
+                                width: 50,
+                                alignment: pw.Alignment.center,
+                                child: pw.Text(
+                                  "Amount",
+                                  style: pw.TextStyle(
+                                    fontWeight: pw.FontWeight.bold,
+                                    fontSize: 10,
+                                    color: PdfColors.white,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -338,6 +447,12 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
 
                         pw.SizedBox(height: 4),
                         ...widget.lineItems.map((item) {
+                          final formattedqty =
+                          NumberFormat('#,##0.00', 'en_US').format(
+                              double.tryParse(item['quantity'] ?? '0') ?? 0);
+                          final formattedrate =
+                          NumberFormat('#,##0.00', 'en_US').format(
+                              double.tryParse(item['rate'] ?? '0') ?? 0);
                           if (item['type'] == 'header') {
                             return pw.Column(children: [
                               pw.Container(
@@ -345,7 +460,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                   height: 10,
                                   child: pw.Text(item['text'] ?? '',
                                       style: pw.TextStyle(
-                                          fontSize: 9,
+                                          fontSize: 9.5,
                                           fontWeight: pw.FontWeight.bold))),
                               pw.Divider(thickness: 0.2)
                             ]);
@@ -353,48 +468,77 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                             return pw.Column(children: [
                               pw.Row(
                                 children: [
-                                  pw.SizedBox(width: 5),
-                                  pw.Expanded(
-                                      flex: 1,
+                                  pw.Container(
+                                    width: 30,
+                                    child: pw.Align(
+                                      alignment: pw.Alignment.center,
                                       child: pw.Text(item['sno'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
-                                  pw.SizedBox(width: 3),
-                                  pw.Expanded(
-                                      flex: 5,
-                                      child: pw.Text(item['description'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
-                                  pw.SizedBox(width: 5),
-                                  pw.Expanded(
-                                      flex: 1,
-                                      child: pw.Text(item['quantity'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
-                                  pw.SizedBox(width: 5),
-                                  pw.Expanded(
-                                      flex: 1,
-                                      child: pw.Text(item['unit'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
-                                  pw.SizedBox(width: 5),
-                                  pw.Expanded(
-                                      flex: 1,
-                                      child: pw.Text(item['rate'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
-                                  pw.SizedBox(width: 5),
-                                  pw.Expanded(
-                                      flex: 1,
-                                      child: pw.Text(item['amount'] ?? '',
-                                          style: pw.TextStyle(
-                                            fontSize: 9,
-                                          ))),
+                                          style: pw.TextStyle(fontSize: 9.5)),
+                                    ),
+                                  ),
+                                  pw.Padding(
+                                      padding: pw.EdgeInsets.only(left: 20),
+                                      child: pw.Container(
+                                        width: 250,
+                                        child: pw.Align(
+                                          alignment: pw.Alignment.topLeft,
+                                          child: pw.Text(
+                                              item['description'] ?? '',
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.5)),
+                                        ),
+                                      )),
+                                  pw.Padding(
+                                      padding: pw.EdgeInsets.only(left: 20),
+                                      child: pw.Container(
+                                        width: 30,
+                                        child: pw.Align(
+                                          alignment: pw.Alignment.center,
+                                          child: pw.Text(formattedqty,
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.5)),
+                                        ),
+                                      )),
+                                  pw.Padding(
+                                      padding: pw.EdgeInsets.only(left: 25),
+                                      child: pw.Container(
+                                        width: 30,
+                                        child: pw.Align(
+                                          alignment: pw.Alignment.center,
+                                          child: pw.Text(item['unit'] ?? '',
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.5)),
+                                        ),
+                                      )),
+                                  pw.Padding(
+                                      padding: pw.EdgeInsets.only(left: 20),
+                                      child: pw.Container(
+                                        width: 40,
+                                        child: pw.Align(
+                                          alignment: pw.Alignment.centerRight,
+                                          child: pw.Text(formattedrate,
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.5)),
+                                        ),
+                                      )),
+                                  pw.Padding(
+                                      padding: pw.EdgeInsets.only(left: 20),
+                                      child: pw.Container(
+                                        width: 50,
+                                        child: pw.Align(
+                                          alignment: pw.Alignment.centerRight,
+                                          child: pw.Text(
+                                            item['amount'] != null
+                                                ? formatCurrency.format(
+                                                    double.tryParse(
+                                                            item['amount']
+                                                                .toString()) ??
+                                                        0)
+                                                : '',
+                                            style: pw.TextStyle(fontSize: 9.5),
+                                          ),
+                                        ),
+                                      )),
                                 ],
                               ),
                               pw.Divider(thickness: 0.2),
@@ -408,27 +552,34 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                             children: [
                               // Label Column
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 370),
-                                child: pw.Column(
-                                  crossAxisAlignment:
-                                      pw.CrossAxisAlignment.start,
-                                  children: [
-                                    pw.Text("SUBTOTAL :",
-                                        style: pw.TextStyle(fontSize: 10)),
-                                    pw.SizedBox(height: 5),
-                                    if (showDiscount) ...[
-                                      pw.Text("DISCOUNT :",
-                                          style: pw.TextStyle(fontSize: 9)),
-                                      pw.SizedBox(height: 5),
-                                    ],
-                                    pw.Text("VAT :",
-                                        style: pw.TextStyle(fontSize: 9)),
-                                    pw.SizedBox(height: 5),
-                                    pw.Text("TAXABLE AMOUNT :",
-                                        style: pw.TextStyle(fontSize: 9)),
-                                  ],
-                                ),
-                              ),
+                                  padding: pw.EdgeInsets.only(left: 365),
+                                  child: pw.Container(
+                                    width: 100,
+                                    alignment: pw.Alignment.topLeft,
+                                    child: pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        if (showDiscount) ...[
+                                          pw.Text("SUBTOTAL :",
+                                              style:
+                                                  pw.TextStyle(fontSize: 10)),
+                                          pw.SizedBox(height: 5),
+                                          pw.Text("DISCOUNT :",
+                                              style: pw.TextStyle(fontSize: 9)),
+                                          pw.SizedBox(height: 5),
+                                        ],
+                                        pw.Text("TAXABLE AMOUNT :",
+                                            style: pw.TextStyle(fontSize: 9)),
+                                        pw.SizedBox(height: 5),
+                                        if (showvat) ...[
+                                          pw.Text("VAT (5%):",
+                                              style: pw.TextStyle(fontSize: 9)),
+                                          pw.SizedBox(height: 5),
+                                        ],
+                                      ],
+                                    ),
+                                  )),
                               // Value Column
                               pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 40),
@@ -436,23 +587,54 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                                   // Align values to right
                                   children: [
-                                    pw.Text(widget.subtotal,
-                                        style: pw.TextStyle(fontSize: 9),
-                                        textAlign: pw.TextAlign.right),
-                                    pw.SizedBox(height: 5),
                                     if (showDiscount) ...[
-                                      pw.Text(widget.discount,
+                                      pw.Text(
+                                          widget.subtotal != null
+                                              ? formatCurrency.format(
+                                                  double.tryParse(widget
+                                                          .subtotal
+                                                          .toString()) ??
+                                                      0)
+                                              : '',
+                                          style: pw.TextStyle(fontSize: 9),
+                                          textAlign: pw.TextAlign.right),
+                                      pw.SizedBox(height: 5),
+                                      pw.Text(
+                                          widget.discount != null
+                                              ? formatCurrency.format(
+                                                  double.tryParse(widget
+                                                          .discount
+                                                          .toString()) ??
+                                                      0)
+                                              : '',
                                           style: pw.TextStyle(fontSize: 9),
                                           textAlign: pw.TextAlign.right),
                                       pw.SizedBox(height: 5),
                                     ],
-                                    pw.Text(widget.vat,
+                                    pw.Text(
+                                        widget.taxableamount != null
+                                            ? formatCurrency.format(
+                                                double.tryParse(widget
+                                                        .taxableamount
+                                                        .toString()) ??
+                                                    0)
+                                            : '',
                                         style: pw.TextStyle(fontSize: 9),
                                         textAlign: pw.TextAlign.right),
                                     pw.SizedBox(height: 5),
-                                    pw.Text(widget.taxableamount,
+                                    if (showvat) ...[
+                                      pw.Text(
+                                        widget.vat != null
+                                            ? formatCurrency.format(
+                                                double.tryParse(widget.vat
+                                                        .toString()) ??
+                                                    0)
+                                            : '',
                                         style: pw.TextStyle(fontSize: 9),
-                                        textAlign: pw.TextAlign.right),
+                                        textAlign: pw.TextAlign.right,
+                                      ),
+                                      pw.SizedBox(height: 5),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -462,7 +644,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
 
                         pw.SizedBox(height: 5),
                         pw.Padding(
-                          padding: pw.EdgeInsets.only(left: 365),
+                          padding: pw.EdgeInsets.only(left: 360),
                           child: pw.Container(
                             width: 200,
                             height: 25,
@@ -472,7 +654,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                 pw.Padding(
                                   padding: pw.EdgeInsets.only(left: 5),
                                   child: pw.Text(
-                                    "TOTAL AMOUNT :",
+                                    "TOTAL AMOUNT (AED):",
                                     style: pw.TextStyle(
                                       fontSize: 9,
                                       fontWeight: pw.FontWeight.bold,
@@ -484,7 +666,12 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                 pw.Padding(
                                   padding: pw.EdgeInsets.only(right: 5),
                                   child: pw.Text(
-                                    "${widget.totalamount} AED",
+                                    widget.totalamount != null
+                                        ? formatCurrency.format(double.tryParse(
+                                                widget.totalamount
+                                                    .toString()) ??
+                                            0)
+                                        : '',
                                     style: pw.TextStyle(
                                       fontSize: 9,
                                       fontWeight: pw.FontWeight.bold,

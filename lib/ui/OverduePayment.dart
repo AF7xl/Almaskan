@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -61,10 +60,22 @@ Future<List<OverduePaymentModel>> Fetchoverduepayment() async {
 class _OverduepaymentState extends State<Overduepayment> {
   final currentdate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-  Future<void> generatePdf(String selectedCompany) async {
+  Future<void> generatePdf({
+    required String selectedCompany,
+    required String note,
+    required String customerName,
+    required String address,
+    required String trnNumber,
+    required String kindAttn,
+  }) async {
     final pdf = pw.Document();
-    final image = pw.MemoryImage(File('assets/Logo.png').readAsBytesSync());
-    final sign = pw.MemoryImage(File('assets/sign.png').readAsBytesSync());
+    final image1 = pw.MemoryImage(
+      (await rootBundle.load('assets/Logo.png')).buffer.asUint8List(),
+    );
+
+    final image2 = pw.MemoryImage(
+      (await rootBundle.load('assets/sign.png')).buffer.asUint8List(),
+    );
     final amount = getTotalAmount();
     pw.Widget buildCompanyDetails() {
       if (selectedCompany == 'almaskan') {
@@ -73,7 +84,7 @@ class _OverduepaymentState extends State<Overduepayment> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text("AL MASKAN PLASTER & TILE CONT",
+                pw.Text("AL MASKAN PLASTER & TILE CONT L.L.C.SP",
                     style: pw.TextStyle(
                         fontSize: 10, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 3),
@@ -125,7 +136,7 @@ class _OverduepaymentState extends State<Overduepayment> {
     pdf.addPage(
       pw.MultiPage(
           pageFormat: PdfPageFormat.a4,
-          margin: pw.EdgeInsets.zero,
+          margin: pw.EdgeInsets.only(top: 15),
           build: (pw.Context context) => [
                 pw.Padding(
                     padding: const pw.EdgeInsets.all(22),
@@ -137,13 +148,13 @@ class _OverduepaymentState extends State<Overduepayment> {
                               child: pw.Container(
                                   width: 160,
                                   height: 160,
-                                  child: pw.Image(image))),
+                                  child: pw.Image(image1))),
 
                           buildCompanyDetails(), pw.SizedBox(height: 10),
                           pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 200),
+                            padding: pw.EdgeInsets.only(left: 250),
                             child: pw.Text(
-                              "Overdue Payment",
+                              "Statement",
                               style: pw.TextStyle(
                                 fontSize: 15,
                                 fontWeight: pw.FontWeight.bold,
@@ -159,14 +170,47 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     fontSize: 10,
                                     fontWeight: pw.FontWeight.normal)),
                           ),
-                          pw.SizedBox(height: 20),
-                          pw.Text("Dear Sir/Madam",
+                          pw.Column(
+                              crossAxisAlignment: pw.CrossAxisAlignment.start,
+                              children: [
+                                pw.Text("To",
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.bold,
+                                        color: PdfColors.black)),
+                                pw.SizedBox(height: 5),
+                                pw.Text(customerName,
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)),
+                                pw.SizedBox(height: 5),
+                                pw.Text(address,
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)),
+                                pw.SizedBox(height: 5),
+                                pw.Text(trnNumber,
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black)),
+                                pw.SizedBox(height: 5),
+                                pw.Text("United Arab Emirates",
+                                    style: pw.TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: pw.FontWeight.normal,
+                                        color: PdfColors.black))
+                              ]),
+                          pw.SizedBox(height: 10),
+                          pw.Text("Kind Attn: ${kindAttn}",
                               style: pw.TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontWeight: pw.FontWeight.bold)),
                           pw.SizedBox(height: 5),
                           pw.Text(
-                            "We kindly request you to release the outstanding payments related to the below mentioned LPOs at your earliest convenience.",
+                            note,
                             style: pw.TextStyle(fontSize: 10),
                           ),
                           pw.SizedBox(height: 8),
@@ -185,26 +229,21 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   child: pw.Text("Date", style: _headerStyle),
                                 ),
                                 pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 31),
-                                  child: pw.Text("Customer Name",
-                                      style: _headerStyle),
-                                ),
-                                pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 78),
-                                  child:
-                                      pw.Text("Invoice#", style: _headerStyle),
-                                ),
-                                pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 13),
-                                  child: pw.Text("LPO#", style: _headerStyle),
-                                ),
-                                pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 42),
+                                  padding: pw.EdgeInsets.only(left: 63),
                                   child: pw.Text("Project Name",
                                       style: _headerStyle),
                                 ),
                                 pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 59),
+                                  padding: pw.EdgeInsets.only(left: 105),
+                                  child:
+                                      pw.Text("Invoice#", style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 26),
+                                  child: pw.Text("LPO#", style: _headerStyle),
+                                ),
+                                pw.Padding(
+                                  padding: pw.EdgeInsets.only(left: 72),
                                   child: pw.Text("Total Amount",
                                       style: _headerStyle),
                                 ),
@@ -230,8 +269,9 @@ class _OverduepaymentState extends State<Overduepayment> {
                                       children: [
                                         pw.Padding(
                                           padding: pw.EdgeInsets.only(left: 10),
-                                          child: pw.SizedBox(
-                                            width: 50,
+                                          child: pw.Container(
+
+                                            width: 65,
                                             height: 20,
                                             child: pw.Text(payment.date,
                                                 style: pw.TextStyle(
@@ -243,11 +283,12 @@ class _OverduepaymentState extends State<Overduepayment> {
                                           ),
                                         ),
                                         pw.Padding(
-                                          padding: pw.EdgeInsets.only(left: 5),
-                                          child: pw.SizedBox(
+                                          padding: pw.EdgeInsets.only(left: 20),
+                                          child: pw.Container(
+
                                             width: 150,
                                             height: 20,
-                                            child: pw.Text(payment.customerName,
+                                            child: pw.Text(payment.projectName,
                                                 style: pw.TextStyle(
                                                   fontSize: 9,
                                                   fontWeight:
@@ -257,9 +298,10 @@ class _OverduepaymentState extends State<Overduepayment> {
                                           ),
                                         ),
                                         pw.Padding(
-                                          padding: pw.EdgeInsets.only(left: 5),
-                                          child: pw.SizedBox(
-                                            width: 35,
+                                          padding: pw.EdgeInsets.only(left: 20),
+                                          child: pw.Container(
+
+                                            width: 45,
                                             height: 20,
                                             child:
                                                 pw.Text(payment.invoiceNumber,
@@ -272,9 +314,10 @@ class _OverduepaymentState extends State<Overduepayment> {
                                           ),
                                         ),
                                         pw.Padding(
-                                          padding: pw.EdgeInsets.only(left: 15),
-                                          child: pw.SizedBox(
-                                            width: 65,
+                                          padding: pw.EdgeInsets.only(left: 20),
+                                          child: pw.Container(
+
+                                            width: 80,
                                             height: 20,
                                             child: pw.Text(payment.lpoNumber,
                                                 style: pw.TextStyle(
@@ -286,23 +329,10 @@ class _OverduepaymentState extends State<Overduepayment> {
                                           ),
                                         ),
                                         pw.Padding(
-                                          padding: pw.EdgeInsets.only(left: 5),
-                                          child: pw.SizedBox(
-                                            width: 120,
-                                            height: 20,
-                                            child: pw.Text(payment.projectName,
-                                                style: pw.TextStyle(
-                                                  fontSize: 9,
-                                                  fontWeight:
-                                                      pw.FontWeight.normal,
-                                                  color: PdfColors.black,
-                                                )),
-                                          ),
-                                        ),
-                                        pw.Padding(
-                                          padding: pw.EdgeInsets.only(left: 5),
-                                          child: pw.SizedBox(
-                                            width: 80,
+                                          padding: pw.EdgeInsets.only(left: 20),
+                                          child: pw.Container(
+
+                                            width: 100,
                                             height: 20,
                                             child: pw.Text(
                                                 NumberFormat('#,##0.00').format(
@@ -321,21 +351,26 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     )));
                           }).toList(),
 
-                          pw.Divider(color: PdfColors.black, indent: 385),
+                          pw.Divider(color: PdfColors.black, indent: 375),
                           pw.SizedBox(height: 5),
                           pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 385),
+                            padding: pw.EdgeInsets.only(left: 375),
                             child: pw.Container(
                                 width: 200,
                                 height: 25,
                                 color: PdfColors.grey300,
-                                child: pw.Padding(padding: pw.EdgeInsets.only(top: 5,left: 3),child: pw.Text(
-                                    "Total Amount : ${formattedAmount}AED ",
-                                    style: pw.TextStyle(fontSize: 10,fontWeight: pw.FontWeight.bold)))),
+                                child: pw.Padding(
+                                    padding:
+                                        pw.EdgeInsets.only(top: 5, left: 3),
+                                    child: pw.Text(
+                                        "Total Amount (AED): ${formattedAmount} ",
+                                        style: pw.TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: pw.FontWeight.bold)))),
                           ),
                         ])),
                 pw.SizedBox(height: 20),
-                pw.Container(width: 160, height: 160, child: pw.Image(sign)),
+                pw.Container(width: 160, height: 160, child: pw.Image(image2)),
                 pw.Padding(
                     padding: pw.EdgeInsets.only(left: 22),
                     child: pw.Text("Authorized Signature",
@@ -430,6 +465,304 @@ class _OverduepaymentState extends State<Overduepayment> {
     return total.toStringAsFixed(2); // format to 2 decimal places
   }
 
+  String selectednote = '';
+  List<String> noteoptions = [
+    'Statement of Account',
+    'We kindly request you to release the outstanding payments related to the below mentioned LPOs at your earliest convenience'
+  ];
+  final customerNameController = TextEditingController();
+  final addressController = TextEditingController();
+  final trnController = TextEditingController();
+  final kindAttController = TextEditingController();
+  final noteController = TextEditingController();
+
+  //to store fetched customer data
+  List<Map<String, dynamic>> customerDataList = [];
+
+  //to fetch customer data
+  Future<void> fetchCustomerData() async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('Customers').get();
+    customerDataList =
+        snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+  }
+
+  void showCustomerNoteDialog(BuildContext context, String company) async {
+    await fetchCustomerData(); // Load customer data before showing dialog
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          child: Container(
+            width: 790.w,
+            height: 500.h,
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Enter Note", style: TextStyle(fontSize: 20)),
+                SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Customer Name",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15.sp,
+                                color: Colors.black)),
+                        Container(
+                          width: 210.w,
+                          height: 60.h,
+                          child: Autocomplete<String>(optionsBuilder:
+                              (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text == '')
+                              return const Iterable<String>.empty();
+                            return customerDataList
+                                .map((e) => e['name'].toString())
+                                .where((name) => name.toLowerCase().contains(
+                                    textEditingValue.text.toLowerCase()));
+                          }, onSelected: (String selection) {
+                            final selectedCustomer = customerDataList
+                                .firstWhere((e) => e['name'] == selection);
+                            customerNameController.text =
+                                selectedCustomer['name'] ?? '';
+                            addressController.text =
+                                selectedCustomer['address'] ?? '';
+                            trnController.text =
+                                selectedCustomer['TRN NO'] ?? '';
+                          }, fieldViewBuilder: (context, textEditingController,
+                              focusNode, onFieldSubmitted) {
+                            textEditingController.text =
+                                customerNameController.text;
+                            textEditingController.addListener(() {
+                              customerNameController.text =
+                                  textEditingController.text;
+                            });
+                            return TextFormField(
+                              controller: textEditingController,
+                              focusNode: focusNode,
+                              decoration:
+                                  InputDecoration(border: OutlineInputBorder()),
+                            );
+                          }, optionsViewBuilder:
+                              (context, onSelected, options) {
+                            return Align(
+                              alignment: Alignment.topLeft,
+                              child: Material(
+                                elevation: 4,
+                                child: Container(
+                                  width: 210.w,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: options.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      final option = options.elementAt(index);
+                                      return InkWell(
+                                        onTap: () {
+                                          onSelected(option);
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 10),
+                                          child: Text(option),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 5.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Address",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15.sp,
+                                color: Colors.black)),
+                        Container(
+                          width: 210.w,
+                          height: 60.h,
+                          child: TextFormField(
+                            controller: addressController,
+                            decoration:
+                                InputDecoration(border: OutlineInputBorder()),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 5.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("TRN Number",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 15.sp,
+                                color: Colors.black)),
+                        Container(
+                          width: 210.w,
+                          height: 60.h,
+                          child: TextFormField(
+                            controller: trnController,
+                            decoration:
+                                InputDecoration(border: OutlineInputBorder()),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5.h),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Kind att",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.sp,
+                            color: Colors.black)),
+                    Container(
+                      width: 210.w,
+                      height: 60.h,
+                      child: TextFormField(
+                        controller: kindAttController,
+                        decoration:
+                            InputDecoration(border: OutlineInputBorder()),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5.w),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Note Before Quote",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 15.sp,
+                            color: Colors.black)),
+                    Autocomplete<String>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.isEmpty)
+                          return const Iterable<String>.empty();
+                        return noteoptions.where((String option) {
+                          return option
+                              .toLowerCase()
+                              .contains(textEditingValue.text.toLowerCase());
+                        });
+                      },
+                      onSelected: (String selection) {
+                        noteController.text = selection;
+                        selectednote = selection;
+                      },
+                      fieldViewBuilder: (BuildContext context,
+                          TextEditingController textEditingController,
+                          FocusNode focusNode,
+                          VoidCallback onFieldSubmitted) {
+                        textEditingController.text = noteController.text;
+                        textEditingController.addListener(() {
+                          noteController.text = textEditingController.text;
+                        });
+                        return TextFormField(
+                          controller: textEditingController,
+                          focusNode: focusNode,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                              hintText: "Type your note...",
+                              border: OutlineInputBorder()),
+                        );
+                      },
+                      optionsViewBuilder: (context, onSelected, options) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: Material(
+                            elevation: 4,
+                            child: Container(
+                              width: 760.w,
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: options.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  final option = options.elementAt(index);
+                                  return InkWell(
+                                    onTap: () {
+                                      onSelected(option);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 10),
+                                      child: Text(option),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        customerNameController.clear();
+                        addressController.clear();
+                        trnController.clear();
+                        kindAttController.clear();
+                        noteController.clear();
+                      },
+                      child: Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        final note = noteController.text.trim();
+                        generatePdf(
+                          selectedCompany: company,
+                          note: note,
+                          customerName: customerNameController.text.trim(),
+                          address: addressController.text.trim(),
+                          trnNumber: trnController.text.trim(),
+                          kindAttn: kindAttController.text.trim(),
+                        );
+                        customerNameController.clear();
+                        addressController.clear();
+                        trnController.clear();
+                        kindAttController.clear();
+                        noteController.clear();
+                      },
+                      child: Text("Generate"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -522,29 +855,38 @@ class _OverduepaymentState extends State<Overduepayment> {
                   padding: EdgeInsets.only(top: 30.h, left: 20.w),
                   child: InkWell(
                     onTap: () {
+                      final rootContext = context;
                       showDialog(
-                        context: context,
+                        context: rootContext,
                         builder: (BuildContext context) {
-                          return AlertDialog(backgroundColor: Colors.white,
+                          return AlertDialog(
+                            backgroundColor: Colors.white,
                             title: Text("Choose Company"),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    generatePdf("almaskan");
+                                  onPressed: () async {
+                                    Navigator.of(context)
+                                        .pop(); // Close current dialog
+                                    await Future.delayed(Duration(
+                                        milliseconds:
+                                            200)); // Let the UI settle
+                                    if (mounted) {
+                                      showCustomerNoteDialog(
+                                          rootContext, "almaskan");
+                                    }
                                   },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white, // A rich violet color
-                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 6,
-
-                              ),
-                                  child:  Text(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 6,
+                                  ),
+                                  child: Text(
                                     "Al maskan",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -556,18 +898,25 @@ class _OverduepaymentState extends State<Overduepayment> {
                                 ),
                                 SizedBox(height: 10),
                                 ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    generatePdf("reyah_almaskan");
+                                  onPressed: () async {
+                                    Navigator.of(context)
+                                        .pop(); // Close current dialog
+                                    await Future.delayed(Duration(
+                                        milliseconds:
+                                            200)); // Let the UI settle
+                                    if (mounted) {
+                                      showCustomerNoteDialog(
+                                          rootContext, "reyah_almaskan");
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white, // A rich violet color
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                    backgroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 14),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     elevation: 6,
-
                                   ),
                                   child: Text(
                                     "Reyah Almaskan",
@@ -579,7 +928,6 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     ),
                                   ),
                                 ),
-
                               ],
                             ),
                           );
@@ -836,7 +1184,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                 itemBuilder: (context) => [
                                       PopupMenuItem(
                                         child: SizedBox(
-                                            width: 40.w,
+                                            width: 45.w,
                                             height: 20.h,
                                             child: Text("Delete")),
                                         value: 'delete',

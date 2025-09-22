@@ -8,6 +8,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+
 class Sales extends StatefulWidget {
   const Sales({super.key});
 
@@ -86,9 +87,9 @@ class _SalesState extends State<Sales> {
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Text("AL MASKAN PLASTER & TILE CONT",
+                pw.Text("AL MASKAN PLASTER & TILE CONT L.L.C.SP",
                     style: pw.TextStyle(
-                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                        fontSize: 11, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 3),
                 pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10)),
                 pw.SizedBox(height: 3),
@@ -161,7 +162,7 @@ class _SalesState extends State<Sales> {
                   endIndent: 25,
                   indent: 25,
                   thickness: 1.5,
-                  color: PdfColors.grey300),
+                  color: PdfColors.grey),
               pw.SizedBox(height: 25),
               pw.Padding(
                   padding: pw.EdgeInsets.only(left: 230),
@@ -184,7 +185,7 @@ class _SalesState extends State<Sales> {
                                 child: pw.Text("Payment Date",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.grey,
+                                        color: PdfColors.black,
                                         fontSize: 12))),
                             pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 65),
@@ -210,7 +211,7 @@ class _SalesState extends State<Sales> {
                                 child: pw.Text("Reference Number",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.grey,
+                                        color: PdfColors.black,
                                         fontSize: 12))),
                             pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 40),
@@ -236,7 +237,7 @@ class _SalesState extends State<Sales> {
                                 child: pw.Text("Payment Mode",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
-                                        color: PdfColors.grey,
+                                        color: PdfColors.black,
                                         fontSize: 12))),
                             pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 60),
@@ -317,7 +318,7 @@ class _SalesState extends State<Sales> {
                         pw.SizedBox(height: 2)
                       ])),
               pw.SizedBox(height: 60),
-              pw.Divider(color: PdfColors.grey300),
+              pw.Divider(color: PdfColors.grey),
               pw.SizedBox(height: 40),
               pw.Padding(
                   padding: pw.EdgeInsets.only(left: 40),
@@ -332,7 +333,7 @@ class _SalesState extends State<Sales> {
                   child: pw.Container(
                       height: 20,
                       width: double.infinity,
-                      color: PdfColors.grey100,
+                      color: PdfColors.grey400,
                       child: pw.Row(children: [
                         pw.Padding(
                             padding: pw.EdgeInsets.only(left: 6),
@@ -409,9 +410,9 @@ class _SalesState extends State<Sales> {
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black)))
                       ]))),
-              pw.Divider(indent: 40, color: PdfColors.grey300),
+              pw.Divider(indent: 40, color: PdfColors.grey400),
               pw.SizedBox(height: 60),
-              pw.Divider(color: PdfColors.grey300)
+              pw.Divider(color: PdfColors.grey)
             ],
           ),
         ),

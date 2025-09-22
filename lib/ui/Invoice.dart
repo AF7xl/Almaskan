@@ -8,8 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:number_to_words/number_to_words.dart';
 
-
-
 class invoice1 extends StatefulWidget {
   final String id;
   final String name;
@@ -31,8 +29,6 @@ class invoice1 extends StatefulWidget {
 }
 
 class _invoice1State extends State<invoice1> {
-
-
   List<String> desoptions = [];
   final desfirestore = FirebaseFirestore.instance
       .collection("Suggestions")
@@ -78,17 +74,26 @@ class _invoice1State extends State<invoice1> {
   TextEditingController naq = TextEditingController();
 
   List<double> originalQty = [];
+  List<double> originalAmounts = [];
+
   List<TextEditingController> percentageControllers = [];
+  List<bool> isAmountManuallyEdited = [];
 
   String selectednbq = '';
+  bool isVatEnabled = true;
 
   List<TextEditingController> headerControllers = [];
   List<Map<String, dynamic>> formStructure = [];
 
+  String percentageMode = 'For All';
+  TextEditingController globalPercentageController = TextEditingController();
 
-  bool showPercentageFields = false;
   String selectedCompany = 'Reyah Al Maskan';
   bool isDiscountEnabled = false;
+
+  double parseSafe(String input) {
+    return double.tryParse(input.replaceAll(',', '').trim()) ?? 0.0;
+  }
 
   //function to add header text
   void addNewHeader() {
@@ -123,6 +128,17 @@ class _invoice1State extends State<invoice1> {
     fetchunitSuggestions();
   }
 
+  Future<bool> doesInvNoExist(String invNo) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection("Clients")
+        .doc(widget.id)
+        .collection("invoice")
+        .where('inv no', isEqualTo: invNo)
+        .get();
+
+    return snapshot.docs.isNotEmpty;
+  }
+
   void fetchnbqSuggestions() async {
     final docSnapshot = await nbqfirestore.get();
 
@@ -151,6 +167,103 @@ class _invoice1State extends State<invoice1> {
       unitoptions = List<String>.from(data?['suggestions'] ?? []);
       setState(() {}); // Trigger rebuild so Autocomplete sees updates
     }
+  }
+
+  double roundDecimalOnly(double value) {
+    final intPart = value.floor();
+    final decimal = value - intPart;
+
+    if (decimal == 0.0)
+      return value;
+    else if (decimal >= 0.5)
+      return intPart + 1.0;
+    else
+      return intPart.toDouble();
+  }
+
+  void resetQuantitiesToOriginal() {
+    for (int i = 0; i < qtyControllers.length; i++) {
+      final unitText = unit[i].text.trim().toLowerCase();
+      final isLumpSum = unitText == 'ls' || unitText == 'l/s';
+
+      // ✅ Only reset qty if it's not a lump sum item
+      if (!isLumpSum && originalQty.length > i) {
+        qtyControllers[i].text = originalQty[i].toStringAsFixed(2);
+        qtyControllers[i].selection = TextSelection.fromPosition(
+          TextPosition(offset: qtyControllers[i].text.length),
+        );
+      }
+
+      // ✅ Always restore amount
+      if (originalAmounts.length > i) {
+        amountControllers[i].text = originalAmounts[i].toStringAsFixed(2);
+      }
+
+      // ✅ Clear individual % field
+      if (percentageControllers.length > i) {
+        percentageControllers[i].clear();
+      }
+
+      // ✅ Reset manual edit flag
+      if (isAmountManuallyEdited.length > i) {
+        isAmountManuallyEdited[i] = false;
+      }
+
+      // ✅ Recalculate
+      calculateAmount(i);
+    }
+
+    // ✅ Reset global percentage field
+    globalPercentageController.clear();
+  }
+
+
+  void insertRowAfter(int index) {
+    setState(() {
+      final rateController = TextEditingController();
+      final qtyController = TextEditingController();
+      final amountController = TextEditingController();
+      final sn = TextEditingController();
+      final desc = TextEditingController();
+      final uni = TextEditingController();
+      final percentageController = TextEditingController();
+
+      rateControllers.insert(index + 1, rateController);
+      qtyControllers.insert(index + 1, qtyController);
+      amountControllers.insert(index + 1, amountController);
+      sno.insert(index + 1, sn);
+      description.insert(index + 1, desc);
+      unit.insert(index + 1, uni);
+      percentageControllers.insert(index + 1, percentageController);
+      isAmountManuallyEdited.insert(index + 1, false);
+
+      // Insert default quantity (0.0) into originalQty
+      originalQty.insert(index + 1, 0.0);
+      originalAmounts.add(0.0);
+
+      // Add listeners
+      rateController.addListener(() => calculateAmount(index + 1));
+      qtyController.addListener(() {
+        final parsed = double.tryParse(qtyController.text) ?? 0.0;
+        originalQty[index + 1] = parsed; // update originalQty
+        calculateAmount(index + 1); // trigger amount update
+      });
+
+      formStructure.insert(index + 1, {
+        'type': 'row',
+        'index': index + 1,
+      });
+
+      // Fix the indices for all rows
+      int rowCounter = 0;
+      for (var item in formStructure) {
+        if (item['type'] == 'row') {
+          item['index'] = rowCounter++;
+        }
+      }
+
+      rebuildRows();
+    });
   }
 
 //function to load data from quotation
@@ -197,6 +310,9 @@ class _invoice1State extends State<invoice1> {
         sno.add(sn);
         description.add(desc);
         qtyControllers.add(qty);
+        final parsedQty = double.tryParse(qty.text) ?? 0.0;
+        originalQty.add(parsedQty);
+
         unit.add(unitc);
         rateControllers.add(rate);
         amountControllers.add(amount);
@@ -231,6 +347,8 @@ class _invoice1State extends State<invoice1> {
     description.add(descController);
     unit.add(unitController);
     percentageControllers.add(percentageController);
+    isAmountManuallyEdited.add(false);
+    originalAmounts.add(0.0);
 
     rateController
         .addListener(() => calculateAmount(rateControllers.length - 1));
@@ -239,19 +357,29 @@ class _invoice1State extends State<invoice1> {
   }
 
   void calculateAmount(int index) {
-    final rateText = rateControllers[index].text;
-    final qtyText = qtyControllers[index].text;
+    if (index < isAmountManuallyEdited.length &&
+        !isAmountManuallyEdited[index]) {
+      final rate = parseSafe(rateControllers[index].text);
+      final qty = parseSafe(qtyControllers[index].text);
 
-    if (rateText.isNotEmpty && qtyText.isNotEmpty) {
-      final rate = double.tryParse(rateText) ?? 0.0;
-      final qty = double.tryParse(qtyText) ?? 0.0;
-      final amount = rate * qty;
-      setState(() {
-        // Update the corresponding amount controller for the row
-        amountControllers[index].text = amount.toStringAsFixed(2);
-      });
+      double amount = 0.0;
+      if (rate > 0 && qty > 0) {
+        amount = rate * qty;
+      } else {
+        amount =
+            parseSafe(amountControllers[index].text); // fallback if lumpsum
+      }
 
-      calculateSubtotal(); // Recalculate subtotal after updating the amount
+      amountControllers[index].text = amount.toStringAsFixed(2);
+
+      // ✅ Store original base for %
+      if (index < originalAmounts.length) {
+        originalAmounts[index] = amount;
+      } else {
+        originalAmounts.add(amount);
+      }
+
+      calculateSubtotal();
     }
   }
 
@@ -268,28 +396,106 @@ class _invoice1State extends State<invoice1> {
 
   void calculateTotal() {
     taxableAmount = subtotal - discount;
-    vat = taxableAmount * 0.05;
-    totalAmount = taxableAmount + vat;
+    vat = isVatEnabled ? taxableAmount * 0.05 : 0.0;
+    totalAmount = roundDecimalOnly(taxableAmount + vat);
 
-    // Convert amount to words and update the controller
-    final totalInt = totalAmount.floor(); // Dirhams
-    final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
-
-    String amountInWords = NumberToWord().convert('en-in', totalInt) + 'dirhams';
-
-    if (totalFils > 0) {
-      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
-    }
-
-    amountInWords += ' only';
-
-    // Capitalize first letter
-    totalamountinname.text =
-        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+    String amountInWords = convertNumberToWords(totalAmount);
+    totalamountinname.text = amountInWords;
 
     setState(() {});
   }
 
+  String convertNumberToWords(double amount) {
+    final int dirhams = amount.floor();
+    final int fils = ((amount - dirhams) * 100).round();
+
+    String dirhamsWords = _convertIntegerToWords(dirhams);
+    String filsWords = fils > 0 ? _convertIntegerToWords(fils) : '';
+
+    String result = '$dirhamsWords dirhams';
+    if (fils > 0) {
+      result += ' and $filsWords fils';
+    }
+    result += ' only.';
+
+    // Capitalize the first letter
+    return result[0].toUpperCase() + result.substring(1).toLowerCase();
+  }
+
+  String _convertIntegerToWords(int number) {
+    if (number == 0) return 'zero';
+
+    final List<String> ones = [
+      '',
+      'one',
+      'two',
+      'three',
+      'four',
+      'five',
+      'six',
+      'seven',
+      'eight',
+      'nine',
+      'ten',
+      'eleven',
+      'twelve',
+      'thirteen',
+      'fourteen',
+      'fifteen',
+      'sixteen',
+      'seventeen',
+      'eighteen',
+      'nineteen'
+    ];
+
+    final List<String> tens = [
+      '',
+      '',
+      'twenty',
+      'thirty',
+      'forty',
+      'fifty',
+      'sixty',
+      'seventy',
+      'eighty',
+      'ninety'
+    ];
+
+    String words = '';
+
+    if (number >= 1000000) {
+      words += '${_convertIntegerToWords(number ~/ 1000000)} million ';
+      number %= 1000000;
+    }
+    if (number >= 1000) {
+      words += '${_convertIntegerToWords(number ~/ 1000)} thousand ';
+      number %= 1000;
+    }
+    if (number >= 100) {
+      words += '${_convertIntegerToWords(number ~/ 100)} hundred ';
+      number %= 100;
+    }
+    if (number >= 20) {
+      words += tens[number ~/ 10];
+      if (number % 10 != 0) {
+        words += '-${ones[number % 10]}';
+      }
+    } else if (number > 0) {
+      words += ones[number];
+    }
+
+    return words.trim();
+  }
+
+// Helper function
+  String toTitleCase(String input) {
+    return input
+        .split(' ')
+        .map((word) => word.isEmpty
+            ? word
+            : '${word[0].toUpperCase()}${word.substring(1)}')
+        .join(' ');
+  }
 
   List<Widget> rows = []; // List to store each row
   void rebuildRows() {
@@ -413,75 +619,76 @@ class _invoice1State extends State<invoice1> {
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return desoptions.where((String option) {
-                    return option
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                displayStringForOption: (String option) => option,
-                onSelected: (String selection) {
-                  description[index].text = selection;
-                },
-                fieldViewBuilder: (BuildContext context,
-                    TextEditingController textEditingController,
-                    FocusNode focusNode,
-                    VoidCallback onFieldSubmitted) {
-                  // Assign your controller value to keep things synced
-                  textEditingController.text = description[index].text;
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return desoptions.where((String option) {
+                      return option
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  displayStringForOption: (String option) => option,
+                  onSelected: (String selection) {
+                    description[index].text = selection;
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    // Assign your controller value to keep things synced
+                    textEditingController.text = description[index].text;
 
-                  textEditingController.addListener(() {
-                    description[index].text = textEditingController.text;
-                  });
+                    textEditingController.addListener(() {
+                      description[index].text = textEditingController.text;
+                    });
 
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    textInputAction: TextInputAction.next,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
-                      border: InputBorder.none,
-                      enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
-                    ),
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    cursorColor: Colors.black,
-                  );
-                },optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4,
-                    child: Container(
-                      width: 500.w,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final option = options.elementAt(index);
-                          return InkWell(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text(option),
-                            ),
-                          );
-                        },
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                        border: InputBorder.none,
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                    ),
-                  ),
-                );
-              }
-              ),
+                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      cursorColor: Colors.black,
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        elevation: 4,
+                        child: Container(
+                          width: 500.w,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: options.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () {
+                                  onSelected(option);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Text(option),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
           // Qty Field
@@ -509,7 +716,8 @@ class _invoice1State extends State<invoice1> {
                       } else {
                         originalQty[index] = parsed;
                       }
-                      // You might want to clear % field or reset any related value here if needed
+                      calculateAmount(
+                          index); // <-- ensure update happens here too
                     },
                     decoration: InputDecoration(
                       contentPadding:
@@ -520,8 +728,8 @@ class _invoice1State extends State<invoice1> {
                   ),
                 ),
 
-                // Percentage container below quantity container
-                if (showPercentageFields)
+                // Percentage field logic
+                if (percentageMode == 'Individual')
                   Container(
                     width: 80.w,
                     height: 40.h,
@@ -541,31 +749,23 @@ class _invoice1State extends State<invoice1> {
                       onChanged: (value) {
                         final percent = double.tryParse(value) ?? 0.0;
 
-                        if (originalQty.length <= index) {
-                          originalQty.add(
-                              double.tryParse(qtyControllers[index].text) ??
-                                  0.0);
-                        } else if (originalQty[index] == 0.0) {
-                          originalQty[index] =
-                              double.tryParse(qtyControllers[index].text) ??
-                                  0.0;
+                        double baseAmount;
+                        if (index < originalAmounts.length &&
+                            originalAmounts[index] > 0) {
+                          baseAmount = originalAmounts[index];
+                        } else {
+                          baseAmount = parseSafe(amountControllers[index].text);
+                          if (index < originalAmounts.length) {
+                            originalAmounts[index] = baseAmount;
+                          } else {
+                            originalAmounts.add(baseAmount);
+                          }
                         }
 
-                        final modified = originalQty[index] * (percent / 100);
-
-                        // Instead of directly changing text here, consider updating qtyControllers text
-                        // with a small delay or inside setState to avoid input conflicts:
-
-                        // For example:
-                        Future.microtask(() {
-                          qtyControllers[index].text =
-                              modified.toStringAsFixed(2);
-                          qtyControllers[index].selection =
-                              TextSelection.fromPosition(
-                            TextPosition(
-                                offset: qtyControllers[index].text.length),
-                          );
-                        });
+                        final result = baseAmount * (percent / 100);
+                        amountControllers[index].text =
+                            result.toStringAsFixed(2);
+                        calculateSubtotal();
                       },
                       style: TextStyle(fontSize: 13.sp),
                     ),
@@ -585,75 +785,76 @@ class _invoice1State extends State<invoice1> {
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return unitoptions.where((String option) {
-                    return option
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                displayStringForOption: (String option) => option,
-                onSelected: (String selection) {
-                  unit[index].text = selection;
-                },
-                fieldViewBuilder: (BuildContext context,
-                    TextEditingController textEditingController,
-                    FocusNode focusNode,
-                    VoidCallback onFieldSubmitted) {
-                  // Assign your controller value to keep things synced
-                  textEditingController.text = unit[index].text;
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return unitoptions.where((String option) {
+                      return option
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  displayStringForOption: (String option) => option,
+                  onSelected: (String selection) {
+                    unit[index].text = selection;
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    // Assign your controller value to keep things synced
+                    textEditingController.text = unit[index].text;
 
-                  textEditingController.addListener(() {
-                    unit[index].text = textEditingController.text;
-                  });
+                    textEditingController.addListener(() {
+                      unit[index].text = textEditingController.text;
+                    });
 
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    textInputAction: TextInputAction.next,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
-                      border: InputBorder.none,
-                      enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
-                    ),
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    cursorColor: Colors.black,
-                  );
-                },optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4,
-                    child: Container(
-                      width: 70.w,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final option = options.elementAt(index);
-                          return InkWell(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text(option),
-                            ),
-                          );
-                        },
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                        border: InputBorder.none,
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                    ),
-                  ),
-                );
-              }
-              ),
+                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      cursorColor: Colors.black,
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        elevation: 4,
+                        child: Container(
+                          width: 70.w,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: options.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () {
+                                  onSelected(option);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Text(option),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
           // Rate Field
@@ -670,6 +871,10 @@ class _invoice1State extends State<invoice1> {
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (value) {
                   ratedata.add(value);
+                },
+                onChanged: (value) {
+                  calculateAmount(
+                      index); // force re-calculation even if user types
                 },
                 controller: rateControllers[index],
                 maxLines: null,
@@ -706,8 +911,21 @@ class _invoice1State extends State<invoice1> {
                 readOnly: false,
                 controller: amountControllers[index],
                 onChanged: (value) {
+                  if (index < isAmountManuallyEdited.length) {
+                    isAmountManuallyEdited[index] = true;
+                  }
+
+                  // ✅ Save the manually changed amount as new original
+                  final parsedAmount = double.tryParse(value) ?? 0.0;
+                  if (index < originalAmounts.length) {
+                    originalAmounts[index] = parsedAmount;
+                  } else {
+                    originalAmounts.add(parsedAmount);
+                  }
+
                   calculateSubtotal();
                 },
+
                 maxLines: null,
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
@@ -760,6 +978,13 @@ class _invoice1State extends State<invoice1> {
               });
             },
           ),
+          IconButton(
+            icon: Icon(Icons.add_circle_outline, color: Colors.green),
+            tooltip: "Insert row below",
+            onPressed: () {
+              insertRowAfter(index);
+            },
+          ),
         ],
       ),
     );
@@ -790,7 +1015,9 @@ class _invoice1State extends State<invoice1> {
             'rate': rateControllers[i].text.trim(),
             'quantity': qtyControllers[i].text.trim(),
             'amount': amountControllers[i].text.trim(),
-            'percentage': percentageControllers[i].text.trim(),
+            'percentage': (i < percentageControllers.length)
+                ? percentageControllers[i].text.trim()
+                : '',
           });
         }
       }
@@ -809,6 +1036,7 @@ class _invoice1State extends State<invoice1> {
       for (var controller in sno) controller.dispose();
       for (var controller in unit) controller.dispose();
       for (var controller in headerControllers) controller.dispose();
+      for (var controller in percentageControllers) controller.dispose();
 
       // Clear all lists
       description.clear();
@@ -820,6 +1048,7 @@ class _invoice1State extends State<invoice1> {
       headerControllers.clear();
       formStructure.clear();
       rows.clear();
+      percentageControllers.clear();
 
       // Reset other fields
       invno.clear();
@@ -965,7 +1194,7 @@ class _invoice1State extends State<invoice1> {
 
                             if (pickedDate != null) {
                               String formattedDate =
-                                  DateFormat('dMMMyyyy').format(pickedDate);
+                                  DateFormat('d/MMM/yyyy').format(pickedDate);
                               date.text = formattedDate;
                             }
                           },
@@ -1116,63 +1345,62 @@ class _invoice1State extends State<invoice1> {
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Autocomplete(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<String>.empty();
-                            }
-                            return nbqoptions.where((String option) {
-                              return option.toLowerCase().contains(
-                                  textEditingValue.text.toLowerCase());
-                            });
-                          },
-                          onSelected: (String selection) {
-                            nbq.text = selection;
-                            selectednbq = selection;
-                          },
-                          fieldViewBuilder: (BuildContext context,
-                              TextEditingController textEditingController,
-                              FocusNode focusNode,
-                              VoidCallback onFieldSubmitted) {
-                            // Sync text initially
-                            textEditingController.text = nbq.text;
+                        child: Autocomplete(optionsBuilder:
+                            (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return nbqoptions.where((String option) {
+                            return option
+                                .toLowerCase()
+                                .contains(textEditingValue.text.toLowerCase());
+                          });
+                        }, onSelected: (String selection) {
+                          nbq.text = selection;
+                          selectednbq = selection;
+                        }, fieldViewBuilder: (BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted) {
+                          // Sync text initially
+                          textEditingController.text = nbq.text;
 
-                            // Sync both ways
-                            textEditingController.addListener(() {
-                              nbq.text = textEditingController.text;
-                            });
+                          // Sync both ways
+                          textEditingController.addListener(() {
+                            nbq.text = textEditingController.text;
+                          });
 
-                            return TextFormField(
-                              controller: textEditingController,
-                              focusNode: focusNode,
-                              maxLines: null,
-                              onFieldSubmitted: (v) {
-                                setState(() {
-                                  selectednbq = v;
-                                });
-                              },
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.multiline,
-                              cursorHeight: 25.h,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.start,
-                              cursorColor: Colors.black45,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    top: 2.h, left: 5.w, bottom: 15.h),
-                                border: InputBorder.none,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                hintText: "",
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
+                          return TextFormField(
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                            maxLines: null,
+                            onFieldSubmitted: (v) {
+                              setState(() {
+                                selectednbq = v;
+                              });
+                            },
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.multiline,
+                            cursorHeight: 25.h,
+                            textAlignVertical: TextAlignVertical.center,
+                            style: TextStyle(color: Colors.black),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black45,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              hintText: "",
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
-                            );
-                          },optionsViewBuilder: (context, onSelected, options) {
+                            ),
+                          );
+                        }, optionsViewBuilder: (context, onSelected, options) {
                           return Align(
                             alignment: Alignment.topLeft,
                             child: Material(
@@ -1183,14 +1411,16 @@ class _invoice1State extends State<invoice1> {
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
                                   itemCount: options.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     final option = options.elementAt(index);
                                     return InkWell(
                                       onTap: () {
                                         onSelected(option);
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 10),
                                         child: Text(option),
                                       ),
                                     );
@@ -1199,12 +1429,101 @@ class _invoice1State extends State<invoice1> {
                               ),
                             ),
                           );
-                        }
-                        ),
+                        }),
                       )
                     ],
                   ),
-                )
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w, top: 25.h),
+                  child: Row(
+                    children: [
+                      Text(
+                        "% Invoice",
+                        style: GoogleFonts.workSans(fontSize: 13.sp),
+                      ),
+                      SizedBox(width: 10.w),
+                      DropdownButton<String>(
+                        value: percentageMode,
+                        items: ['Individual', 'For All']
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            percentageMode = value!;
+                            rebuildRows();
+                          });
+                        },
+                      ),
+                      if (percentageMode == 'For All')
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.w),
+                          child: Container(
+                            width: 80.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.r),
+                            ),
+                            child: TextFormField(
+                              controller: globalPercentageController,
+                              decoration: InputDecoration(
+                                hintText: '% All',
+                                contentPadding:
+                                    EdgeInsets.only(left: 5.w, bottom: 10.h),
+                                border: InputBorder.none,
+                              ),
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                double percent = double.tryParse(value) ?? 0.0;
+
+                                for (int i = 0;
+                                    i < amountControllers.length;
+                                    i++) {
+                                  double baseAmount;
+
+                                  // Use stored original amount if available
+                                  if (i < originalAmounts.length &&
+                                      originalAmounts[i] > 0) {
+                                    baseAmount = originalAmounts[i];
+                                  } else {
+                                    baseAmount =
+                                        parseSafe(amountControllers[i].text);
+                                    if (i < originalAmounts.length) {
+                                      originalAmounts[i] = baseAmount;
+                                    } else {
+                                      originalAmounts.add(baseAmount);
+                                    }
+                                  }
+
+                                  final result = baseAmount * (percent / 100);
+                                  amountControllers[i].text =
+                                      result.toStringAsFixed(2);
+                                }
+
+                                calculateSubtotal();
+                              },
+                              style: TextStyle(fontSize: 13.sp),
+                            ),
+                          ),
+                        ),
+                      SizedBox(width: 10.w),
+                      //cancel button
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            resetQuantitiesToOriginal();
+                          });
+                        },
+                        child:
+                            Text("Cancel", style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
             Padding(
@@ -1212,7 +1531,7 @@ class _invoice1State extends State<invoice1> {
               child: Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 865.w),
+                    padding: EdgeInsets.only(left: 900.w),
                     child: InkWell(
                       onTap: () {
                         addNewRow();
@@ -1284,26 +1603,6 @@ class _invoice1State extends State<invoice1> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.w),
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          value: showPercentageFields,
-                          onChanged: (value) {
-                            setState(() {
-                              showPercentageFields = value!;
-                              rebuildRows();
-                            });
-                          },
-                        ),
-                        Text(
-                          "% Invoice",
-                          style: GoogleFonts.workSans(fontSize: 13.sp),
-                        ),
-                      ],
                     ),
                   ),
                 ],
@@ -1518,34 +1817,49 @@ class _invoice1State extends State<invoice1> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 770.w, top: 10.h),
-                    child: Text(
-                      "Vat 5%",
-                      style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black),
+                    padding: EdgeInsets.only(left: 720.w, top: 10.h),
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: isVatEnabled,
+                          onChanged: (value) {
+                            setState(() {
+                              isVatEnabled = value!;
+                              calculateTotal(); // Recalculate if VAT is toggled
+                            });
+                          },
+                        ),
+                        Text(
+                          "Vat 5%",
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.w),
-                    child: Container(
-                        width: 200.w,
-                        height: 50.h,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 3.w, top: 2.h),
-                          child: Text(
-                            "\$ ${vat.toStringAsFixed(2)}",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 18.sp,
-                                color: Colors.black),
-                          ),
-                        )),
-                  )
+                  if (isVatEnabled)
+                    Padding(
+                      padding: EdgeInsets.only(left: 30.w),
+                      child: Container(
+                          width: 200.w,
+                          height: 50.h,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.r)),
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 3.w, top: 2.h),
+                            child: Text(
+                              "\$ ${vat.toStringAsFixed(2)}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 18.sp,
+                                  color: Colors.black),
+                            ),
+                          )),
+                    )
                 ],
               ),
             ),
@@ -1816,12 +2130,37 @@ class _invoice1State extends State<invoice1> {
                                                 '';
                                         qtyControllers[index].text =
                                             item['quantity']?.toString() ?? '';
+                                        final parsedQty = double.tryParse(
+                                                qtyControllers[index].text) ??
+                                            0.0;
+
+                                        if (originalQty.length <= index) {
+                                          originalQty.add(parsedQty);
+                                        } else {
+                                          originalQty[index] = parsedQty;
+                                        }
+                                        originalQty.add(parsedQty);
+
                                         unit[index].text =
                                             item['unit']?.toString() ?? '';
                                         rateControllers[index].text =
                                             item['rate']?.toString() ?? '';
+                                        rateControllers[index].addListener(
+                                            () => calculateAmount(index));
+                                        qtyControllers[index].addListener(
+                                            () => calculateAmount(index));
+
                                         amountControllers[index].text =
                                             item['amount']?.toString() ?? '';
+                                        isAmountManuallyEdited.add(
+                                            (item['rate'] == null ||
+                                                    item['rate']
+                                                        .toString()
+                                                        .isEmpty) &&
+                                                (item['quantity'] == null ||
+                                                    item['quantity']
+                                                        .toString()
+                                                        .isEmpty));
                                       }
                                     }
                                   }
@@ -1829,6 +2168,7 @@ class _invoice1State extends State<invoice1> {
 
                                 // Force rebuild of rows
                                 rebuildRows();
+                                calculateSubtotal();
                               } catch (e) {
                                 print('Error loading quotation: $e');
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -1845,6 +2185,27 @@ class _invoice1State extends State<invoice1> {
                           child: InkWell(
                             onTap: () async {
                               collectFormData();
+                              final existing =
+                                  await doesInvNoExist(invno.text.trim());
+
+                              if (existing) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Duplicate INV No"),
+                                    content: Text(
+                                        "An invoice with INV No '${invno.text}' already exists."),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: Text("OK")),
+                                    ],
+                                  ),
+                                );
+                                return; // prevent saving
+                              }
+
                               final id = DateTime.now()
                                   .microsecondsSinceEpoch
                                   .toString();
@@ -1866,35 +2227,18 @@ class _invoice1State extends State<invoice1> {
                                       totalamountinname.text,
                                   'note after quote': naq.text
                                 });
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Invoice Saved'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.green,
-                                    behavior: SnackBarBehavior.floating,
-                                    // optional for a floating snackbar
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    margin: EdgeInsets.all(
-                                        30), // only works with floating behavior
-                                  ),
-                                );
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('Invoice Saved'),
+                                  backgroundColor: Colors.green,
+                                ));
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('Failed to save ${e}'),
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: Colors.black54,
-                                    behavior: SnackBarBehavior.floating,
-                                    // optional for a floating snackbar
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    margin: EdgeInsets.all(
-                                        30), // only works with floating behavior
-                                  ),
-                                );
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text('Failed to save: $e'),
+                                  backgroundColor: Colors.red,
+                                ));
                               }
                             },
                             child: Container(
@@ -1991,6 +2335,9 @@ class _invoice1State extends State<invoice1> {
                                     trn: widget.trn,
                                     invoiceId: '',
                                     selectedCompany: selectedCompany,
+                                    percentageMode: percentageMode,
+                                    globalPercentage:
+                                        globalPercentageController.text,
                                   ),
                                 ),
                               );

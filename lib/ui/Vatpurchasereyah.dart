@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -39,12 +40,10 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
 
   Future<void> generatePdf() async {
     final pdf = pw.Document();
-    final image = pw.MemoryImage(
-      File('assets/Logo.png').readAsBytesSync(),
-    );
     final image1 = pw.MemoryImage(
-      File('assets/logoin.png').readAsBytesSync(),
+      (await rootBundle.load('assets/Logo.png')).buffer.asUint8List(),
     );
+
     final headerStyle = pw.TextStyle(
       fontWeight: pw.FontWeight.bold,
       fontSize: 8,
@@ -55,6 +54,9 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
       fontSize: 8,
       color: PdfColors.black,
     );
+    final formattedInvoice = NumberFormat("#,##0.00", "en_US").format(totalInvoice);
+    final formattedTax = NumberFormat("#,##0.00", "en_US").format(totalTax);
+    final formattedTotal = NumberFormat("#,##0.00", "en_US").format(totalAmount);
 
     pdf.addPage(
       pw.MultiPage(
@@ -63,7 +65,7 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Container(
-                          width: 160, height: 160, child: pw.Image(image)),
+                          width: 160, height: 160, child: pw.Image(image1)),
                       pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
@@ -164,7 +166,12 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
                       ),
 
                       // Data rows
-                      ...filteredData.map((data) {
+                      ...filteredData.map((data) { final formattedinvamountl = NumberFormat('#,##0.00', 'en_US')
+                          .format(double.tryParse(data['Invoice Amount']) ?? 0);
+                      final formattedvat = NumberFormat('#,##0.00', 'en_US')
+                          .format(double.tryParse(data['Tax']) ?? 0);
+                      final formattedtotal = NumberFormat('#,##0.00', 'en_US')
+                          .format(double.tryParse(data['Total Amount']) ?? 0);
                         return pw.Container(
                           width: double.infinity,
                           height: 25,
@@ -206,19 +213,19 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
                                   child: pw.SizedBox(
                                       width: 50,
                                       child: pw.Text(
-                                          data['Invoice Amount'] ?? '',
+                                          formattedinvamountl ?? '',
                                           style: textstyle))),
                               pw.Padding(
                                   padding: pw.EdgeInsets.only(left: 32),
                                   child: pw.SizedBox(
                                       width: 25,
-                                      child: pw.Text(data['Tax'] ?? '',
+                                      child: pw.Text(formattedvat ?? '',
                                           style: textstyle))),
                               pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 6),
                                 child: pw.SizedBox(
                                     width: 40,
-                                    child: pw.Text(data['Total Amount'] ?? '',
+                                    child: pw.Text(formattedtotal ?? '',
                                         style: textstyle)),
                               ),
                             ],
@@ -230,18 +237,18 @@ class _VatpurchasereyahState extends State<Vatpurchasereyah> {
                       pw.Divider(),
                       pw.Padding(
                           padding: pw.EdgeInsets.only(left: 350),
-                          child: pw.Text("Invoice Amount: $totalInvoice",
+                          child: pw.Text("Invoice Amount: $formattedInvoice",
                               style: pw.TextStyle(fontSize: 10))),
                       pw.SizedBox(height: 2),
                       pw.Padding(
                           padding: pw.EdgeInsets.only(left: 350),
-                          child: pw.Text("Tax (5%):           $totalTax",
+                          child: pw.Text("Tax (5%):           $formattedTax",
                               style: pw.TextStyle(fontSize: 10))),
                       pw.SizedBox(height: 2),
 
                       pw.Padding(
                           padding: pw.EdgeInsets.only(left: 350),
-                          child: pw.Text("Total Amount:     $totalAmount",
+                          child: pw.Text("Total Amount:     $formattedTotal",
                               style: pw.TextStyle(fontSize: 10))),
 
                       pw.SizedBox(height: 30),

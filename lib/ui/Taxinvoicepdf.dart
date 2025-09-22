@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -93,7 +94,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text("AL MASKAN PLASTER & TILE CONT",
+            pw.Text("AL MASKAN PLASTER & TILE CONT L.L.C.SP",
                 style:
                     pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 3),
@@ -133,6 +134,14 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
         );
       }
     }
+    final formattedSubtotal = NumberFormat('#,##0.00', 'en_US')
+        .format(double.tryParse(widget.subtotal) ?? 0);
+    final formattedAdvance = NumberFormat('#,##0.00', 'en_US')
+        .format(double.tryParse(widget.advance) ?? 0);
+    final formattedvat = NumberFormat('#,##0.00', 'en_US')
+        .format(double.tryParse(widget.vat) ?? 0);
+    final formattedtotal = NumberFormat('#,##0.00', 'en_US')
+        .format(double.tryParse(widget.totalamount) ?? 0);
 
     pw.Widget bankdetails() {
       if (widget.selectedCompany == 'Al Maskan') {
@@ -332,22 +341,28 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                           fontWeight: pw.FontWeight.normal,
                                           fontSize: 10)),
                                   pw.SizedBox(height: 3),
-                                  pw.Text(widget.name,
-                                      style: pw.TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: pw.FontWeight.bold)),
+                                  pw.Container(
+                                      width: 300,
+                                      child: pw.Text(widget.name,
+                                          style: pw.TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: pw.FontWeight.bold))),
                                   pw.SizedBox(height: 3),
-                                  pw.Text(widget.address,
-                                      style: pw.TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: pw.FontWeight.normal,
-                                          letterSpacing: 0.5)),
+                                  pw.Container(
+                                      width: 200,
+                                      child: pw.Text(widget.address,
+                                          style: pw.TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: pw.FontWeight.normal,
+                                              letterSpacing: 0.5))),
                                   pw.SizedBox(height: 3),
-                                  pw.Text("TRN-${widget.trn}",
-                                      style: pw.TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: pw.FontWeight.normal,
-                                          letterSpacing: 0.5)),
+                                  pw.Container(
+                                      width: 200,
+                                      child: pw.Text("TRN-${widget.trn}",
+                                          style: pw.TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: pw.FontWeight.normal,
+                                              letterSpacing: 0.5))),
                                   pw.SizedBox(height: 3),
                                   pw.Text("United Arab Emirates",
                                       style: pw.TextStyle(
@@ -355,32 +370,105 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
                                 ]),
-                            pw.SizedBox(width: 220),
+
                             pw.Column(
-                                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                pw.CrossAxisAlignment.start,
                                 children: [
-                                  pw.Padding(
-                                    padding: pw.EdgeInsets.only(top: 15),
-                                    child:
-                                        pw.Text("Invoice Date : ${widget.date}",
+                                  pw.Row(
+                                      crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Padding(
+                                            padding: pw.EdgeInsets.only(
+                                                left: 105),
+                                            child: pw.Container(
+                                                alignment: pw
+                                                    .Alignment.centerRight,
+                                                width: 50,
+                                                child:
+                                                pw.Text("Invoice Date :",
+                                                    style: pw.TextStyle(
+                                                      fontWeight: pw
+                                                          .FontWeight
+                                                          .normal,
+                                                      fontSize: 8,
+                                                    )))),
+                                        pw.Container(
+                                            alignment:
+                                            pw.Alignment.centerRight,
+                                            width: 90,
+                                            child: pw.Text(widget.date,
+                                                style: pw.TextStyle(
+                                                  fontWeight:
+                                                  pw.FontWeight.normal,
+                                                  fontSize: 8,
+                                                )))
+                                      ]),
+                                  pw.SizedBox(height: 5),
+                                  pw.Row(
+                                      crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Padding(
+                                            padding: pw.EdgeInsets.only(
+                                                left: 85),
+                                            child: pw.Container(
+                                                alignment: pw
+                                                    .Alignment.centerRight,
+                                                width: 70,
+                                                child: pw.Text(
+                                                    "P.O(OR)QTN NO :",
+                                                    style: pw.TextStyle(
+                                                      fontWeight: pw
+                                                          .FontWeight
+                                                          .normal,
+                                                      fontSize: 8,
+                                                    )))),
+                                        pw.Container(
+                                            alignment:
+                                            pw.Alignment.centerRight,
+                                            width: 90,
+                                            child: pw.Text(widget.lpoqtn,
+                                                style: pw.TextStyle(
+                                                  fontWeight:
+                                                  pw.FontWeight.normal,
+                                                  fontSize: 8,
+                                                )))
+                                      ]),
+                                  pw.SizedBox(height: 5),
+                                  pw.Row(
+                                      crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Padding(
+                                            padding: pw.EdgeInsets.only(
+                                                left: 105),
+                                            child: pw.Container(
+                                                alignment: pw
+                                                    .Alignment.centerRight,
+                                                width: 50,
+                                                child: pw.Text("Project :",
+                                                    style: pw.TextStyle(
+                                                      fontWeight: pw
+                                                          .FontWeight
+                                                          .normal,
+                                                      fontSize: 8,
+                                                    )))),
+                                        pw.Container(
+                                          width: 90,
+                                          child: pw.Text(
+                                            widget.project,
+                                            textAlign: pw.TextAlign.right,
+                                            // This aligns the text inside
                                             style: pw.TextStyle(
-                                              fontWeight: pw.FontWeight.normal,
-                                              fontSize: 9,
-                                            )),
-                                  ),
-                                  pw.SizedBox(height: 3),
-                                  pw.Text("P.O (OR) QTN NO: ${widget.lpoqtn}",
-                                      style: pw.TextStyle(
-                                        fontSize: 9,
-                                        fontWeight: pw.FontWeight.normal,
-                                      )),
-                                  pw.SizedBox(height: 3),
-                                  pw.Text("Project: ${widget.project}",
-                                      textAlign: pw.TextAlign.right,
-                                      style: pw.TextStyle(
-                                        fontSize: 9,
-                                        fontWeight: pw.FontWeight.normal,
-                                      )),
+                                              fontWeight:
+                                              pw.FontWeight.normal,
+                                              fontSize: 8,
+                                            ),
+                                          ),
+                                        )
+                                      ])
                                 ])
                           ]),
                       pw.SizedBox(height: 10),
@@ -459,26 +547,29 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.Expanded(
                               flex: 6,
                               child: pw.Column(
-                                  crossAxisAlignment:
-                                      pw.CrossAxisAlignment.start,
+                                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                                   children: [
-                                    pw.Text("${widget.payment} Amount",
-                                        style: pw.TextStyle(
-                                            fontWeight: pw.FontWeight.bold,
-                                            fontSize: 10,
-                                            color: PdfColors.black)),
                                     pw.Text(
-                                        "SUBTOTAL TAXABLE QTN AMOUNT - ${widget.subtotal}",
-                                        style: pw.TextStyle(
-                                            fontWeight: pw.FontWeight.normal,
-                                            fontSize: 8,
-                                            color: PdfColors.black))
+                                      "${widget.payment} - ${widget.advancepercent}%",
+                                      style: pw.TextStyle(
+                                          fontWeight: pw.FontWeight.bold,
+                                          fontSize: 10,
+                                          color: PdfColors.black),
+                                    ),
+                                    pw.Text(
+                                      "SUBTOTAL TAXABLE QTN AMOUNT - $formattedSubtotal",
+                                      style: pw.TextStyle(
+                                          fontWeight: pw.FontWeight.normal,
+                                          fontSize: 8,
+                                          color: PdfColors.black),
+                                    ),
                                   ]),
                             ),
+
                             pw.SizedBox(width: 5),
                             pw.Expanded(
                               flex: 2,
-                              child: pw.Text(widget.advance,
+                              child: pw.Text(formattedAdvance,
                                   style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black,
@@ -488,7 +579,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.SizedBox(width: 5),
                             pw.Expanded(
                               flex: 2,
-                              child: pw.Text(widget.advance,
+                              child: pw.Text(formattedAdvance,
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black,
@@ -499,7 +590,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                       ),
                       pw.Divider(thickness: 0.3), pw.SizedBox(height: 5),
                       pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 300),
+                        padding: pw.EdgeInsets.only(left: 308),
                         child: pw.Container(
                           width: 200, // adjust width as needed
                           padding: pw.EdgeInsets.symmetric(
@@ -531,12 +622,12 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                 crossAxisAlignment: pw.CrossAxisAlignment.end,
                                 children: [
                                   pw.Text(
-                                    widget.advance,
+                                    formattedAdvance,
                                     style: pw.TextStyle(fontSize: 9),
                                   ),
                                   pw.SizedBox(height: 8),
                                   pw.Text(
-                                    widget.vat,
+                                    formattedvat,
                                     style: pw.TextStyle(fontSize: 9),
                                   ),
                                 ],
@@ -548,7 +639,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
 
                       pw.SizedBox(height: 8),
                       pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 310),
+                        padding: pw.EdgeInsets.only(left: 313),
                         child: pw.Container(
                           width: 200,
                           height: 25,
@@ -558,7 +649,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                               pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 5),
                                 child: pw.Text(
-                                  "TOTAL AMOUNT ",
+                                  "TOTAL AMOUNT (AED)",
                                   style: pw.TextStyle(
                                     fontSize: 9,
                                     fontWeight: pw.FontWeight.bold,
@@ -570,7 +661,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                               pw.Padding(
                                 padding: pw.EdgeInsets.only(right: 5),
                                 child: pw.Text(
-                                  "${widget.totalamount}AED",
+                                  "${formattedtotal}",
                                   style: pw.TextStyle(
                                     fontSize: 9,
                                     fontWeight: pw.FontWeight.bold,
@@ -587,7 +678,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 315),
+                                padding: pw.EdgeInsets.only(left: 318),
                                 child: pw.Text("Total In Words:",
                                     style: pw.TextStyle(
                                       fontSize: 9,
@@ -610,7 +701,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                       pw.SizedBox(height: 2),
                       pw.Text("Notes", style: pw.TextStyle(fontSize: 10)),
                       pw.SizedBox(height: 2),
-                      pw.Text(widget.naq, style: pw.TextStyle(fontSize: 8)),
+                      pw.Text(widget.naq, style: pw.TextStyle(fontSize: 8.5)),
                       pw.SizedBox(height: 5),
 
                       pw.Text("Bank Details:",
