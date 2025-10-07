@@ -42,6 +42,7 @@ class _DashboardState extends State<Dashboard> {
       showcontainer = !showcontainer;
     });
   }
+
 //container
   Widget container() {
     return Padding(
@@ -267,7 +268,70 @@ class _DashboardState extends State<Dashboard> {
           children: [
             SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.h, left: 20.w),
+                        child: Text(
+                          "RECENTLY",
+                          style: GoogleFonts.workSans(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.h, left: 20.w),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 60.h,
+                          width: 200.w,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.r))),
+                          child: Center(
+                            child: Text(
+                              "QTN no:  25-01",
+                              style: GoogleFonts.workSans(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Container(
+                          height: 60.h,
+                          width: 200.w,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.r))),
+                          child: Center(
+                            child: Text(
+                              "INV no:  25-01",
+                              style: GoogleFonts.workSans(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                   Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
+                    child:const Divider(),
+                  ),
                   StreamBuilder<QuerySnapshot>(
                       stream: firestor,
                       builder: (context, snapshot) {
@@ -375,6 +439,8 @@ class _DashboardState extends State<Dashboard> {
                                                                             .docs[index]
                                                                         [
                                                                         'address'],
+                                                                    index:
+                                                                        index,
                                                                   )));
                                                     }
                                                     if (value == 'invoice') {
@@ -396,6 +462,8 @@ class _DashboardState extends State<Dashboard> {
                                                                         trn: snapshot
                                                                             .data!
                                                                             .docs[index]['TRN NO'],
+                                                                        index:
+                                                                            index,
                                                                       )));
                                                     }
                                                     if (value == 'taxinvoice') {
@@ -423,6 +491,8 @@ class _DashboardState extends State<Dashboard> {
                                                                             .docs[index]
                                                                         [
                                                                         'TRN NO'],
+                                                                    index:
+                                                                        index,
                                                                   )));
                                                     }
                                                   },
@@ -539,18 +609,32 @@ class _DashboardState extends State<Dashboard> {
                                                               Navigator.of(
                                                                       context)
                                                                   .pop();
-                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                              ScaffoldMessenger
+                                                                      .of(context)
+                                                                  .showSnackBar(
                                                                 SnackBar(
-                                                                  content: Text('Client Deleted Successfully'),
-                                                                  duration: Duration(seconds: 2),
-                                                                  backgroundColor: Colors.red,
-                                                                  behavior: SnackBarBehavior.floating,
+                                                                  content: Text(
+                                                                      'Client Deleted Successfully'),
+                                                                  duration:
+                                                                      Duration(
+                                                                          seconds:
+                                                                              2),
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .red,
+                                                                  behavior:
+                                                                      SnackBarBehavior
+                                                                          .floating,
                                                                   // optional for a floating snackbar
-                                                                  shape: RoundedRectangleBorder(
-                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  shape:
+                                                                      RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
                                                                   ),
-                                                                  margin: EdgeInsets.all(
-                                                                      30), // only works with floating behavior
+                                                                  margin: EdgeInsets
+                                                                      .all(
+                                                                          30), // only works with floating behavior
                                                                 ),
                                                               );
                                                             },
@@ -565,7 +649,6 @@ class _DashboardState extends State<Dashboard> {
                                                           ),
                                                         ],
                                                       );
-
                                                     },
                                                   );
                                                 },
@@ -812,31 +895,45 @@ class _DashboardState extends State<Dashboard> {
                                                                             .doc(docId)
                                                                             .update(updatedData);
 
-                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(
                                                                           SnackBar(
-                                                                            content: Text('Client Data Updated'),
-                                                                            duration: Duration(seconds: 2),
-                                                                            backgroundColor: Colors.green,
-                                                                            behavior: SnackBarBehavior.floating, // optional for a floating snackbar
-                                                                            shape: RoundedRectangleBorder(
+                                                                            content:
+                                                                                Text('Client Data Updated'),
+                                                                            duration:
+                                                                                Duration(seconds: 2),
+                                                                            backgroundColor:
+                                                                                Colors.green,
+                                                                            behavior:
+                                                                                SnackBarBehavior.floating, // optional for a floating snackbar
+                                                                            shape:
+                                                                                RoundedRectangleBorder(
                                                                               borderRadius: BorderRadius.circular(8),
                                                                             ),
-                                                                            margin: EdgeInsets.all(16), // only works with floating behavior
+                                                                            margin:
+                                                                                EdgeInsets.all(16), // only works with floating behavior
                                                                           ),
-                                                                        );Navigator.of(context).pop();
-
-
+                                                                        );
+                                                                        Navigator.of(context)
+                                                                            .pop();
                                                                       } catch (e) {
-                                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(
                                                                           SnackBar(
-                                                                            content: Text('Update Failed ${e}'),
-                                                                            duration: Duration(seconds: 2),
-                                                                            backgroundColor: Colors.green,
-                                                                            behavior: SnackBarBehavior.floating, // optional for a floating snackbar
-                                                                            shape: RoundedRectangleBorder(
+                                                                            content:
+                                                                                Text('Update Failed ${e}'),
+                                                                            duration:
+                                                                                Duration(seconds: 2),
+                                                                            backgroundColor:
+                                                                                Colors.green,
+                                                                            behavior:
+                                                                                SnackBarBehavior.floating, // optional for a floating snackbar
+                                                                            shape:
+                                                                                RoundedRectangleBorder(
                                                                               borderRadius: BorderRadius.circular(8),
                                                                             ),
-                                                                            margin: EdgeInsets.all(16), // only works with floating behavior
+                                                                            margin:
+                                                                                EdgeInsets.all(16), // only works with floating behavior
                                                                           ),
                                                                         );
                                                                       }

@@ -23,6 +23,7 @@ class InvoicePdfPreviewPage extends StatefulWidget {
   final String TAC;
   final String selectedCompany;
   final List<Map<String, dynamic>> lineItems;
+  final String newfeild;
 
   final String subtotal;
   final String discount;
@@ -56,7 +57,7 @@ class InvoicePdfPreviewPage extends StatefulWidget {
     this.fromSaved = false,
     required this.lineItems,
     required this.TAC,
-    required this.selectedCompany,
+    required this.selectedCompany, required this.newfeild,
   }) : super(key: key);
 
   @override

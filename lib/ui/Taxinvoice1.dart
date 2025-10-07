@@ -12,6 +12,7 @@ class Taxinvoice1 extends StatefulWidget {
   final String address;
   final String trn;
   final String? taxinvoiceid;
+  final int    index;
 
   const Taxinvoice1(
       {super.key,
@@ -19,7 +20,7 @@ class Taxinvoice1 extends StatefulWidget {
       required this.name,
       required this.address,
       required this.trn,
-      this.taxinvoiceid});
+      this.taxinvoiceid, required this.index});
 
   @override
   State<Taxinvoice1> createState() => _Taxinvoice1State();
@@ -35,6 +36,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   String selectednbq = '';
   TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
+
+  //for new add textformfiled
+  TextEditingController newfeild= TextEditingController();
+
   TextEditingController lpoqtn = TextEditingController();
   TextEditingController project = TextEditingController();
   TextEditingController advancepercent = TextEditingController();
@@ -52,6 +57,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
 
   get index => index;
 
+  //for new add button
+
+   bool isclicked = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +72,130 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
       });
     });
     fetchnbqSuggestions();
+      loadNewinvno();
   }
+  // Add a helper function to handle async initialization
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+// Use your client-specific path for 'quotationRef' when saving the quote
+// The client ID must be available in your widget's state for this
+CollectionReference get quotationRef => _firestore 
+    .collection('Clients') 
+    .doc(widget.id) // Replace 'widget.clientId' with your actual client ID variable
+    .collection('invoice');
+
+// 1. QTN Load function (for initState)
+void loadNewinvno() async {
+  try {
+    // Note: This calls the safe read-only fetch
+    final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
+    if (mounted) {
+      setState(() {
+        invno.text = nextinvno;
+      });
+    }
+  } catch (e) {
+    print('Failed to pre-load invno No.: $e');
+    if (mounted) {
+      setState(() {
+        invno.text = 'Failed to load';
+      });
+    }
+  }
+}
+
+// 2. QTN Reserve function (for save button)
+Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore, TextEditingController qtnnoController) async {
+  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
+  
+  final currentFullYear = DateTime.now().year;
+  final currentShortYear = currentFullYear % 100;
+  String reservedinvNumber = ''; // Store the number calculated inside the transaction
+
+  await firestore.runTransaction((Transaction transaction) async {
+    final counterSnapshot = await transaction.get(invnoCounterRef);
+    
+    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
+    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
+    
+    int newSequence;
+    
+    if (yearInDb != currentFullYear) {
+      newSequence = 1; 
+    } else {
+      newSequence = lastSequence + 1; 
+    }
+
+    // 1. Format the reserved number
+    final sequenceString = newSequence.toString().padLeft(2, '0');
+    reservedinvNumber = '$currentShortYear-$sequenceString';
+
+    // 2. Safely commit the new sequence to the counter
+    if (yearInDb != currentFullYear) {
+      transaction.set(invnoCounterRef, {
+        'currentYear': currentFullYear,
+        'lastSequence': newSequence,
+        'lastUpdated': FieldValue.serverTimestamp(), 
+      });
+    } else {
+      transaction.update(invnoCounterRef, {
+        'lastSequence': newSequence,
+        'lastUpdated': FieldValue.serverTimestamp(),
+      });
+    }
+  }); // End of Transaction
+
+  // Update the local controller with the reserved number ONLY if the transaction succeeded
+  qtnnoController.text = reservedinvNumber;
+}
+
+Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
+  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
+  
+  final currentFullYear = DateTime.now().year;
+  final currentShortYear = currentFullYear % 100;
+
+  try {
+    // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
+    final counterSnapshot = await invnoCounterRef.get();
+    
+    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
+    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
+    
+    int nextSequence;
+    
+    // Check for year change (the first number of the new year is 1)
+    if (yearInDb != currentFullYear) {
+      nextSequence = 1;
+    } else {
+      // Get the next number (e.g., if lastSequence was 5, the next is 6)
+      nextSequence = lastSequence + 1; 
+    }
+
+    final sequenceString = nextSequence.toString().padLeft(2, '0');
+    return '$currentShortYear-$sequenceString';
+
+  } catch (e) {
+    print('Error fetching next QTN No.: $e');
+    return 'XX-00'; // Return a fallback value
+  }
+}
+
+
+// You will need to pass the FirebaseFirestore instance to this function
+Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async {
+  // Use a Collection Group Query to search all 'quotation' sub-collections 
+  // regardless of the parent client document.
+  final querySnapshot = await firestore
+      .collectionGroup('invoice') // Searches all 'quotation' sub-collections
+      .where('inv no', isEqualTo: invNumber)
+      .limit(1)
+      .get();
+      
+  // If the query returns any documents, the QTN number is NOT unique
+  return querySnapshot.docs.isEmpty;
+}
+
+
 
   void fetchnbqSuggestions() async {
     final docSnapshot = await nbqfirestore.get();
@@ -466,9 +598,76 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       )
                     ],
                   ),
+                ),
+               // new add button for textformfield
+                SizedBox(
+                  width: 30.w,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 40.h),
+                  child: CircleAvatar(
+                    radius: 30.r,
+                    backgroundColor: Colors.blue,
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isclicked = true;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 40.sp,
+                        )),
+                  ),
                 )
               ],
             ),
+            isclicked == true
+                ? Padding(
+                   padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                  child: Row(
+                    children: [
+                      Container(
+                          width: 250.w,
+                          height: 60.h,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.r)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            controller: newfeild,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            cursorHeight: 25.h,
+                            textAlignVertical: TextAlignVertical.center,
+                            style:const TextStyle(color: Colors.black),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black45,
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                              border: InputBorder.none,
+                              enabledBorder:
+                                const  OutlineInputBorder(borderSide: BorderSide.none),
+                              hintText: "",
+                              hintStyle:const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 16,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(width: 10.w,),IconButton(onPressed: () {
+                          setState(() {
+                            isclicked=false;
+                          });
+                        }, icon:const Icon(Icons.close))
+                    ],
+                  ),
+                )
+                : const SizedBox(),
             Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w, right: 150.w),
               child: Table(
@@ -843,6 +1042,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             );
 
                             try {
+                              await _reserveAndIncrementinvno(_firestore, invno);
                               await firestore.doc(id).set({
                                 'id': id,
                                 'inv no': invno.text,
@@ -873,6 +1073,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                       15), // only works with floating behavior
                                 ),
                               );
+                              loadNewinvno();
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

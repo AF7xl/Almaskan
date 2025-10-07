@@ -8,18 +8,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:number_to_words/number_to_words.dart';
 import 'Invoice.dart';
+
 import 'Quotationpdf.dart';
 
 class Quotation2 extends StatefulWidget {
   final String id;
   final String name;
   final String address;
+  final int index;
 
   const Quotation2({
     super.key,
     required this.id,
     required this.name,
     required this.address,
+    required this.index,
   });
 
   @override
@@ -67,9 +70,12 @@ class _Quotation2State extends State<Quotation2> {
   List<TextEditingController> unit = [];
   TextEditingController qtnno = TextEditingController();
   TextEditingController date = TextEditingController();
+  //for add textfield
+  TextEditingController newfeild = TextEditingController();
   TextEditingController kindatt = TextEditingController();
   TextEditingController project = TextEditingController();
   TextEditingController nbq = TextEditingController();
+  TextEditingController snoCtrl = TextEditingController();
 
   TextEditingController discountcontroller = TextEditingController();
 
@@ -95,6 +101,10 @@ class _Quotation2State extends State<Quotation2> {
     });
   }
 
+  //for new add button
+
+  bool isclicked = false;
+
   double subtotal = 0.0;
   double discount = 0.0;
   double taxableAmount = 0.0;
@@ -109,37 +119,144 @@ class _Quotation2State extends State<Quotation2> {
     fetchnbqSuggestions();
     fetchdescSuggestions();
     fetchunitSuggestions();
+    _loadNewQtnNo();
   }
 
-  void fetchnbqSuggestions() async {
-    final docSnapshot = await nbqfirestore.get();
+// Add a helper function to handle async initialization
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+// Use your client-specific path for 'quotationRef' when saving the quote
+// The client ID must be available in your widget's state for this
+  CollectionReference get quotationRef => _firestore
+      .collection('Clients')
+      .doc(widget
+          .id) // Replace 'widget.clientId' with your actual client ID variable
+      .collection('quotation');
 
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data();
-      nbqoptions = List<String>.from(data?['suggestions'] ?? []);
-      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+// 1. QTN Load function (for initState)
+  void _loadNewQtnNo() async {
+    try {
+      // Note: This calls the safe read-only fetch
+      final nextQtn = await _fetchNextQtnNoForDisplay(_firestore);
+      if (mounted) {
+        setState(() {
+          qtnno.text = nextQtn;
+        });
+      }
+    } catch (e) {
+      print('Failed to pre-load QTN No.: $e');
+      if (mounted) {
+        setState(() {
+          qtnno.text = 'Failed to load';
+        });
+      }
     }
   }
 
-  void fetchdescSuggestions() async {
-    final docSnapshot = await desfirestore.get();
+// 2. QTN Reserve function (for save button)
+  Future<void> _reserveAndIncrementQtnNo(FirebaseFirestore firestore,
+      TextEditingController qtnnoController) async {
+    final DocumentReference qtnCounterRef =
+        firestore.collection('counters').doc('quotation_counter');
 
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data();
-      desoptions = List<String>.from(data?['suggestions'] ?? []);
-      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+    String reservedQtnNumber =
+        ''; // Store the number calculated inside the transaction
+
+    await firestore.runTransaction((Transaction transaction) async {
+      final counterSnapshot = await transaction.get(qtnCounterRef);
+
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
+
+      int newSequence;
+
+      if (yearInDb != currentFullYear) {
+        newSequence = 1;
+      } else {
+        newSequence = lastSequence + 1;
+      }
+
+      // 1. Format the reserved number
+      final sequenceString = newSequence.toString().padLeft(2, '0');
+      reservedQtnNumber = '$currentShortYear-$sequenceString';
+
+      // 2. Safely commit the new sequence to the counter
+      if (yearInDb != currentFullYear) {
+        transaction.set(qtnCounterRef, {
+          'currentYear': currentFullYear,
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      } else {
+        transaction.update(qtnCounterRef, {
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    }); // End of Transaction
+
+    // Update the local controller with the reserved number ONLY if the transaction succeeded
+    qtnnoController.text = reservedQtnNumber;
+  }
+
+  Future<String> _fetchNextQtnNoForDisplay(FirebaseFirestore firestore) async {
+    final DocumentReference qtnCounterRef =
+        firestore.collection('counters').doc('quotation_counter');
+
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+
+    try {
+      // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
+      final counterSnapshot = await qtnCounterRef.get();
+
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
+
+      int nextSequence;
+
+      // Check for year change (the first number of the new year is 1)
+      if (yearInDb != currentFullYear) {
+        nextSequence = 1;
+      } else {
+        // Get the next number (e.g., if lastSequence was 5, the next is 6)
+        nextSequence = lastSequence + 1;
+      }
+
+      final sequenceString = nextSequence.toString().padLeft(2, '0');
+      return '$currentShortYear-$sequenceString';
+    } catch (e) {
+      print('Error fetching next QTN No.: $e');
+      return 'XX-00'; // Return a fallback value
     }
   }
 
-  void fetchunitSuggestions() async {
-    final docSnapshot = await unitfirestore.get();
+// You will need to pass the FirebaseFirestore instance to this function
+  Future<bool> isQtnNoUnique(
+      FirebaseFirestore firestore, String qtnNumber) async {
+    // Use a Collection Group Query to search all 'quotation' sub-collections
+    // regardless of the parent client document.
+    final querySnapshot = await firestore
+        .collectionGroup(
+            'quotation') // Searches all 'quotation' sub-collections
+        .where('qtn no', isEqualTo: qtnNumber)
+        .limit(1)
+        .get();
 
-    if (docSnapshot.exists) {
-      final data = docSnapshot.data();
-      unitoptions = List<String>.from(data?['suggestions'] ?? []);
-      setState(() {}); // Trigger rebuild so Autocomplete sees updates
-    }
+    // If the query returns any documents, the QTN number is NOT unique
+    return querySnapshot.docs.isEmpty;
   }
+
+  // ... rest of your methods ...
 
   void initializeControllers({bool addNewRow = true}) {
     if (addNewRow) {
@@ -239,13 +356,51 @@ class _Quotation2State extends State<Quotation2> {
     setState(() {});
   }
 
+  void fetchnbqSuggestions() async {
+    final docSnapshot = await nbqfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      nbqoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
+  void fetchdescSuggestions() async {
+    final docSnapshot = await desfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      desoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
+  void fetchunitSuggestions() async {
+    final docSnapshot = await unitfirestore.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data();
+      unitoptions = List<String>.from(data?['suggestions'] ?? []);
+      setState(() {}); // Trigger rebuild so Autocomplete sees updates
+    }
+  }
+
   void rebuildRows() {
     rows.clear();
+    // Variable to keep track of the serial number for the current section
+    int currentSNo = 1;
 
     for (int i = 0; i < formStructure.length; i++) {
       final item = formStructure[i];
       if (item['type'] == 'header') {
+        // Reset S.No. when a new header is encountered
+        currentSNo = 1;
+
         final controller = item['controller'] as TextEditingController;
+
+        // ... (Your existing header creation code)
+        // ... (No change needed here for S.No.)
 
         rows.add(
           Padding(
@@ -293,6 +448,14 @@ class _Quotation2State extends State<Quotation2> {
         );
       } else if (item['type'] == 'row') {
         final index = item['index'] as int;
+
+        // 1. Update the S.No. Controller with the new sequential number
+        sno[index].text = currentSNo.toString();
+
+        // 2. Increment the S.No. for the *next* row in this section
+        currentSNo++;
+
+        // 3. Build the row widget using the correct controller index
         rows.add(buildRow(index));
       }
     }
@@ -654,6 +817,27 @@ class _Quotation2State extends State<Quotation2> {
     );
   }
 
+  int getNextSerialNumber() {
+    int serialNumber = 1;
+    // Iterate backwards through the formStructure
+    for (int i = formStructure.length - 1; i >= 0; i--) {
+      final item = formStructure[i];
+      if (item['type'] == 'row') {
+        // If we find a row, increment the serial number based on its position.
+        // Since we're iterating backwards, the *next* row will be +1 to the *last* row's number.
+        // A simpler way is to count rows since the last header.
+        serialNumber++;
+      } else if (item['type'] == 'header') {
+        // If a header is found, the serial number for the new row should be 1,
+        // as it's the first row under this new header/section.
+        // But since we incremented once already for the new row, we reset to 1
+        return 1;
+      }
+    }
+    // If no header is found, it's the first section, so the count is the total rows + 1
+    return serialNumber;
+  }
+
   List<Map<String, dynamic>> lineItems = [];
 
   void collectFormData() {
@@ -757,6 +941,7 @@ class _Quotation2State extends State<Quotation2> {
             'vat': vat,
             'totalAmount': totalAmount,
           },
+          index: widget.index,
         ),
       ),
     );
@@ -919,7 +1104,7 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1260,9 +1445,80 @@ class _Quotation2State extends State<Quotation2> {
                       )
                     ],
                   ),
+                ),
+                // new add button for textformfield
+                SizedBox(
+                  width: 30.w,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 40.h),
+                  child: CircleAvatar(
+                    radius: 30.r,
+                    backgroundColor: Colors.blue,
+                    child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            isclicked = true;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 40.sp,
+                        )),
+                  ),
                 )
               ],
             ),
+            isclicked == true
+                ? Padding(
+                    padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 250.w,
+                          height: 60.h,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(5.r)),
+                          child: TextFormField(
+                            textInputAction: TextInputAction.next,
+                            controller: newfeild,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            cursorHeight: 25.h,
+                            textAlignVertical: TextAlignVertical.center,
+                            style: const TextStyle(color: Colors.black),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black45,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
+                              border: InputBorder.none,
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              hintText: "",
+                              hintStyle: const TextStyle(
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 16,
+                                  color: Colors.black),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isclicked = false;
+                              });
+                            },
+                            icon: const Icon(Icons.close))
+                      ],
+                    ),
+                  )
+                : const SizedBox(),
             Padding(
               padding: EdgeInsets.only(top: 15.h),
               child: Row(
@@ -1272,6 +1528,7 @@ class _Quotation2State extends State<Quotation2> {
                     child: InkWell(
                       onTap: () {
                         addNewRow();
+                        getNextSerialNumber();
                       },
                       child: Container(
                         width: 130.w,
@@ -2125,6 +2382,7 @@ class _Quotation2State extends State<Quotation2> {
                                 clearForm();
 
                                 setState(() {
+                                  isclicked=true;
                                   selectedDocumentId = selectedDoc.id;
                                   qtnno.text = data['qtn no'] ?? '';
                                   date.text = data['date'] ?? '';
@@ -2134,6 +2392,7 @@ class _Quotation2State extends State<Quotation2> {
                                   selectednbq = data['note before quote'] ?? '';
                                   termsandconditioncontroller.text =
                                       data['termsandcondition'] ?? '';
+                                  newfeild.text=data['newfield']??'No Data foud';    
                                   selectedTAC = data['termsandcondition'] ?? '';
                                   naq.text = data['note after quote'] ?? '';
                                   totalamountinname.text =
@@ -2233,6 +2492,8 @@ class _Quotation2State extends State<Quotation2> {
                                   .microsecondsSinceEpoch
                                   .toString();
                               try {
+                                await _reserveAndIncrementQtnNo(
+                                    _firestore, qtnno);
                                 await quotationRef.doc(id).set({
                                   'id': id,
                                   'project': project.text,
@@ -2250,7 +2511,9 @@ class _Quotation2State extends State<Quotation2> {
                                       totalamountinname.text,
                                   'note after quote': naq.text,
                                   'termsandcondition':
-                                      termsandconditioncontroller.text
+                                      termsandconditioncontroller.text,
+                                  'newfield':
+                                      isclicked == true ? newfeild.text : null
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -2266,6 +2529,7 @@ class _Quotation2State extends State<Quotation2> {
                                         15), // only works with floating behavior
                                   ),
                                 );
+                                _loadNewQtnNo();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -2382,6 +2646,7 @@ class _Quotation2State extends State<Quotation2> {
                                     fromSaved: false,
                                     quotationId: '',
                                     selectedCompany: selectedCompany,
+                                     newfeild:newfeild.text,
                                   ),
                                 ),
                               );
@@ -2444,7 +2709,9 @@ class _Quotation2State extends State<Quotation2> {
                                 'total amount in name': totalamountinname.text,
                                 'note after quote': naq.text,
                                 'termsandcondition':
-                                    termsandconditioncontroller.text
+                                    termsandconditioncontroller.text,
+                                 'newfield':newfeild.text,   
+
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

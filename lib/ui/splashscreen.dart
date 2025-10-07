@@ -42,14 +42,14 @@ class _splashscreenState extends State<splashscreen>
                   padding: EdgeInsets.only(left: 200.w),
                   child: SizedBox(
                       width: 300.w,
-                      height: 300.h,
+                      height: 300.h, 
                       child: Image.asset("assets/Logo.png")),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "REYAH AL MASKAN",
+                      "AMD",
                       style: GoogleFonts.workSans(
                           fontWeight: FontWeight.w700, fontSize: 60.sp),
                     ),

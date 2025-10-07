@@ -9,13 +9,14 @@ class Dashboard2 extends StatefulWidget {
   final String name;
   final String address;
   final String trn;
+  final int index;
 
   const Dashboard2(
       {super.key,
       required this.id,
       required this.name,
       required this.address,
-      required this.trn});
+      required this.trn, required this.index});
 
   @override
   State<Dashboard2> createState() => _Dashboard2State();
@@ -75,19 +76,22 @@ class _Dashboard2State extends State<Dashboard2> {
                       Quotation2(
                         id: widget.id,
                         name: widget.name,
-                        address: widget.address ,
+                address: widget.address,
+                         index: widget.index ,
                       ),
                       invoice1(
                         id: widget.id,
                         name: widget.name,
                         address: widget.address,
                         trn: widget.trn,
+                         index:widget.index,
                       ),
                       Taxinvoice1(
                         id: widget.id,
                         name: widget.name,
                         address: widget.address,
                         trn: widget.trn,
+                         index: widget.index,
                       ),
                     ],
                   ))

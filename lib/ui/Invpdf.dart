@@ -32,6 +32,7 @@ class Invpdf extends StatefulWidget {
   final String address;
   final bool fromSaved;
   final String trn;
+  final String newfeild;
 
   const Invpdf({
     Key? key,
@@ -54,7 +55,7 @@ class Invpdf extends StatefulWidget {
     required this.invoiceId,
     this.fromSaved = false,
     required this.lineItems,
-    required this.selectedCompany,
+    required this.selectedCompany, required this.newfeild,
   }) : super(key: key);
 
   @override
