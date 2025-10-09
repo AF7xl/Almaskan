@@ -8,8 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:number_to_words/number_to_words.dart';
 
-
-
 class invoice1 extends StatefulWidget {
   final String id;
   final String name;
@@ -33,8 +31,6 @@ class invoice1 extends StatefulWidget {
 }
 
 class _invoice1State extends State<invoice1> {
-
-
   List<String> desoptions = [];
   final desfirestore = FirebaseFirestore.instance
       .collection("Suggestions")
@@ -73,7 +69,7 @@ class _invoice1State extends State<invoice1> {
   TextEditingController invno = TextEditingController();
   TextEditingController date = TextEditingController();
   //add new textfield
-  TextEditingController newfeild= TextEditingController();
+  TextEditingController newfeild = TextEditingController();
 
   TextEditingController lpoqtn = TextEditingController();
   TextEditingController project = TextEditingController();
@@ -90,10 +86,11 @@ class _invoice1State extends State<invoice1> {
   List<TextEditingController> headerControllers = [];
   List<Map<String, dynamic>> formStructure = [];
 
-
   bool showPercentageFields = false;
   String selectedCompany = 'Reyah Al Maskan';
   bool isDiscountEnabled = false;
+  bool ispaymentcheck = false;
+  bool ischeked = false;
 
   //function to add header text
   void addNewHeader() {
@@ -117,9 +114,8 @@ class _invoice1State extends State<invoice1> {
 
   get index => 1;
 
-  //for new add button 
-   bool isclicked = false;
-
+  //for new add button
+  bool isclicked = false;
 
   @override
   void initState() {
@@ -132,126 +128,139 @@ class _invoice1State extends State<invoice1> {
     fetchunitSuggestions();
     loadNewinvno();
   }
+
   // Add a helper function to handle async initialization
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 // Use your client-specific path for 'quotationRef' when saving the quote
 // The client ID must be available in your widget's state for this
-CollectionReference get quotationRef => _firestore 
-    .collection('Clients') 
-    .doc(widget.id) // Replace 'widget.clientId' with your actual client ID variable
-    .collection('invoice');
+  CollectionReference get quotationRef => _firestore
+      .collection('Clients')
+      .doc(widget
+          .id) // Replace 'widget.clientId' with your actual client ID variable
+      .collection('invoice');
 
 // 1. QTN Load function (for initState)
-void loadNewinvno() async {
-  try {
-    // Note: This calls the safe read-only fetch
-    final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
-    if (mounted) {
-      setState(() {
-        invno.text = nextinvno;
-      });
-    }
-  } catch (e) {
-    print('Failed to pre-load invno No.: $e');
-    if (mounted) {
-      setState(() {
-        invno.text = 'Failed to load';
-      });
+  void loadNewinvno() async {
+    try {
+      // Note: This calls the safe read-only fetch
+      final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
+      if (mounted) {
+        setState(() {
+          invno.text = nextinvno;
+        });
+      }
+    } catch (e) {
+      print('Failed to pre-load invno No.: $e');
+      if (mounted) {
+        setState(() {
+          invno.text = 'Failed to load';
+        });
+      }
     }
   }
-}
 
 // 2. QTN Reserve function (for save button)
-Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore, TextEditingController qtnnoController) async {
-  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
-  
-  final currentFullYear = DateTime.now().year;
-  final currentShortYear = currentFullYear % 100;
-  String reservedinvNumber = ''; // Store the number calculated inside the transaction
+  Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore,
+      TextEditingController qtnnoController) async {
+    final DocumentReference invnoCounterRef =
+        firestore.collection('counters2').doc('invoice_counter');
 
-  await firestore.runTransaction((Transaction transaction) async {
-    final counterSnapshot = await transaction.get(invnoCounterRef);
-    
-    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
-    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
-    
-    int newSequence;
-    
-    if (yearInDb != currentFullYear) {
-      newSequence = 1; 
-    } else {
-      newSequence = lastSequence + 1; 
-    }
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+    String reservedinvNumber =
+        ''; // Store the number calculated inside the transaction
 
-    // 1. Format the reserved number
-    final sequenceString = newSequence.toString().padLeft(2, '0');
-    reservedinvNumber = '$currentShortYear-$sequenceString';
+    await firestore.runTransaction((Transaction transaction) async {
+      final counterSnapshot = await transaction.get(invnoCounterRef);
 
-    // 2. Safely commit the new sequence to the counter
-    if (yearInDb != currentFullYear) {
-      transaction.set(invnoCounterRef, {
-        'currentYear': currentFullYear,
-        'lastSequence': newSequence,
-        'lastUpdated': FieldValue.serverTimestamp(), 
-      });
-    } else {
-      transaction.update(invnoCounterRef, {
-        'lastSequence': newSequence,
-        'lastUpdated': FieldValue.serverTimestamp(),
-      });
-    }
-  }); // End of Transaction
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
 
-  // Update the local controller with the reserved number ONLY if the transaction succeeded
-  qtnnoController.text = reservedinvNumber;
-}
+      int newSequence;
 
-Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
-  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
-  
-  final currentFullYear = DateTime.now().year;
-  final currentShortYear = currentFullYear % 100;
+      if (yearInDb != currentFullYear) {
+        newSequence = 1;
+      } else {
+        newSequence = lastSequence + 1;
+      }
 
-  try {
-    // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
-    final counterSnapshot = await invnoCounterRef.get();
-    
-    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
-    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
-    
-    int nextSequence;
-    
-    // Check for year change (the first number of the new year is 1)
-    if (yearInDb != currentFullYear) {
-      nextSequence = 1;
-    } else {
-      // Get the next number (e.g., if lastSequence was 5, the next is 6)
-      nextSequence = lastSequence + 1; 
-    }
+      // 1. Format the reserved number
+      final sequenceString = newSequence.toString().padLeft(2, '0');
+      reservedinvNumber = '$currentShortYear-$sequenceString';
 
-    final sequenceString = nextSequence.toString().padLeft(2, '0');
-    return '$currentShortYear-$sequenceString';
+      // 2. Safely commit the new sequence to the counter
+      if (yearInDb != currentFullYear) {
+        transaction.set(invnoCounterRef, {
+          'currentYear': currentFullYear,
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      } else {
+        transaction.update(invnoCounterRef, {
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    }); // End of Transaction
 
-  } catch (e) {
-    print('Error fetching next QTN No.: $e');
-    return 'XX-00'; // Return a fallback value
+    // Update the local controller with the reserved number ONLY if the transaction succeeded
+    qtnnoController.text = reservedinvNumber;
   }
-}
 
+  Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
+    final DocumentReference invnoCounterRef =
+        firestore.collection('counters2').doc('invoice_counter');
+
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+
+    try {
+      // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
+      final counterSnapshot = await invnoCounterRef.get();
+
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
+
+      int nextSequence;
+
+      // Check for year change (the first number of the new year is 1)
+      if (yearInDb != currentFullYear) {
+        nextSequence = 1;
+      } else {
+        // Get the next number (e.g., if lastSequence was 5, the next is 6)
+        nextSequence = lastSequence + 1;
+      }
+
+      final sequenceString = nextSequence.toString().padLeft(2, '0');
+      return '$currentShortYear-$sequenceString';
+    } catch (e) {
+      print('Error fetching next QTN No.: $e');
+      return 'XX-00'; // Return a fallback value
+    }
+  }
 
 // You will need to pass the FirebaseFirestore instance to this function
-Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async {
-  // Use a Collection Group Query to search all 'quotation' sub-collections 
-  // regardless of the parent client document.
-  final querySnapshot = await firestore
-      .collectionGroup('invoice') // Searches all 'quotation' sub-collections
-      .where('inv no', isEqualTo: invNumber)
-      .limit(1)
-      .get();
-      
-  // If the query returns any documents, the QTN number is NOT unique
-  return querySnapshot.docs.isEmpty;
-}
+  Future<bool> isinvnoUnique(
+      FirebaseFirestore firestore, String invNumber) async {
+    // Use a Collection Group Query to search all 'quotation' sub-collections
+    // regardless of the parent client document.
+    final querySnapshot = await firestore
+        .collectionGroup('invoice') // Searches all 'quotation' sub-collections
+        .where('inv no', isEqualTo: invNumber)
+        .limit(1)
+        .get();
+
+    // If the query returns any documents, the QTN number is NOT unique
+    return querySnapshot.docs.isEmpty;
+  }
 
   void fetchnbqSuggestions() async {
     final docSnapshot = await nbqfirestore.get();
@@ -405,7 +414,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
     final totalInt = totalAmount.floor(); // Dirhams
     final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
 
-    String amountInWords = NumberToWord().convert('en-in', totalInt) + 'dirhams';
+    String amountInWords =
+        NumberToWord().convert('en-in', totalInt) + 'dirhams';
 
     if (totalFils > 0) {
       amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
@@ -419,7 +429,6 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
 
     setState(() {});
   }
-
 
   List<Widget> rows = []; // List to store each row
   void rebuildRows() {
@@ -497,7 +506,6 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
     }
   }
 
-
   void addNewRow() {
     setState(() {
       initializeControllers(addNewRow: true);
@@ -560,75 +568,76 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return desoptions.where((String option) {
-                    return option
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                displayStringForOption: (String option) => option,
-                onSelected: (String selection) {
-                  description[index].text = selection;
-                },
-                fieldViewBuilder: (BuildContext context,
-                    TextEditingController textEditingController,
-                    FocusNode focusNode,
-                    VoidCallback onFieldSubmitted) {
-                  // Assign your controller value to keep things synced
-                  textEditingController.text = description[index].text;
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return desoptions.where((String option) {
+                      return option
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  displayStringForOption: (String option) => option,
+                  onSelected: (String selection) {
+                    description[index].text = selection;
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    // Assign your controller value to keep things synced
+                    textEditingController.text = description[index].text;
 
-                  textEditingController.addListener(() {
-                    description[index].text = textEditingController.text;
-                  });
+                    textEditingController.addListener(() {
+                      description[index].text = textEditingController.text;
+                    });
 
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    textInputAction: TextInputAction.next,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
-                      border: InputBorder.none,
-                      enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
-                    ),
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    cursorColor: Colors.black,
-                  );
-                },optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4,
-                    child: Container(
-                      width: 500.w,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final option = options.elementAt(index);
-                          return InkWell(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text(option),
-                            ),
-                          );
-                        },
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                        border: InputBorder.none,
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                    ),
-                  ),
-                );
-              }
-              ),
+                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      cursorColor: Colors.black,
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        elevation: 4,
+                        child: Container(
+                          width: 500.w,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: options.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () {
+                                  onSelected(option);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Text(option),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
           // Qty Field
@@ -732,75 +741,76 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                 borderRadius: BorderRadius.circular(5.r),
               ),
               child: Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text == '') {
-                    return const Iterable<String>.empty();
-                  }
-                  return unitoptions.where((String option) {
-                    return option
-                        .toLowerCase()
-                        .contains(textEditingValue.text.toLowerCase());
-                  });
-                },
-                displayStringForOption: (String option) => option,
-                onSelected: (String selection) {
-                  unit[index].text = selection;
-                },
-                fieldViewBuilder: (BuildContext context,
-                    TextEditingController textEditingController,
-                    FocusNode focusNode,
-                    VoidCallback onFieldSubmitted) {
-                  // Assign your controller value to keep things synced
-                  textEditingController.text = unit[index].text;
+                  optionsBuilder: (TextEditingValue textEditingValue) {
+                    if (textEditingValue.text == '') {
+                      return const Iterable<String>.empty();
+                    }
+                    return unitoptions.where((String option) {
+                      return option
+                          .toLowerCase()
+                          .contains(textEditingValue.text.toLowerCase());
+                    });
+                  },
+                  displayStringForOption: (String option) => option,
+                  onSelected: (String selection) {
+                    unit[index].text = selection;
+                  },
+                  fieldViewBuilder: (BuildContext context,
+                      TextEditingController textEditingController,
+                      FocusNode focusNode,
+                      VoidCallback onFieldSubmitted) {
+                    // Assign your controller value to keep things synced
+                    textEditingController.text = unit[index].text;
 
-                  textEditingController.addListener(() {
-                    unit[index].text = textEditingController.text;
-                  });
+                    textEditingController.addListener(() {
+                      unit[index].text = textEditingController.text;
+                    });
 
-                  return TextFormField(
-                    controller: textEditingController,
-                    focusNode: focusNode,
-                    textInputAction: TextInputAction.next,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      contentPadding:
-                          EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
-                      border: InputBorder.none,
-                      enabledBorder:
-                          OutlineInputBorder(borderSide: BorderSide.none),
-                    ),
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
-                    cursorColor: Colors.black,
-                  );
-                },optionsViewBuilder: (context, onSelected, options) {
-                return Align(
-                  alignment: Alignment.topLeft,
-                  child: Material(
-                    elevation: 4,
-                    child: Container(
-                      width: 70.w,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: options.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final option = options.elementAt(index);
-                          return InkWell(
-                            onTap: () {
-                              onSelected(option);
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text(option),
-                            ),
-                          );
-                        },
+                    return TextFormField(
+                      controller: textEditingController,
+                      focusNode: focusNode,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                        border: InputBorder.none,
+                        enabledBorder:
+                            OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                    ),
-                  ),
-                );
-              }
-              ),
+                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      cursorColor: Colors.black,
+                    );
+                  },
+                  optionsViewBuilder: (context, onSelected, options) {
+                    return Align(
+                      alignment: Alignment.topLeft,
+                      child: Material(
+                        elevation: 4,
+                        child: Container(
+                          width: 70.w,
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: options.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final option = options.elementAt(index);
+                              return InkWell(
+                                onTap: () {
+                                  onSelected(option);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 10),
+                                  child: Text(option),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
             ),
           ),
           // Rate Field
@@ -1263,63 +1273,62 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(5.r)),
-                        child: Autocomplete(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<String>.empty();
-                            }
-                            return nbqoptions.where((String option) {
-                              return option.toLowerCase().contains(
-                                  textEditingValue.text.toLowerCase());
-                            });
-                          },
-                          onSelected: (String selection) {
-                            nbq.text = selection;
-                            selectednbq = selection;
-                          },
-                          fieldViewBuilder: (BuildContext context,
-                              TextEditingController textEditingController,
-                              FocusNode focusNode,
-                              VoidCallback onFieldSubmitted) {
-                            // Sync text initially
-                            textEditingController.text = nbq.text;
+                        child: Autocomplete(optionsBuilder:
+                            (TextEditingValue textEditingValue) {
+                          if (textEditingValue.text.isEmpty) {
+                            return const Iterable<String>.empty();
+                          }
+                          return nbqoptions.where((String option) {
+                            return option
+                                .toLowerCase()
+                                .contains(textEditingValue.text.toLowerCase());
+                          });
+                        }, onSelected: (String selection) {
+                          nbq.text = selection;
+                          selectednbq = selection;
+                        }, fieldViewBuilder: (BuildContext context,
+                            TextEditingController textEditingController,
+                            FocusNode focusNode,
+                            VoidCallback onFieldSubmitted) {
+                          // Sync text initially
+                          textEditingController.text = nbq.text;
 
-                            // Sync both ways
-                            textEditingController.addListener(() {
-                              nbq.text = textEditingController.text;
-                            });
+                          // Sync both ways
+                          textEditingController.addListener(() {
+                            nbq.text = textEditingController.text;
+                          });
 
-                            return TextFormField(
-                              controller: textEditingController,
-                              focusNode: focusNode,
-                              maxLines: null,
-                              onFieldSubmitted: (v) {
-                                setState(() {
-                                  selectednbq = v;
-                                });
-                              },
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.multiline,
-                              cursorHeight: 25.h,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.start,
-                              cursorColor: Colors.black45,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    top: 2.h, left: 5.w, bottom: 15.h),
-                                border: InputBorder.none,
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide.none),
-                                hintText: "",
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.w300,
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                ),
+                          return TextFormField(
+                            controller: textEditingController,
+                            focusNode: focusNode,
+                            maxLines: null,
+                            onFieldSubmitted: (v) {
+                              setState(() {
+                                selectednbq = v;
+                              });
+                            },
+                            textInputAction: TextInputAction.next,
+                            keyboardType: TextInputType.multiline,
+                            cursorHeight: 25.h,
+                            textAlignVertical: TextAlignVertical.center,
+                            style: TextStyle(color: Colors.black),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black45,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                              hintText: "",
+                              hintStyle: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16,
+                                color: Colors.black,
                               ),
-                            );
-                          },optionsViewBuilder: (context, onSelected, options) {
+                            ),
+                          );
+                        }, optionsViewBuilder: (context, onSelected, options) {
                           return Align(
                             alignment: Alignment.topLeft,
                             child: Material(
@@ -1330,14 +1339,16 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                   padding: EdgeInsets.zero,
                                   shrinkWrap: true,
                                   itemCount: options.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     final option = options.elementAt(index);
                                     return InkWell(
                                       onTap: () {
                                         onSelected(option);
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 10),
                                         child: Text(option),
                                       ),
                                     );
@@ -1346,13 +1357,12 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                               ),
                             ),
                           );
-                        }
-                        ),
+                        }),
                       )
                     ],
                   ),
                 ),
-              // new add button for textformfield
+                // new add button for textformfield
                 SizedBox(
                   width: 30.w,
                 ),
@@ -1378,10 +1388,10 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
             ),
             isclicked == true
                 ? Padding(
-                   padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                  child: Row(
-                    children: [
-                      Container(
+                    padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                    child: Row(
+                      children: [
+                        Container(
                           width: 250.w,
                           height: 60.h,
                           decoration: BoxDecoration(
@@ -1394,32 +1404,53 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style:const TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
                               border: InputBorder.none,
-                              enabledBorder:
-                                const  OutlineInputBorder(borderSide: BorderSide.none),
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle:const TextStyle(
+                              hintStyle: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   fontSize: 16,
                                   color: Colors.black),
                             ),
                           ),
                         ),
-
-                        SizedBox(width: 10.w,),IconButton(onPressed: () {
-                          setState(() {
-                            isclicked=false;
-                          });
-                        }, icon:const Icon(Icons.close))
-                    ],
-                  ),
-                )
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isclicked = false;
+                              });
+                            },
+                            icon: const Icon(Icons.close)),
+                        SizedBox(
+                          width: 20.w,
+                        ),
+                      ispaymentcheck==true?  Row(children: [ Text(
+                          "Payment Done",
+                          style: GoogleFonts.workSans(
+                              fontSize: 15.sp, fontWeight: FontWeight.w400),
+                        ),
+                        Checkbox(
+                          value: ischeked,
+                          onChanged: (value) {
+                            setState(() {
+                              ischeked = value!;
+                            });
+                          },
+                        )],):const SizedBox(),
+                       
+                      ],
+                    ),
+                  )
                 : const SizedBox(),
             Padding(
               padding: EdgeInsets.only(top: 15.h),
@@ -1958,6 +1989,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 clearForm();
 
                                 setState(() {
+                                  isclicked = true;
+                                  ispaymentcheck=true;
                                   selectedDocumentId = selectedDoc.id;
                                   selectedDocumentId = selectedDoc.id;
                                   invno.text = data['inv no'] ?? '';
@@ -1967,7 +2000,12 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                   nbq.text = data['note before quote'] ?? '';
                                   selectednbq = data['note before quote'] ?? '';
                                   naq.text = data['note after quote'] ?? '';
-                                  newfeild=data['newfield']??'';
+                                  //new field                                  
+                                  newfeild.text =
+                                      data['newfield'] ?? 'No Data foud';
+                                  //new checkbox
+                                  ischeked=data['paymentdone'] ?? false;
+                                      
                                   totalamountinname.text =
                                       data['total amount in name'] ?? '';
 
@@ -2004,6 +2042,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                           0.0
                                       : (data['total amount']?.toDouble() ??
                                           0.0);
+                                         
 
                                   // Rebuild line items
                                   if (data['lineItems'] != null &&
@@ -2064,7 +2103,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                   .microsecondsSinceEpoch
                                   .toString();
                               try {
-                                await _reserveAndIncrementinvno(_firestore, invno);
+                                await _reserveAndIncrementinvno(
+                                    _firestore, invno);
                                 await quotationRef.doc(id).set({
                                   'id': id,
                                   'project': project.text,
@@ -2081,7 +2121,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                   'total amount in name':
                                       totalamountinname.text,
                                   'note after quote': naq.text,
-                                  'newfield':newfeild.text,
+                                  'newfield':
+                                      isclicked == true ? newfeild.text : null,
+                                  'paymentdone': false
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -2210,7 +2252,6 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                     invoiceId: '',
                                     selectedCompany: selectedCompany,
                                     newfeild: newfeild.text,
-                                    
                                   ),
                                 ),
                               );
@@ -2272,7 +2313,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 'total amount': totalAmount.toString(),
                                 'total amount in name': totalamountinname.text,
                                 'note after quote': naq.text,
-                                'newfield':newfeild.text,
+                                'newfield': newfeild.text,
+                                'paymentdone':ischeked
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

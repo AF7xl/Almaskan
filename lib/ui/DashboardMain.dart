@@ -35,6 +35,9 @@ class _DashboardState extends State<Dashboard> {
   final firestore = FirebaseFirestore.instance.collection('Clients');
   final ref = FirebaseFirestore.instance.collection('Clients');
   final firestor = FirebaseFirestore.instance.collection('Clients').snapshots();
+  final counter = FirebaseFirestore.instance.collection('counters').snapshots();
+  final counter2 =
+      FirebaseFirestore.instance.collection('counters2').snapshots();
   //for container
   bool showcontainer = false;
   void tooglecontainer() {
@@ -202,15 +205,15 @@ class _DashboardState extends State<Dashboard> {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Client Created'),
-                        duration: Duration(seconds: 2),
+                        content:const Text('Client Created'),
+                        duration:const Duration(seconds: 2),
                         backgroundColor: Colors.green,
                         behavior: SnackBarBehavior.floating,
                         // optional for a floating snackbar
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        margin: EdgeInsets.all(
+                        margin:const EdgeInsets.all(
                             30), // only works with floating behavior
                       ),
                     );
@@ -219,14 +222,14 @@ class _DashboardState extends State<Dashboard> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Failed to Create Client ${e}'),
-                        duration: Duration(seconds: 2),
+                        duration:const Duration(seconds: 2),
                         backgroundColor: Colors.black54,
                         behavior: SnackBarBehavior.floating,
                         // optional for a floating snackbar
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        margin: EdgeInsets.all(
+                        margin:const EdgeInsets.all(
                             30), // only works with floating behavior
                       ),
                     );
@@ -285,61 +288,97 @@ class _DashboardState extends State<Dashboard> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 20.h, left: 20.w),
-                    child: Row(
-                      children: [
-                        Container(
-                          height: 60.h,
-                          width: 200.w,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.r))),
-                          child: Center(
-                            child: Text(
-                              "QTN no:  25-01",
-                              style: GoogleFonts.workSans(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black),
-                            ),
+                      padding: EdgeInsets.only(top: 20.h, left: 20.w),
+                      child: Row(
+                        children: [
+                          StreamBuilder<QuerySnapshot>(
+                              stream: counter,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text(
+                                    'error',
+                                    style: TextStyle(color: Colors.purple),
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  return Container(
+                                    height: 60.h,
+                                    width: 200.w,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.r))),
+                                    child: Center(
+                                      child: Text(
+                                        "QTN no:  ${snapshot.data!.docs[0]['currentYear'].toString().substring(2)}-${snapshot.data!.docs[0]['lastSequence'].toString()}",
+                                        style: GoogleFonts.workSans(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              }),
+                          SizedBox(
+                            width: 5.w,
                           ),
-                        ),
-                        SizedBox(
-                          width: 5.w,
-                        ),
-                        Container(
-                          height: 60.h,
-                          width: 200.w,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.r))),
-                          child: Center(
-                            child: Text(
-                              "INV no:  25-01",
-                              style: GoogleFonts.workSans(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.h,horizontal: 20.w),
-                    child:const Divider(),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: counter2,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text(
+                                    'error',
+                                    style: TextStyle(color: Colors.purple),
+                                  );
+                                }
+                                if (snapshot.hasData) {
+                                  return Container(
+                                    height: 60.h,
+                                    width: 200.w,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10.r))),
+                                    child: Center(
+                                      child: Text(
+                                        "INV no:  ${snapshot.data!.docs[0]['currentYear'].toString().substring(2)}-${snapshot.data!.docs[0]['lastSequence'].toString()}",
+                                        style: GoogleFonts.workSans(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black),
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              })
+                        ],
+                      )),
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
+                    child: const Divider(),
                   ),
                   StreamBuilder<QuerySnapshot>(
                       stream: firestor,
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
-                          return Text(
+                          return const Text(
                             'error',
                             style: TextStyle(color: Colors.purple),
                           );
@@ -353,7 +392,7 @@ class _DashboardState extends State<Dashboard> {
                             padding: EdgeInsets.only(
                                 top: 25.h, left: 20.w, right: 20.w),
                             childAspectRatio: 378.w / 250.h,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             children: List.generate(snapshot.data!.docs.length,
                                 (index) {
                               return Card(
