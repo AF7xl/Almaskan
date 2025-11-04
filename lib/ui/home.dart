@@ -3,6 +3,7 @@ import 'package:almaskan/ui/PaymentEnroll.dart';
 import 'package:almaskan/ui/Sales.dart';
 import 'package:almaskan/ui/VatAdmin.dart';
 import 'package:almaskan/ui/VatPurchase.dart';
+import 'package:almaskan/ui/payslip/payslip.dart';
 import 'package:almaskan/ui/vatadminReyah.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'DashboardMain.dart';
 import 'Vatpurchasereyah.dart';
-
 
 class home extends StatefulWidget {
   const home({super.key});
@@ -78,7 +78,7 @@ class _homeState extends State<home> {
                   onTap: (index, controller) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Sales()),
+                      MaterialPageRoute(builder: (context) =>const Sales()),
                     );
                   },
                 ),
@@ -87,7 +87,7 @@ class _homeState extends State<home> {
                   onTap: (index, controller) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Overduepayment()),
+                      MaterialPageRoute(builder: (context) =>const Overduepayment()),
                     );
                   },
                 ),
@@ -108,7 +108,7 @@ class _homeState extends State<home> {
                     onTap: (index, controller) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Vatadmin()),
+                        MaterialPageRoute(builder: (context) =>const Vatadmin()),
                       );
                     },
                   ),
@@ -119,7 +119,7 @@ class _homeState extends State<home> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Vatadminreyah()),
+                            builder: (context) =>const Vatadminreyah()),
                       );
                     },
                   ),
@@ -140,7 +140,7 @@ class _homeState extends State<home> {
                     onTap: (index, controller) {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Vatpurchase()),
+                        MaterialPageRoute(builder: (context) =>const Vatpurchase()),
                       );
                     },
                   ),
@@ -151,10 +151,19 @@ class _homeState extends State<home> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Vatpurchasereyah()),
+                            builder: (context) =>const Vatpurchasereyah()),
                       );
                     },
                   ),
+                SideMenuItem(
+                  title: 'Payslip',
+                  onTap: (index, controller) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>const Payslip()),
+                    );
+                  },
+                )
               ],
             ),
           ),
@@ -163,13 +172,14 @@ class _homeState extends State<home> {
           Expanded(
             child: PageView(
               controller: pageController,
-              children: [
+              children:const [
                 Paymentenroll(),
                 Dashboard(),
                 Sales(),
                 Overduepayment(),
                 Vatadmin(),
                 Vatpurchase(),
+                Payslip(),
               ],
             ),
           ),

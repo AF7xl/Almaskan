@@ -405,25 +405,54 @@ class _invoice1State extends State<invoice1> {
     calculateTotal(); // Recalculate total after updating subtotal
   }
 
+  // void calculateTotal() {
+  //   taxableAmount = subtotal - discount;
+  //   vat = taxableAmount * 0.05;
+  //   totalAmount = taxableAmount + vat;
+
+  //   // Convert amount to words and update the controller
+  //   final totalInt = totalAmount.floor(); // Dirhams
+  //   final totalFils = ((totalAmount - totalInt) * 100).floor(); // Fils
+
+  //   String amountInWords =
+  //       NumberToWord().convert('en-in', totalInt) + 'dirhams';
+
+  //   if (totalFils > 0) {
+  //     amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
+  //   }
+
+  //   amountInWords += ' only';
+
+  //   // Capitalize first letter
+  //   totalamountinname.text =
+  //       amountInWords[0].toUpperCase() + amountInWords.substring(1);
+
+  //   setState(() {});
+  // }
+
   void calculateTotal() {
     taxableAmount = subtotal - discount;
-    vat = taxableAmount * 0.05;
-    totalAmount = taxableAmount + vat;
 
-    // Convert amount to words and update the controller
+    // Use precise double math with truncation to avoid rounding up
+    vat = double.parse((taxableAmount * 0.05).toStringAsFixed(2));
+
+    totalAmount = double.parse((taxableAmount + vat).toStringAsFixed(2));
+
+    // Convert amount to words
     final totalInt = totalAmount.floor(); // Dirhams
-    final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
+    final totalFils =
+        ((totalAmount - totalInt) * 100).floor(); // 🔹 Use floor() not round()
 
     String amountInWords =
-        NumberToWord().convert('en-in', totalInt) + 'dirhams';
+        NumberToWord().convert('en-in', totalInt) + ' dirhams';
 
     if (totalFils > 0) {
-      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
+      amountInWords +=
+          ' and ${NumberToWord().convert('en-in', totalFils)} fils';
     }
 
     amountInWords += ' only';
 
-    // Capitalize first letter
     totalamountinname.text =
         amountInWords[0].toUpperCase() + amountInWords.substring(1);
 
@@ -1259,12 +1288,123 @@ class _invoice1State extends State<invoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
-                        child: Text(
-                          "NOTE Before Quote",
-                          style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black),
+                        child: Row(
+                          children: [
+                            Text(
+                              "NOTE Before Quote",
+                              style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(left: 5.w),
+                              child: GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      TextEditingController _noteController =
+                                          TextEditingController();
+                                      return AlertDialog(
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(4.r)),
+                                        title: Text("Add Note Before Quote"),
+                                        insetPadding: EdgeInsets.symmetric(
+                                            horizontal: 40, vertical: 24),
+                                        // Controls width and height
+                                        content: SizedBox(
+                                          width: 400.w, // Custom width
+                                          height: 90.h, // Custom height
+                                          child: TextFormField(
+                                            controller: _noteController,
+                                            decoration: InputDecoration(
+                                              hintText:
+                                                  "Enter your note here...",
+                                              border: OutlineInputBorder(),
+                                            ),
+                                            maxLines: null,
+                                            expands: true,
+                                            // Expands to fill the height
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(); // Close dialog
+                                            },
+                                            child: Text("Cancel"),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              final suggestion =
+                                                  _noteController.text.trim();
+                                              if (suggestion.isEmpty) return;
+
+                                              try {
+                                                await nbqfirestore.update({
+                                                  'suggestions':
+                                                      FieldValue.arrayUnion(
+                                                          [suggestion])
+                                                }).catchError((_) async {
+                                                  await nbqfirestore.set({
+                                                    'suggestions': [suggestion]
+                                                  });
+                                                });
+
+                                                Navigator.of(context).pop();
+                                                fetchnbqSuggestions(); // Refresh the local list
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Suggestion Saved'),
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    behavior: SnackBarBehavior
+                                                        .floating,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                    ),
+                                                    margin: EdgeInsets.all(15),
+                                                  ),
+                                                );
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Failed to Save: $e'),
+                                                    backgroundColor: Colors.red,
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Text("Add"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child:
+                                    Icon(Icons.add_circle, color: Colors.blue),
+                              ),
+                            )
+                          ],
                         ),
                       ),
                       Container(
@@ -1434,20 +1574,26 @@ class _invoice1State extends State<invoice1> {
                         SizedBox(
                           width: 20.w,
                         ),
-                      ispaymentcheck==true?  Row(children: [ Text(
-                          "Payment Done",
-                          style: GoogleFonts.workSans(
-                              fontSize: 15.sp, fontWeight: FontWeight.w400),
-                        ),
-                        Checkbox(
-                          value: ischeked,
-                          onChanged: (value) {
-                            setState(() {
-                              ischeked = value!;
-                            });
-                          },
-                        )],):const SizedBox(),
-                       
+                        ispaymentcheck == true
+                            ? Row(
+                                children: [
+                                  Text(
+                                    "Payment Done",
+                                    style: GoogleFonts.workSans(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  Checkbox(
+                                    value: ischeked,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        ischeked = value!;
+                                      });
+                                    },
+                                  )
+                                ],
+                              )
+                            : const SizedBox(),
                       ],
                     ),
                   )
@@ -1694,12 +1840,12 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
                           prefixText: '\$ ',
-                          prefixStyle: TextStyle(
+                          prefixStyle: const TextStyle(
                             color: Colors.black,
                             fontSize: 20,
                             fontWeight: FontWeight.w400,
@@ -1707,9 +1853,9 @@ class _invoice1State extends State<invoice1> {
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintStyle: TextStyle(
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
+                          hintStyle: const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black),
@@ -1858,15 +2004,15 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
                         ),
                       ),
                     ),
@@ -1901,16 +2047,16 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
-                          enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintStyle: TextStyle(
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
+                          hintStyle: const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black),
@@ -1930,7 +2076,8 @@ class _invoice1State extends State<invoice1> {
                     .collection("invoice")
                     .snapshots(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData) return CircularProgressIndicator();
+                  if (!snapshot.hasData)
+                    return const CircularProgressIndicator();
 
                   var docs = snapshot.data!.docs;
                   final invoiceMap = {
@@ -1958,14 +2105,15 @@ class _invoice1State extends State<invoice1> {
                                           .contains(filter.toLowerCase()))
                                   .toList();
                             },
-                            popupProps: PopupProps.menu(
+                            popupProps: const PopupProps.menu(
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
                                     hintText: "Search by INV No"),
                               ),
                             ),
-                            dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownDecoratorProps:
+                                const DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                 labelText: "Select Invooice to Edit",
                                 border: OutlineInputBorder(),
@@ -1990,7 +2138,7 @@ class _invoice1State extends State<invoice1> {
 
                                 setState(() {
                                   isclicked = true;
-                                  ispaymentcheck=true;
+                                  ispaymentcheck = true;
                                   selectedDocumentId = selectedDoc.id;
                                   selectedDocumentId = selectedDoc.id;
                                   invno.text = data['inv no'] ?? '';
@@ -2000,12 +2148,12 @@ class _invoice1State extends State<invoice1> {
                                   nbq.text = data['note before quote'] ?? '';
                                   selectednbq = data['note before quote'] ?? '';
                                   naq.text = data['note after quote'] ?? '';
-                                  //new field                                  
+                                  //new field
                                   newfeild.text =
                                       data['newfield'] ?? 'No Data foud';
                                   //new checkbox
-                                  ischeked=data['paymentdone'] ?? false;
-                                      
+                                  ischeked = data['paymentdone'] ?? false;
+
                                   totalamountinname.text =
                                       data['total amount in name'] ?? '';
 
@@ -2042,7 +2190,6 @@ class _invoice1State extends State<invoice1> {
                                           0.0
                                       : (data['total amount']?.toDouble() ??
                                           0.0);
-                                         
 
                                   // Rebuild line items
                                   if (data['lineItems'] != null &&
@@ -2251,7 +2398,7 @@ class _invoice1State extends State<invoice1> {
                                     trn: widget.trn,
                                     invoiceId: '',
                                     selectedCompany: selectedCompany,
-                                    newfeild: newfeild.text,
+                                    // newfeild: newfeild.text,
                                   ),
                                 ),
                               );
@@ -2314,7 +2461,7 @@ class _invoice1State extends State<invoice1> {
                                 'total amount in name': totalamountinname.text,
                                 'note after quote': naq.text,
                                 'newfield': newfeild.text,
-                                'paymentdone':ischeked
+                                'paymentdone': ischeked
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

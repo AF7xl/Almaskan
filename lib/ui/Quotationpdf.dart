@@ -57,7 +57,8 @@ class InvoicePdfPreviewPage extends StatefulWidget {
     this.fromSaved = false,
     required this.lineItems,
     required this.TAC,
-    required this.selectedCompany, required this.newfeild,
+    required this.selectedCompany,
+    required this.newfeild,
   }) : super(key: key);
 
   @override
@@ -230,7 +231,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                             letterSpacing: 0.5)),
                                   ]),
                               pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 250),
+                                  padding:const pw.EdgeInsets.only(left: 160),  
                                   child: pw.Column(
                                       crossAxisAlignment:
                                           pw.CrossAxisAlignment.start,
@@ -249,6 +250,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                                     pw.FontWeight.normal,
                                                 letterSpacing: 0.5)),
                                         pw.SizedBox(height: 3),
+                                    
                                         pw.Text("Project : ${widget.project}",
                                             style: pw.TextStyle(
                                                 fontSize: 9,
@@ -521,7 +523,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                               color: PdfColors.black,
                                               fontStyle: pw.FontStyle.italic))))
                             ]),
-                        pw.SizedBox(height: 15),
+
                         pw.Text("Notes", style: pw.TextStyle(fontSize: 10)),
                         pw.SizedBox(height: 5),
                         pw.Text(widget.naq, style: pw.TextStyle(fontSize: 10)),
@@ -531,17 +533,25 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                               fontSize: 10,
                             )),
                         pw.SizedBox(height: 5),
-                        pw.Container(
-                            width: 400,
-                            height: 50,
-                            child: pw.Text(widget.TAC,
-                                style: pw.TextStyle(fontSize: 10))),
-                        pw.SizedBox(height: 20),
-                        pw.Container(
-                            width: 160, height: 160, child: pw.Image(sign)),
-                        pw.Text("Authorized Signature",
-                            style: pw.TextStyle(
-                                fontSize: 10, fontWeight: pw.FontWeight.normal))
+                        pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start,children: [
+                          pw.Container(
+                              width: 400,
+                              height: 50,
+                              child: pw.Text(widget.TAC,
+                                  style: pw.TextStyle(fontSize: 10))),
+                          pw.Column(mainAxisAlignment:pw.MainAxisAlignment.start,
+                            children: [
+                              pw.Container(
+                                  width: 160,
+                                  height: 100,
+                                  child: pw.Image(sign)),
+                              pw.Text("Authorized Signature",
+                                  style: pw.TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: pw.FontWeight.normal))
+                            ],
+                          )
+                        ]),
                       ],
                     )),
               ],

@@ -535,21 +535,21 @@ class _DashboardState extends State<Dashboard> {
                                                                   )));
                                                     }
                                                   },
-                                                  itemBuilder: (context) => [
+                                                  itemBuilder: (context) =>const [
                                                         PopupMenuItem(
+                                                          value: 'quote',
                                                           child: Text(
                                                               "Create Quote"),
-                                                          value: 'quote',
                                                         ),
                                                         PopupMenuItem(
+                                                          value: 'invoice',
                                                           child: Text(
                                                               "Create Invoice"),
-                                                          value: 'invoice',
                                                         ),
                                                         PopupMenuItem(
+                                                          value: 'taxinvoice',
                                                           child: Text(
                                                               "Create Tax Invoice"),
-                                                          value: 'taxinvoice',
                                                         )
                                                       ]),
                                             ),
@@ -652,10 +652,10 @@ class _DashboardState extends State<Dashboard> {
                                                                       .of(context)
                                                                   .showSnackBar(
                                                                 SnackBar(
-                                                                  content: Text(
+                                                                  content: const Text(
                                                                       'Client Deleted Successfully'),
                                                                   duration:
-                                                                      Duration(
+                                                                      const Duration(
                                                                           seconds:
                                                                               2),
                                                                   backgroundColor:
@@ -671,7 +671,7 @@ class _DashboardState extends State<Dashboard> {
                                                                         BorderRadius
                                                                             .circular(8),
                                                                   ),
-                                                                  margin: EdgeInsets
+                                                                  margin: const EdgeInsets
                                                                       .all(
                                                                           30), // only works with floating behavior
                                                                 ),

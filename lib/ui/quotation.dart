@@ -386,6 +386,71 @@ class _Quotation2State extends State<Quotation2> {
     }
   }
 
+  void insertHeaderAfter(int formIndex) {
+    setState(() {
+      final controller = TextEditingController();
+      headerControllers.add(controller);
+
+      formStructure.insert(formIndex + 1, {
+        'type': 'header',
+        'controller': controller,
+      });
+
+      rebuildRows();
+    });
+  }
+
+  void insertRowAfter(int formIndex) {
+    setState(() {
+      // Create controllers for new row
+      final rateController = TextEditingController();
+      final qtyController = TextEditingController();
+      final amountController = TextEditingController();
+      final sn = TextEditingController();
+      final desc = TextEditingController();
+      final uni = TextEditingController();
+
+      // Find the next row index relative to formStructure
+      // (needed to insert controllers at correct place)
+      int insertAtRowIndex = 0;
+      for (var j = 0; j <= formIndex; j++) {
+        if (formStructure[j]['type'] == 'row') {
+          insertAtRowIndex++;
+        }
+      }
+
+      // Insert controllers at the correct place
+      rateControllers.insert(insertAtRowIndex, rateController);
+      qtyControllers.insert(insertAtRowIndex, qtyController);
+      amountControllers.insert(insertAtRowIndex, amountController);
+      sno.insert(insertAtRowIndex, sn);
+      description.insert(insertAtRowIndex, desc);
+      unit.insert(insertAtRowIndex, uni);
+      //isAmountManuallyEdited.insert(insertAtRowIndex, false);
+
+      // Add listeners
+      rateController.addListener(() => calculateAmount(insertAtRowIndex));
+      qtyController.addListener(() => calculateAmount(insertAtRowIndex));
+
+      // Insert into formStructure
+      formStructure.insert(formIndex + 1, {
+        'type': 'row',
+        'index': insertAtRowIndex,
+      });
+
+      // Reindex all rows in formStructure
+      int rowCounter = 0;
+      for (var item in formStructure) {
+        if (item['type'] == 'row') {
+          item['index'] = rowCounter;
+          rowCounter++;
+        }
+      }
+
+      rebuildRows();
+    });
+  }
+
   void rebuildRows() {
     rows.clear();
     // Variable to keep track of the serial number for the current section
@@ -585,7 +650,67 @@ class _Quotation2State extends State<Quotation2> {
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 10),
-                                  child: Text(option),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                          child: Text(
+                                        option,
+                                      )),
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.translucent,
+                                        onTapDown:
+                                            (_) {}, // 👈 Prevent autocomplete from closing
+                                        child: IconButton(
+                                            onPressed: () async {
+                                              // The item we want to remove
+                                              final optionToRemove = option;
+
+                                              // 1. Remove locally
+                                              setState(() {
+                                                desoptions
+                                                    .remove(optionToRemove);
+                                              });
+
+                                              // 2. Update Firestore document
+                                              try {
+                                                await desfirestore.update({
+                                                  'suggestions':
+                                                      FieldValue.arrayRemove(
+                                                          [optionToRemove]),
+                                                });
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Item removed successfully'),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                  ),
+                                                );
+                                                // 👇 Close the dropdown after a small delay (auto close)
+                                                Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 200), () {
+                                                  FocusScope.of(context)
+                                                      .unfocus(); // closes autocomplete
+                                                });
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Failed to remove item: $e'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            icon: Icon(Icons.close)),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -776,14 +901,14 @@ class _Quotation2State extends State<Quotation2> {
                       EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                      const OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
           ),
           // Remove Row Icon
           IconButton(
-            icon: Icon(Icons.cancel_outlined, color: Colors.black),
+            icon: const Icon(Icons.cancel_outlined, color: Colors.black),
             onPressed: () {
               setState(() {
                 // Remove controllers at index
@@ -810,6 +935,32 @@ class _Quotation2State extends State<Quotation2> {
                 rebuildRows();
                 calculateSubtotal();
               });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+            onPressed: () async {
+              final choice = await showMenu<String>(
+                context: context,
+                position: const RelativeRect.fromLTRB(100, 100, 0, 0),
+                items: [
+                  const PopupMenuItem(value: 'row', child: Text('Add Row')),
+                  const PopupMenuItem(
+                      value: 'header', child: Text('Add Header')),
+                ],
+              );
+
+              final formIndex = formStructure.indexWhere(
+                (item) => item['type'] == 'row' && item['index'] == index,
+              );
+
+              if (formIndex == -1) return;
+
+              if (choice == 'row') {
+                insertRowAfter(formIndex);
+              } else if (choice == 'header') {
+                insertHeaderAfter(formIndex);
+              }
             },
           ),
         ],
@@ -978,7 +1129,7 @@ class _Quotation2State extends State<Quotation2> {
                   }
                 },
                 itemBuilder: (context) => [
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         child: Text("Convert to Invoice"),
                         value: 'convert',
                       )
@@ -1021,17 +1172,17 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -1077,7 +1228,7 @@ class _Quotation2State extends State<Quotation2> {
                               builder: (context, child) {
                                 return Theme(
                                   data: Theme.of(context).copyWith(
-                                    colorScheme: ColorScheme.light(
+                                    colorScheme: const ColorScheme.light(
                                       primary: Colors.deepPurple,
                                       onPrimary: Colors.white,
                                       onSurface: Colors.black,
@@ -1111,10 +1262,10 @@ class _Quotation2State extends State<Quotation2> {
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: 'Select date',
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black,
@@ -1153,17 +1304,17 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -1201,17 +1352,17 @@ class _Quotation2State extends State<Quotation2> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -1255,16 +1406,18 @@ class _Quotation2State extends State<Quotation2> {
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4.r)),
-                                        title: Text("Add Note Before Quote"),
-                                        insetPadding: EdgeInsets.symmetric(
-                                            horizontal: 40, vertical: 24),
+                                        title:
+                                            const Text("Add Note Before Quote"),
+                                        insetPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 40, vertical: 24),
                                         // Controls width and height
                                         content: SizedBox(
                                           width: 400.w, // Custom width
                                           height: 90.h, // Custom height
                                           child: TextFormField(
                                             controller: _noteController,
-                                            decoration: InputDecoration(
+                                            decoration: const InputDecoration(
                                               hintText:
                                                   "Enter your note here...",
                                               border: OutlineInputBorder(),
@@ -1282,7 +1435,7 @@ class _Quotation2State extends State<Quotation2> {
                                               Navigator.of(context)
                                                   .pop(); // Close dialog
                                             },
-                                            child: Text("Cancel"),
+                                            child: const Text("Cancel"),
                                           ),
                                           ElevatedButton(
                                             onPressed: () async {
@@ -1307,10 +1460,10 @@ class _Quotation2State extends State<Quotation2> {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   SnackBar(
-                                                    content: Text(
+                                                    content: const Text(
                                                         'Suggestion Saved'),
-                                                    duration:
-                                                        Duration(seconds: 2),
+                                                    duration: const Duration(
+                                                        seconds: 2),
                                                     backgroundColor:
                                                         Colors.green,
                                                     behavior: SnackBarBehavior
@@ -1321,7 +1474,9 @@ class _Quotation2State extends State<Quotation2> {
                                                           BorderRadius.circular(
                                                               8),
                                                     ),
-                                                    margin: EdgeInsets.all(15),
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            15),
                                                   ),
                                                 );
                                               } catch (e) {
@@ -1331,21 +1486,21 @@ class _Quotation2State extends State<Quotation2> {
                                                     content: Text(
                                                         'Failed to Save: $e'),
                                                     backgroundColor: Colors.red,
-                                                    duration:
-                                                        Duration(seconds: 2),
+                                                    duration: const Duration(
+                                                        seconds: 2),
                                                   ),
                                                 );
                                               }
                                             },
-                                            child: Text("Add"),
+                                            child: const Text("Add"),
                                           ),
                                         ],
                                       );
                                     },
                                   );
                                 },
-                                child:
-                                    Icon(Icons.add_circle, color: Colors.blue),
+                                child: const Icon(Icons.add_circle,
+                                    color: Colors.blue),
                               ),
                             )
                           ],
@@ -1395,17 +1550,17 @@ class _Quotation2State extends State<Quotation2> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(
                                   top: 2.h, left: 5.w, bottom: 15.h),
                               border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
+                              enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: TextStyle(
+                              hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black,
@@ -1431,7 +1586,7 @@ class _Quotation2State extends State<Quotation2> {
                                         onSelected(option);
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 10),
                                         child: Text(option),
                                       ),
@@ -1642,9 +1797,10 @@ class _Quotation2State extends State<Quotation2> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(4.r)),
-                                          title: Text("Add Description"),
-                                          insetPadding: EdgeInsets.symmetric(
-                                              horizontal: 40, vertical: 24),
+                                          title: const Text("Add Description"),
+                                          insetPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 40, vertical: 24),
                                           // Controls width and height
                                           content: SizedBox(
                                             width: 400.w, // Custom width
@@ -1652,7 +1808,7 @@ class _Quotation2State extends State<Quotation2> {
                                             child: TextFormField(
                                               controller:
                                                   _descsuggesstioncontroller,
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     "Enter your Desc here...",
                                                 border: OutlineInputBorder(),
@@ -1670,7 +1826,7 @@ class _Quotation2State extends State<Quotation2> {
                                                 Navigator.of(context)
                                                     .pop(); // Close dialog
                                               },
-                                              child: Text("Cancel"),
+                                              child: const Text("Cancel"),
                                             ),
                                             ElevatedButton(
                                               onPressed: () async {
@@ -1699,10 +1855,10 @@ class _Quotation2State extends State<Quotation2> {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     SnackBar(
-                                                      content: Text(
+                                                      content: const Text(
                                                           'Suggestion Saved'),
-                                                      duration:
-                                                          Duration(seconds: 2),
+                                                      duration: const Duration(
+                                                          seconds: 2),
                                                       backgroundColor:
                                                           Colors.green,
                                                       behavior: SnackBarBehavior
@@ -1714,7 +1870,8 @@ class _Quotation2State extends State<Quotation2> {
                                                                 .circular(8),
                                                       ),
                                                       margin:
-                                                          EdgeInsets.all(15),
+                                                          const EdgeInsets.all(
+                                                              15),
                                                     ),
                                                   );
                                                 } catch (e) {
@@ -1725,20 +1882,20 @@ class _Quotation2State extends State<Quotation2> {
                                                           'Failed to Save: $e'),
                                                       backgroundColor:
                                                           Colors.red,
-                                                      duration:
-                                                          Duration(seconds: 2),
+                                                      duration: const Duration(
+                                                          seconds: 2),
                                                     ),
                                                   );
                                                 }
                                               },
-                                              child: Text("Add"),
+                                              child: const Text("Add"),
                                             ),
                                           ],
                                         );
                                       },
                                     );
                                   },
-                                  child: Icon(Icons.add_circle,
+                                  child: const Icon(Icons.add_circle,
                                       color: Colors.blue),
                                 ),
                               )
@@ -1769,9 +1926,10 @@ class _Quotation2State extends State<Quotation2> {
                                           shape: RoundedRectangleBorder(
                                               borderRadius:
                                                   BorderRadius.circular(4.r)),
-                                          title: Text("Add Unit"),
-                                          insetPadding: EdgeInsets.symmetric(
-                                              horizontal: 40, vertical: 24),
+                                          title: const Text("Add Unit"),
+                                          insetPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 40, vertical: 24),
                                           // Controls width and height
                                           content: SizedBox(
                                             width: 400.w, // Custom width
@@ -1779,7 +1937,7 @@ class _Quotation2State extends State<Quotation2> {
                                             child: TextFormField(
                                               controller:
                                                   _unitsuggestioncontroller,
-                                              decoration: InputDecoration(
+                                              decoration: const InputDecoration(
                                                 hintText:
                                                     "Enter your Unit here...",
                                                 border: OutlineInputBorder(),
@@ -2382,7 +2540,7 @@ class _Quotation2State extends State<Quotation2> {
                                 clearForm();
 
                                 setState(() {
-                                  isclicked=true;
+                                  isclicked = true;
                                   selectedDocumentId = selectedDoc.id;
                                   qtnno.text = data['qtn no'] ?? '';
                                   date.text = data['date'] ?? '';
@@ -2392,7 +2550,8 @@ class _Quotation2State extends State<Quotation2> {
                                   selectednbq = data['note before quote'] ?? '';
                                   termsandconditioncontroller.text =
                                       data['termsandcondition'] ?? '';
-                                  newfeild.text=data['newfield']??'No Data foud';    
+                                  newfeild.text =
+                                      data['newfield'] ?? 'No Data foud';
                                   selectedTAC = data['termsandcondition'] ?? '';
                                   naq.text = data['note after quote'] ?? '';
                                   totalamountinname.text =
@@ -2646,7 +2805,7 @@ class _Quotation2State extends State<Quotation2> {
                                     fromSaved: false,
                                     quotationId: '',
                                     selectedCompany: selectedCompany,
-                                     newfeild:newfeild.text,
+                                    newfeild: newfeild.text,
                                   ),
                                 ),
                               );
@@ -2710,8 +2869,7 @@ class _Quotation2State extends State<Quotation2> {
                                 'note after quote': naq.text,
                                 'termsandcondition':
                                     termsandconditioncontroller.text,
-                                 'newfield':newfeild.text,   
-
+                                'newfield': newfeild.text,
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(

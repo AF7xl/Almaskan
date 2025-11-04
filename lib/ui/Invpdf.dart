@@ -9,8 +9,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-
-
 class Invpdf extends StatefulWidget {
   final String invno;
   final String id;
@@ -32,31 +30,30 @@ class Invpdf extends StatefulWidget {
   final String address;
   final bool fromSaved;
   final String trn;
-  final String newfeild;
 
-  const Invpdf({
-    Key? key,
-    required this.invno,
-    required this.trn,
-    required this.date,
-    required this.lpoqtn,
-    required this.project,
-    required this.nbq,
-    required this.subtotal,
-    required this.discount,
-    required this.taxableamount,
-    required this.vat,
-    required this.totalamount,
-    required this.totalamountinname,
-    required this.naq,
-    required this.name,
-    required this.address,
-    required this.id,
-    required this.invoiceId,
-    this.fromSaved = false,
-    required this.lineItems,
-    required this.selectedCompany, required this.newfeild,
-  }) : super(key: key);
+  const Invpdf(
+      {Key? key,
+      required this.invno,
+      required this.trn,
+      required this.date,
+      required this.lpoqtn,
+      required this.project,
+      required this.nbq,
+      required this.subtotal,
+      required this.discount,
+      required this.taxableamount,
+      required this.vat,
+      required this.totalamount,
+      required this.totalamountinname,
+      required this.naq,
+      required this.name,
+      required this.address,
+      required this.id,
+      required this.invoiceId,
+      this.fromSaved = false,
+      required this.lineItems,
+      required this.selectedCompany})
+      : super(key: key);
 
   @override
   State<Invpdf> createState() => _InvpdfState();
@@ -377,7 +374,7 @@ class _InvpdfState extends State<Invpdf> {
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
                                 ]),
-                            pw.SizedBox(width: 220),
+                            pw.SizedBox(width: 160),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
@@ -677,13 +674,19 @@ class _InvpdfState extends State<Invpdf> {
                             decoration: pw.TextDecoration.underline,
                           )),
                       pw.SizedBox(height: 5),
-                      bankdetails(),
+                      pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,children: [
+                        bankdetails(),
+                        pw.Column(children: [
+                          pw.Container(
+                              width: 160, height: 160, child: pw.Image(sign)),
+                          pw.Text("Authorized Signature",
+                              style: pw.TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: pw.FontWeight.normal))
+                        ]),
+                      ]),
+
                       pw.SizedBox(height: 20),
-                      pw.Container(
-                          width: 160, height: 160, child: pw.Image(sign)),
-                      pw.Text("Authorized Signature",
-                          style: pw.TextStyle(
-                              fontSize: 10, fontWeight: pw.FontWeight.normal))
                     ],
                   ))
             ];

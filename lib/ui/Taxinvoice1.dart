@@ -12,7 +12,7 @@ class Taxinvoice1 extends StatefulWidget {
   final String address;
   final String trn;
   final String? taxinvoiceid;
-  final int    index;
+  final int index;
 
   const Taxinvoice1(
       {super.key,
@@ -20,7 +20,8 @@ class Taxinvoice1 extends StatefulWidget {
       required this.name,
       required this.address,
       required this.trn,
-      this.taxinvoiceid, required this.index});
+      this.taxinvoiceid,
+      required this.index});
 
   @override
   State<Taxinvoice1> createState() => _Taxinvoice1State();
@@ -38,12 +39,12 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   TextEditingController date = TextEditingController();
 
   //for new add textformfiled
-  TextEditingController newfeild= TextEditingController();
-
+  TextEditingController newfeild = TextEditingController();
+  TextEditingController nbq = TextEditingController();
   TextEditingController lpoqtn = TextEditingController();
   TextEditingController project = TextEditingController();
   TextEditingController advancepercent = TextEditingController();
-  TextEditingController nbq = TextEditingController();
+  TextEditingController _controller = TextEditingController();
 
   TextEditingController totalamountinname = TextEditingController();
   TextEditingController naq = TextEditingController();
@@ -59,7 +60,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
 
   //for new add button
 
-   bool isclicked = false;
+  bool isclicked = false;
 
   @override
   void initState() {
@@ -72,130 +73,141 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
       });
     });
     fetchnbqSuggestions();
-      loadNewinvno();
+    loadNewinvno();
   }
+
   // Add a helper function to handle async initialization
-final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 // Use your client-specific path for 'quotationRef' when saving the quote
 // The client ID must be available in your widget's state for this
-CollectionReference get quotationRef => _firestore 
-    .collection('Clients') 
-    .doc(widget.id) // Replace 'widget.clientId' with your actual client ID variable
-    .collection('invoice');
+  CollectionReference get quotationRef => _firestore
+      .collection('Clients')
+      .doc(widget
+          .id) // Replace 'widget.clientId' with your actual client ID variable
+      .collection('invoice');
 
 // 1. QTN Load function (for initState)
-void loadNewinvno() async {
-  try {
-    // Note: This calls the safe read-only fetch
-    final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
-    if (mounted) {
-      setState(() {
-        invno.text = nextinvno;
-      });
-    }
-  } catch (e) {
-    print('Failed to pre-load invno No.: $e');
-    if (mounted) {
-      setState(() {
-        invno.text = 'Failed to load';
-      });
+  void loadNewinvno() async {
+    try {
+      // Note: This calls the safe read-only fetch
+      final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
+      if (mounted) {
+        setState(() {
+          invno.text = nextinvno;
+        });
+      }
+    } catch (e) {
+      print('Failed to pre-load invno No.: $e');
+      if (mounted) {
+        setState(() {
+          invno.text = 'Failed to load';
+        });
+      }
     }
   }
-}
 
 // 2. QTN Reserve function (for save button)
-Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore, TextEditingController qtnnoController) async {
-  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
-  
-  final currentFullYear = DateTime.now().year;
-  final currentShortYear = currentFullYear % 100;
-  String reservedinvNumber = ''; // Store the number calculated inside the transaction
+  Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore,
+      TextEditingController qtnnoController) async {
+    final DocumentReference invnoCounterRef =
+        firestore.collection('counters').doc('invoice_counter');
 
-  await firestore.runTransaction((Transaction transaction) async {
-    final counterSnapshot = await transaction.get(invnoCounterRef);
-    
-    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
-    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
-    
-    int newSequence;
-    
-    if (yearInDb != currentFullYear) {
-      newSequence = 1; 
-    } else {
-      newSequence = lastSequence + 1; 
-    }
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+    String reservedinvNumber =
+        ''; // Store the number calculated inside the transaction
 
-    // 1. Format the reserved number
-    final sequenceString = newSequence.toString().padLeft(2, '0');
-    reservedinvNumber = '$currentShortYear-$sequenceString';
+    await firestore.runTransaction((Transaction transaction) async {
+      final counterSnapshot = await transaction.get(invnoCounterRef);
 
-    // 2. Safely commit the new sequence to the counter
-    if (yearInDb != currentFullYear) {
-      transaction.set(invnoCounterRef, {
-        'currentYear': currentFullYear,
-        'lastSequence': newSequence,
-        'lastUpdated': FieldValue.serverTimestamp(), 
-      });
-    } else {
-      transaction.update(invnoCounterRef, {
-        'lastSequence': newSequence,
-        'lastUpdated': FieldValue.serverTimestamp(),
-      });
-    }
-  }); // End of Transaction
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
 
-  // Update the local controller with the reserved number ONLY if the transaction succeeded
-  qtnnoController.text = reservedinvNumber;
-}
+      int newSequence;
 
-Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
-  final DocumentReference invnoCounterRef = firestore.collection('counters').doc('invoice_counter');
-  
-  final currentFullYear = DateTime.now().year;
-  final currentShortYear = currentFullYear % 100;
+      if (yearInDb != currentFullYear) {
+        newSequence = 1;
+      } else {
+        newSequence = lastSequence + 1;
+      }
 
-  try {
-    // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
-    final counterSnapshot = await invnoCounterRef.get();
-    
-    int yearInDb = counterSnapshot.exists ? counterSnapshot.get('currentYear') as int : 0;
-    int lastSequence = counterSnapshot.exists ? counterSnapshot.get('lastSequence') as int : 0;
-    
-    int nextSequence;
-    
-    // Check for year change (the first number of the new year is 1)
-    if (yearInDb != currentFullYear) {
-      nextSequence = 1;
-    } else {
-      // Get the next number (e.g., if lastSequence was 5, the next is 6)
-      nextSequence = lastSequence + 1; 
-    }
+      // 1. Format the reserved number
+      final sequenceString = newSequence.toString().padLeft(2, '0');
+      reservedinvNumber = '$currentShortYear-$sequenceString';
 
-    final sequenceString = nextSequence.toString().padLeft(2, '0');
-    return '$currentShortYear-$sequenceString';
+      // 2. Safely commit the new sequence to the counter
+      if (yearInDb != currentFullYear) {
+        transaction.set(invnoCounterRef, {
+          'currentYear': currentFullYear,
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      } else {
+        transaction.update(invnoCounterRef, {
+          'lastSequence': newSequence,
+          'lastUpdated': FieldValue.serverTimestamp(),
+        });
+      }
+    }); // End of Transaction
 
-  } catch (e) {
-    print('Error fetching next QTN No.: $e');
-    return 'XX-00'; // Return a fallback value
+    // Update the local controller with the reserved number ONLY if the transaction succeeded
+    qtnnoController.text = reservedinvNumber;
   }
-}
 
+  Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
+    final DocumentReference invnoCounterRef =
+        firestore.collection('counters').doc('invoice_counter');
+
+    final currentFullYear = DateTime.now().year;
+    final currentShortYear = currentFullYear % 100;
+
+    try {
+      // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
+      final counterSnapshot = await invnoCounterRef.get();
+
+      int yearInDb = counterSnapshot.exists
+          ? counterSnapshot.get('currentYear') as int
+          : 0;
+      int lastSequence = counterSnapshot.exists
+          ? counterSnapshot.get('lastSequence') as int
+          : 0;
+
+      int nextSequence;
+
+      // Check for year change (the first number of the new year is 1)
+      if (yearInDb != currentFullYear) {
+        nextSequence = 1;
+      } else {
+        // Get the next number (e.g., if lastSequence was 5, the next is 6)
+        nextSequence = lastSequence + 1;
+      }
+
+      final sequenceString = nextSequence.toString().padLeft(2, '0');
+      return '$currentShortYear-$sequenceString';
+    } catch (e) {
+      print('Error fetching next QTN No.: $e');
+      return 'XX-00'; // Return a fallback value
+    }
+  }
 
 // You will need to pass the FirebaseFirestore instance to this function
-Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async {
-  // Use a Collection Group Query to search all 'quotation' sub-collections 
-  // regardless of the parent client document.
-  final querySnapshot = await firestore
-      .collectionGroup('invoice') // Searches all 'quotation' sub-collections
-      .where('inv no', isEqualTo: invNumber)
-      .limit(1)
-      .get();
-      
-  // If the query returns any documents, the QTN number is NOT unique
-  return querySnapshot.docs.isEmpty;
-}
+  Future<bool> isinvnoUnique(
+      FirebaseFirestore firestore, String invNumber) async {
+    // Use a Collection Group Query to search all 'quotation' sub-collections
+    // regardless of the parent client document.
+    final querySnapshot = await firestore
+        .collectionGroup('invoice') // Searches all 'quotation' sub-collections
+        .where('inv no', isEqualTo: invNumber)
+        .limit(1)
+        .get();
 
-
+    // If the query returns any documents, the QTN number is NOT unique
+    return querySnapshot.docs.isEmpty;
+  }
 
   void fetchnbqSuggestions() async {
     final docSnapshot = await nbqfirestore.get();
@@ -316,9 +328,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                              const  OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle:const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -367,7 +379,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                             }
                           },
                           cursorHeight: 25.h,
-                          style: TextStyle(color: Colors.black),
+                          style:const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           textAlignVertical: TextAlignVertical.center,
@@ -376,9 +388,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                              const  OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "Select Date",
-                            hintStyle: TextStyle(
+                            hintStyle:const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black,
@@ -417,7 +429,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style:const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -425,9 +437,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                              const  OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle:const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -465,7 +477,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style:const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -473,9 +485,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
                             enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
+                             const   OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle:const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -548,17 +560,17 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: TextStyle(color: Colors.black),
+                            style:const TextStyle(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(
                                   top: 2.h, left: 5.w, bottom: 15.h),
                               border: InputBorder.none,
-                              enabledBorder: OutlineInputBorder(
+                              enabledBorder:const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: TextStyle(
+                              hintStyle:const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black,
@@ -584,7 +596,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                         onSelected(option);
                                       },
                                       child: Padding(
-                                        padding: EdgeInsets.symmetric(
+                                        padding:const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 10),
                                         child: Text(option),
                                       ),
@@ -599,7 +611,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                     ],
                   ),
                 ),
-               // new add button for textformfield
+                // new add button for textformfield
                 SizedBox(
                   width: 30.w,
                 ),
@@ -625,10 +637,10 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
             ),
             isclicked == true
                 ? Padding(
-                   padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                  child: Row(
-                    children: [
-                      Container(
+                    padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                    child: Row(
+                      children: [
+                        Container(
                           width: 250.w,
                           height: 60.h,
                           decoration: BoxDecoration(
@@ -641,32 +653,36 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style:const TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
-                              contentPadding:
-                                  EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 15.h),
                               border: InputBorder.none,
-                              enabledBorder:
-                                const  OutlineInputBorder(borderSide: BorderSide.none),
+                              enabledBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle:const TextStyle(
+                              hintStyle: const TextStyle(
                                   fontWeight: FontWeight.w300,
                                   fontSize: 16,
                                   color: Colors.black),
                             ),
                           ),
                         ),
-
-                        SizedBox(width: 10.w,),IconButton(onPressed: () {
-                          setState(() {
-                            isclicked=false;
-                          });
-                        }, icon:const Icon(Icons.close))
-                    ],
-                  ),
-                )
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isclicked = false;
+                              });
+                            },
+                            icon: const Icon(Icons.close))
+                      ],
+                    ),
+                  )
                 : const SizedBox(),
             Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w, right: 150.w),
@@ -680,9 +696,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(color: Colors.red[900]),
-                    children: [
+                    children:const [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding:  EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
                           style: TextStyle(
@@ -692,7 +708,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding:  EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
                           style: TextStyle(
@@ -707,7 +723,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                   TableRow(children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child: Text(
+                      child:const Text(
                         'Subtotal Taxable Amount',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -722,7 +738,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                         controller: subtotalController,
                         onChanged: (val) => updateAdvanceAmount(),
                         textAlign: TextAlign.left,
-                        decoration: InputDecoration(
+                        decoration:const InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -736,32 +752,83 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                   TableRow(children: [
                     Padding(
                         padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                        child: DropdownButtonFormField<int>(
-                          hint: Text("Select Payment Method"),
-                          items: paymentOptions.map((option) {
-                            return DropdownMenuItem<int>(
-                              value: option['id'],
-                              child: Text(option['label']),
-                            );
-                          }).toList(),
-                          onChanged: (id) {
-                            var selectedOption = paymentOptions
-                                .firstWhere((opt) => opt['id'] == id);
-                            setState(() {
-                              selectedpaymentId = id;
-                              selectedPercentage = selectedOption['value'];
-                              updateAdvanceAmount();
-                            });
-                          },
-                          value: selectedpaymentId,
-                        )),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: _controller,
+                                decoration:const InputDecoration(
+                                  labelText: "Payment Method",
+                                  hintText: "Select or type manually",
+                                  border: OutlineInputBorder(),
+                                ),
+                                onChanged: (value) {
+                                  // Optional: detect custom percentages like "40%"
+                                  if (value.contains('%')) {
+                                    final numeric = double.tryParse(value
+                                        .replaceAll(RegExp(r'[^0-9]'), ''));
+                                    if (numeric != null) {
+                                      setState(() {
+                                        selectedPercentage = numeric;
+                                      });
+                                      updateAdvanceAmount(); // 👈 call your existing amount update function
+                                    }
+                                  }
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            DropdownButton<int>(
+                              underline: const SizedBox(),
+                              items: paymentOptions.map((option) {
+                                return DropdownMenuItem<int>(
+                                  value: option['id'],
+                                  child: Text(option['label']),
+                                );
+                              }).toList(),
+                              onChanged: (id) {
+                                final selectedOption = paymentOptions
+                                    .firstWhere((opt) => opt['id'] == id);
+                                setState(() {
+                                  selectedpaymentId = id;
+                                  selectedPercentage = selectedOption['value'];
+                                  _controller.text = selectedOption['label'];
+                                  updateAdvanceAmount(); // 👈 fills text field
+                                });
+                              },
+                              value: selectedpaymentId,
+                            ),
+                          ],
+                        )
+                        //  DropdownButtonFormField<int>(
+                        //   hint: Text("Select Payment Method"),
+                        //   items: paymentOptions.map((option) {
+                        //     return DropdownMenuItem<int>(
+                        //       value: option['id'],
+                        //       child: Text(option['label']),
+                        //     );
+                        //   }).toList(),
+                        //   onChanged: (id) {
+
+                        //     var selectedOption = paymentOptions
+                        //         .firstWhere((opt) => opt['id'] == id);
+                        //     setState(() {
+                        //       selectedpaymentId = id;
+                        //       selectedPercentage = selectedOption['value'];
+                        //       updateAdvanceAmount();
+                        //     });
+                        //   },
+                        //   value: selectedpaymentId,
+                        // )
+
+                        ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         textInputAction: TextInputAction.next,
                         controller: advanceController,
                         textAlign: TextAlign.left,
-                        decoration: InputDecoration(
+                        decoration:const InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -776,7 +843,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child: SizedBox(
+                        child:const SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -811,7 +878,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child: SizedBox(
+                        child:const SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -872,7 +939,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black),
+                        style:const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -880,7 +947,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
+                            const  OutlineInputBorder(borderSide: BorderSide.none),
                         ),
                       ),
                     ),
@@ -915,7 +982,7 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(color: Colors.black),
+                        style:const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -923,8 +990,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
                           enabledBorder:
-                              OutlineInputBorder(borderSide: BorderSide.none),
-                          hintStyle: TextStyle(
+                            const  OutlineInputBorder(borderSide: BorderSide.none),
+                          hintStyle:const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black),
@@ -972,14 +1039,14 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                           .contains(filter.toLowerCase()))
                                   .toList();
                             },
-                            popupProps: PopupProps.menu(
+                            popupProps:const PopupProps.menu(
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
                                     hintText: "Search by INV No"),
                               ),
                             ),
-                            dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownDecoratorProps:const DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                 labelText: "Select Invoice to Edit",
                                 border: OutlineInputBorder(),
@@ -1009,7 +1076,9 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 naq.text = data['note after quote'] ?? '';
                                 advancepercent.text =
                                     data['advance percent'] ?? '';
-
+                                //new field
+                                newfeild.text =
+                                    data['newfield'] ?? 'No Data foud';
                                 vat =
                                     double.tryParse(data['vat 5%'] ?? '0') ?? 0;
                                 total = double.tryParse(
@@ -1042,7 +1111,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                             );
 
                             try {
-                              await _reserveAndIncrementinvno(_firestore, invno);
+                              await _reserveAndIncrementinvno(
+                                  _firestore, invno);
                               await firestore.doc(id).set({
                                 'id': id,
                                 'inv no': invno.text,
@@ -1057,7 +1127,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 'vat 5%': vat.toString(),
                                 'total amount': total.toString(),
                                 'total amount in name': totalamountinname.text,
-                                'note after quote': naq.text
+                                'note after quote': naq.text,
+                                'newfield': newfeild.text,
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -1253,7 +1324,8 @@ Future<bool> isinvnoUnique(FirebaseFirestore firestore, String invNumber) async 
                                 'vat 5%': vat.toString(),
                                 'total amount': total.toString(),
                                 'total amount in name': totalamountinname.text,
-                                'note after quote': naq.text
+                                'note after quote': naq.text,
+                                'newfield': newfeild.text
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
