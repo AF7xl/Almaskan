@@ -207,7 +207,7 @@ class _InvpdfState extends State<Invpdf> {
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE48 0410 0000 1207 9331 001",
+                    child: pw.Text("AE06 0410 0000 1236 4478 001",
                         style: pw.TextStyle(fontSize: 7)),
                   ),
                 ]),
@@ -278,7 +278,7 @@ class _InvpdfState extends State<Invpdf> {
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE0606410000012364478001",
+                    child: pw.Text("AE060410000012364478001",
                         style: pw.TextStyle(fontSize: 7)),
                   ),
                 ]),

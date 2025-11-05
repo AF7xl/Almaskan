@@ -188,7 +188,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE48 0410 0000 1207 9331 001",
+                    child: pw.Text("AE06 0410 0000 1236 4478 001",
                         style: pw.TextStyle(fontSize: 7)),
                   ),
                 ]),
@@ -259,7 +259,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE0606410000012364478001",
+                    child: pw.Text("AE060410000012364478001",
                         style: pw.TextStyle(fontSize: 7)),
                   ),
                 ]),
@@ -618,14 +618,18 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             fontSize: 8,
                             decoration: pw.TextDecoration.underline,
                           )),
-                      pw.SizedBox(height: 5),
 
+                      pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,children: [
+                    
                       bankdetails(), pw.SizedBox(height: 20),
-                      pw.Container(
+                      pw.Column(children: [
+                      pw.Container(color: PdfColors.black,
                           width: 160, height: 160, child: pw.Image(sign)),
                       pw.Text("Authorized Signature",
                           style: pw.TextStyle(
                               fontSize: 10, fontWeight: pw.FontWeight.normal))
+                      ])
+                      ])
                     ],
                   )),
             ];

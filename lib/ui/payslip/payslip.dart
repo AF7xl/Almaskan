@@ -433,10 +433,29 @@ class _PayslipState extends State<Payslip> {
                                                                     )));
                                                   }
                                                   if (value == 'profile') {
-                                                    Navigator.of(context).push(
-                                                        MaterialPageRoute(
-                                                            builder: (_) =>
-                                                                const Profile()));
+                                                    Navigator.of(context).push(MaterialPageRoute(
+                                                        builder: (_) => Profile(
+                                                            name: snapshot.data!.docs[index]
+                                                                ['name'],
+                                                            address: snapshot.data!.docs[index]
+                                                                ['address'],
+                                                            companyno: snapshot.data!.docs[index]
+                                                                ['Company NO'],
+                                                            work: snapshot.data!.docs[index]
+                                                                ['work'],
+                                                            dob: snapshot.data!.docs[index]
+                                                                ['Dateofbirth'],
+                                                            emirates: snapshot.data!.docs[index]
+                                                                ['Emiratedid'],
+                                                            joindate: snapshot.data!.docs[index]
+                                                                ['joindate'],
+                                                            visareniewdate: snapshot
+                                                                    .data!
+                                                                    .docs[index]
+                                                                ['visareniewdate'],
+                                                            vacationdate: snapshot.data!.docs[index]['Vacationdate'],
+                                                            nationality: snapshot.data!.docs[index]['Nationality'],
+                                                            id: snapshot.data!.docs[index]['id'])));
                                                   }
                                                 },
                                                 itemBuilder: (context) =>
@@ -936,7 +955,8 @@ class _PayslipState extends State<Payslip> {
                                                                       'work': updwork
                                                                           .text,
                                                                       'Company NO':
-                                                                          updcompno.text,
+                                                                          updcompno
+                                                                              .text,
                                                                       'Nationality':
                                                                           '',
                                                                       'Dateofbirth':
