@@ -306,7 +306,7 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                                   fontWeight: pw.FontWeight.bold))),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
-                          child: pw.Text(widget.month, style: smallStyle)),
+                          child: pw.Text(widget.monthsalary.toString(), style: smallStyle)),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text('SUB TOTAL',

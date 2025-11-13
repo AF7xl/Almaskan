@@ -61,6 +61,12 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   //for new add button
 
   bool isclicked = false;
+  final List<Map<String, dynamic>> options = [
+    {'label': 'YES', 'id': 1},
+    {'label': 'NO', 'id': 2},
+  ];
+
+  int? selectedoption;
 
   @override
   void initState() {
@@ -327,10 +333,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                              const  OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:const TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -379,7 +385,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             }
                           },
                           cursorHeight: 25.h,
-                          style:const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           textAlignVertical: TextAlignVertical.center,
@@ -387,10 +393,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                              const  OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "Select Date",
-                            hintStyle:const TextStyle(
+                            hintStyle: const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black,
@@ -429,17 +435,17 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                              const  OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:const TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -477,17 +483,17 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:const TextStyle(color: Colors.black),
+                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 top: 2.h, left: 5.w, bottom: 15.h),
                             border: InputBorder.none,
-                            enabledBorder:
-                             const   OutlineInputBorder(borderSide: BorderSide.none),
+                            enabledBorder: const OutlineInputBorder(
+                                borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:const TextStyle(
+                            hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -560,17 +566,17 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style:const TextStyle(color: Colors.black),
+                            style: const TextStyle(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.only(
                                   top: 2.h, left: 5.w, bottom: 15.h),
                               border: InputBorder.none,
-                              enabledBorder:const OutlineInputBorder(
+                              enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle:const TextStyle(
+                              hintStyle: const TextStyle(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black,
@@ -596,7 +602,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                         onSelected(option);
                                       },
                                       child: Padding(
-                                        padding:const EdgeInsets.symmetric(
+                                        padding: const EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 10),
                                         child: Text(option),
                                       ),
@@ -696,9 +702,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(color: Colors.red[900]),
-                    children:const [
+                    children: const [
                       Padding(
-                        padding:  EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
                           style: TextStyle(
@@ -708,7 +714,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
                           style: TextStyle(
@@ -723,7 +729,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   TableRow(children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child:const Text(
+                      child: const Text(
                         'Subtotal Taxable Amount',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -738,7 +744,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         controller: subtotalController,
                         onChanged: (val) => updateAdvanceAmount(),
                         textAlign: TextAlign.left,
-                        decoration:const InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -757,7 +763,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             Expanded(
                               child: TextFormField(
                                 controller: _controller,
-                                decoration:const InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: "Payment Method",
                                   hintText: "Select or type manually",
                                   border: OutlineInputBorder(),
@@ -828,7 +834,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         textInputAction: TextInputAction.next,
                         controller: advanceController,
                         textAlign: TextAlign.left,
-                        decoration:const InputDecoration(
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           contentPadding:
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
@@ -843,7 +849,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:const SizedBox(
+                        child: const SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -878,7 +884,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:const SizedBox(
+                        child: const SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -913,6 +919,47 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
               ),
             ),
             Padding(
+              padding: EdgeInsets.only(top: 15.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 725.w, top: 10.h),
+                    child: Text(
+                      "Sign Section ",
+                      style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.red),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 7.w),
+                    child: Container(
+                      height: 50.h,
+                      width: 150.w,
+                      child: DropdownButtonFormField<int>(
+                        hint: const Text("Select option"),
+                        items: options.map((option) {
+                          return DropdownMenuItem<int>(
+                            value: option['id'],
+                            child: Text(option['label']),
+                          );
+                        }).toList(),
+                        onChanged: (id) {
+                          setState(() {
+                            selectedoption = id;
+                            // recalc
+                          });
+                        },
+                        value: selectedoption,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -939,15 +986,15 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
-                          enabledBorder:
-                            const  OutlineInputBorder(borderSide: BorderSide.none),
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
                         ),
                       ),
                     ),
@@ -982,16 +1029,16 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.only(
                               top: 2.h, left: 5.w, bottom: 15.h),
                           border: InputBorder.none,
-                          enabledBorder:
-                            const  OutlineInputBorder(borderSide: BorderSide.none),
-                          hintStyle:const TextStyle(
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide.none),
+                          hintStyle: const TextStyle(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black),
@@ -1039,14 +1086,15 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                           .contains(filter.toLowerCase()))
                                   .toList();
                             },
-                            popupProps:const PopupProps.menu(
+                            popupProps: const PopupProps.menu(
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
                                     hintText: "Search by INV No"),
                               ),
                             ),
-                            dropdownDecoratorProps:const DropDownDecoratorProps(
+                            dropdownDecoratorProps:
+                                const DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                 labelText: "Select Invoice to Edit",
                                 border: OutlineInputBorder(),
@@ -1260,6 +1308,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                                 {'label': ''})['label'] ??
                                         '',
                                     selectedCompany: selectedCompany,
+                                    option: selectedoption != null
+                                        ? options.firstWhere((m) =>
+                                            m['id'] == selectedoption)['label']
+                                        : '',
                                   ),
                                 ),
                               );

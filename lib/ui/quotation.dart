@@ -55,6 +55,14 @@ class _Quotation2State extends State<Quotation2> {
   final List<String> TACoptions = [
     'a) 50% Advance Payment,40% Work in Progress,10% Completion of Work\nb) The work will be only starting after getting LPO and advance payment\nc) Quote is per boq.any changes or extra work will be treated as variation'
   ];
+
+  final List<Map<String, dynamic>> options = [
+    {'label': 'YES', 'id': 1},
+    {'label': 'NO', 'id': 2},
+  ];
+
+  int? selectedoption;
+
   String selectednbq = '';
   String selectedTAC = '';
   List<TextEditingController> rateControllers = [];
@@ -2274,6 +2282,47 @@ class _Quotation2State extends State<Quotation2> {
               ),
             ),
             Padding(
+              padding: EdgeInsets.only(top: 15.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 725.w, top: 10.h),
+                    child: Text(
+                      "Sign Section ",
+                      style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.red),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 7.w),
+                    child: Container(
+                      height: 50.h,
+                      width: 150.w,
+                      child: DropdownButtonFormField<int>(
+                        hint: const Text("Select option"),
+                        items: options.map((option) {
+                          return DropdownMenuItem<int>(
+                            value: option['id'],
+                            child: Text(option['label']),
+                          );
+                        }).toList(),
+                        onChanged: (id) {
+                          setState(() {
+                            selectedoption = id;
+                            // recalc
+                          });
+                        },
+                        value: selectedoption,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2509,14 +2558,15 @@ class _Quotation2State extends State<Quotation2> {
                                           .contains(filter.toLowerCase()))
                                   .toList();
                             },
-                            popupProps: PopupProps.menu(
+                            popupProps: const PopupProps.menu(
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
                                     hintText: "Search by QTN No"),
                               ),
                             ),
-                            dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownDecoratorProps:
+                                const DropDownDecoratorProps(
                               dropdownSearchDecoration: InputDecoration(
                                 labelText: "Select Quotation to Edit",
                                 border: OutlineInputBorder(),
@@ -2806,6 +2856,10 @@ class _Quotation2State extends State<Quotation2> {
                                     quotationId: '',
                                     selectedCompany: selectedCompany,
                                     newfeild: newfeild.text,
+                                    option: selectedoption != null
+                                        ? options.firstWhere((m) =>
+                                            m['id'] == selectedoption)['label']
+                                        : '',
                                   ),
                                 ),
                               );

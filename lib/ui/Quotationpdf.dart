@@ -1,16 +1,12 @@
 import 'dart:io';
-import 'package:almaskan/ui/quotation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
-import 'Invoice.dart';
 
 class InvoicePdfPreviewPage extends StatefulWidget {
   final String qtnno;
@@ -24,7 +20,6 @@ class InvoicePdfPreviewPage extends StatefulWidget {
   final String selectedCompany;
   final List<Map<String, dynamic>> lineItems;
   final String newfeild;
-
   final String subtotal;
   final String discount;
   final String taxableamount;
@@ -35,6 +30,7 @@ class InvoicePdfPreviewPage extends StatefulWidget {
   final String name;
   final String address;
   final bool fromSaved;
+  final String option;
 
   const InvoicePdfPreviewPage({
     Key? key,
@@ -59,6 +55,7 @@ class InvoicePdfPreviewPage extends StatefulWidget {
     required this.TAC,
     required this.selectedCompany,
     required this.newfeild,
+    required this.option,
   }) : super(key: key);
 
   @override
@@ -110,7 +107,11 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
     );
 
     final sign = pw.MemoryImage(
-      (await rootBundle.load('assets/sign.png')).buffer.asUint8List(),
+      (await rootBundle.load(widget.selectedCompany == 'Al Maskan'
+              ? 'assets/sign.png'
+              : 'assets/sign2.jpg'))
+          .buffer
+          .asUint8List(),
     );
     final showDiscount = isDiscountVisible(widget.discount);
     pw.Widget buildCompanyDetails() {
@@ -231,7 +232,7 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                             letterSpacing: 0.5)),
                                   ]),
                               pw.Padding(
-                                  padding:const pw.EdgeInsets.only(left: 160),  
+                                  padding: const pw.EdgeInsets.only(left: 160),
                                   child: pw.Column(
                                       crossAxisAlignment:
                                           pw.CrossAxisAlignment.start,
@@ -250,7 +251,6 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                                     pw.FontWeight.normal,
                                                 letterSpacing: 0.5)),
                                         pw.SizedBox(height: 3),
-                                    
                                         pw.Text("Project : ${widget.project}",
                                             style: pw.TextStyle(
                                                 fontSize: 9,
@@ -360,42 +360,42 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                                   pw.Expanded(
                                       flex: 1,
                                       child: pw.Text(item['sno'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                   pw.SizedBox(width: 3),
                                   pw.Expanded(
                                       flex: 5,
                                       child: pw.Text(item['description'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                   pw.SizedBox(width: 5),
                                   pw.Expanded(
                                       flex: 1,
                                       child: pw.Text(item['quantity'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                   pw.SizedBox(width: 5),
                                   pw.Expanded(
                                       flex: 1,
                                       child: pw.Text(item['unit'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                   pw.SizedBox(width: 5),
                                   pw.Expanded(
                                       flex: 1,
                                       child: pw.Text(item['rate'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                   pw.SizedBox(width: 5),
                                   pw.Expanded(
                                       flex: 1,
                                       child: pw.Text(item['amount'] ?? '',
-                                          style: pw.TextStyle(
+                                          style: const pw.TextStyle(
                                             fontSize: 9,
                                           ))),
                                 ],
@@ -411,30 +411,32 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                             children: [
                               // Label Column
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 370),
+                                padding: const pw.EdgeInsets.only(left: 370),
                                 child: pw.Column(
                                   crossAxisAlignment:
                                       pw.CrossAxisAlignment.start,
                                   children: [
                                     pw.Text("SUBTOTAL :",
-                                        style: pw.TextStyle(fontSize: 10)),
+                                        style:
+                                            const pw.TextStyle(fontSize: 10)),
                                     pw.SizedBox(height: 5),
                                     if (showDiscount) ...[
                                       pw.Text("DISCOUNT :",
-                                          style: pw.TextStyle(fontSize: 9)),
+                                          style:
+                                              const pw.TextStyle(fontSize: 9)),
                                       pw.SizedBox(height: 5),
                                     ],
                                     pw.Text("VAT :",
-                                        style: pw.TextStyle(fontSize: 9)),
+                                        style: const pw.TextStyle(fontSize: 9)),
                                     pw.SizedBox(height: 5),
                                     pw.Text("TAXABLE AMOUNT :",
-                                        style: pw.TextStyle(fontSize: 9)),
+                                        style: const pw.TextStyle(fontSize: 9)),
                                   ],
                                 ),
                               ),
                               // Value Column
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 40),
+                                padding: const pw.EdgeInsets.only(left: 40),
                                 child: pw.Column(
                                   crossAxisAlignment: pw.CrossAxisAlignment.end,
                                   // Align values to right
@@ -533,25 +535,32 @@ class _InvoicePdfPreviewPageState extends State<InvoicePdfPreviewPage> {
                               fontSize: 10,
                             )),
                         pw.SizedBox(height: 5),
-                        pw.Row(crossAxisAlignment: pw.CrossAxisAlignment.start,children: [
-                          pw.Container(
-                              width: 400,
-                              height: 50,
-                              child: pw.Text(widget.TAC,
-                                  style: pw.TextStyle(fontSize: 10))),
-                          pw.Column(mainAxisAlignment:pw.MainAxisAlignment.start,
+                        pw.Row(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Container(
-                                  width: 160,
-                                  height: 100,
-                                  child: pw.Image(sign)),
-                              pw.Text("Authorized Signature",
-                                  style: pw.TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: pw.FontWeight.normal))
-                            ],
-                          )
-                        ]),
+                                  width: 400,
+                                  height: 50,
+                                  child: pw.Text(widget.TAC,
+                                      style: pw.TextStyle(fontSize: 10))),
+                              widget.option.trim().toLowerCase() == 'yes'
+                                  ? pw.Column(children: [
+                                      pw.Container(
+                                          width: 160,
+                                          height: 160,
+                                          child: pw.Image(sign)),
+                                      pw.Text("Authorized Signature",
+                                          style: pw.TextStyle(
+                                              fontSize: 10,
+                                              fontWeight: pw.FontWeight.normal))
+                                    ])
+                                  : widget.option.trim().toLowerCase() == 'no'
+                                      ? pw.Wrap(children: [
+                                          pw.Text(
+                                              'This is computer generated\ncode This not need to Sign'),
+                                        ])
+                                      : pw.SizedBox()
+                            ])
                       ],
                     )),
               ],

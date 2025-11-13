@@ -30,6 +30,7 @@ class Invpdf extends StatefulWidget {
   final String address;
   final bool fromSaved;
   final String trn;
+  final String option;
 
   const Invpdf(
       {Key? key,
@@ -52,7 +53,8 @@ class Invpdf extends StatefulWidget {
       required this.invoiceId,
       this.fromSaved = false,
       required this.lineItems,
-      required this.selectedCompany})
+      required this.selectedCompany,
+      required this.option})
       : super(key: key);
 
   @override
@@ -104,7 +106,11 @@ class _InvpdfState extends State<Invpdf> {
     );
 
     final sign = pw.MemoryImage(
-      (await rootBundle.load('assets/sign.png')).buffer.asUint8List(),
+      (await rootBundle.load(widget.selectedCompany == 'Al Maskan'
+              ? 'assets/sign.png'
+              : 'assets/sign2.jpg'))
+          .buffer
+          .asUint8List(),
     );
     final showDiscount = isDiscountVisible(widget.discount);
     pw.Widget buildCompanyDetails() {
@@ -674,17 +680,28 @@ class _InvpdfState extends State<Invpdf> {
                             decoration: pw.TextDecoration.underline,
                           )),
                       pw.SizedBox(height: 5),
-                      pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,children: [
-                        bankdetails(),
-                        pw.Column(children: [
-                          pw.Container(
-                              width: 160, height: 160, child: pw.Image(sign)),
-                          pw.Text("Authorized Signature",
-                              style: pw.TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: pw.FontWeight.normal))
-                        ]),
-                      ]),
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            bankdetails(),
+                            widget.option.trim().toLowerCase() == 'yes'
+                                ? pw.Column(children: [
+                                    pw.Container(
+                                        width: 160,
+                                        height: 160,
+                                        child: pw.Image(sign)),
+                                    pw.Text("Authorized Signature",
+                                        style: pw.TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: pw.FontWeight.normal))
+                                  ])
+                                : widget.option.trim().toLowerCase() == 'no'
+                                    ? pw.Wrap(children: [
+                                        pw.Text(
+                                            'This is computer generated\ncode This not need to Sign'),
+                                      ])
+                                    : pw.SizedBox()
+                          ]),
 
                       pw.SizedBox(height: 20),
                     ],

@@ -1,5 +1,3 @@
-
-
 import 'package:almaskan/ui/payslip/gratuity_pdf.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -29,7 +27,7 @@ class _GratuityState extends State<Gratuity> {
   TextEditingController noofdays = TextEditingController();
   TextEditingController totalserviceperiod = TextEditingController();
   TextEditingController total = TextEditingController();
-  TextEditingController month = TextEditingController();
+  TextEditingController monthsalary = TextEditingController();
   TextEditingController subtotal = TextEditingController();
   TextEditingController loandeduction = TextEditingController();
   TextEditingController topay = TextEditingController();
@@ -42,7 +40,7 @@ class _GratuityState extends State<Gratuity> {
     // Add one default empty row
     // Add listeners to auto-update calculations
     total.addListener(_updateSubtotal);
-    month.addListener(_updateSubtotal);
+    monthsalary.addListener(_updateSubtotal);
     loandeduction.addListener(_updateToPay);
     _loadNextNumber();
   }
@@ -70,7 +68,7 @@ class _GratuityState extends State<Gratuity> {
 
   void _updateSubtotal() {
     final double totalValue = double.tryParse(total.text) ?? 0.0;
-    final double monthValue = double.tryParse(month.text) ?? 0.0;
+    final double monthValue = double.tryParse(monthsalary.text) ?? 0.0;
 
     final double sub = totalValue + monthValue;
     subtotal.text = sub.toStringAsFixed(2);
@@ -119,7 +117,7 @@ class _GratuityState extends State<Gratuity> {
     noofdays.dispose();
     totalserviceperiod.dispose();
     total.dispose();
-    month.dispose();
+    monthsalary.dispose();
     subtotal.dispose();
     loandeduction.dispose();
     topay.dispose();
@@ -145,7 +143,7 @@ class _GratuityState extends State<Gratuity> {
       noofdays.clear();
       totalserviceperiod.clear();
       total.clear();
-      month.clear();
+      monthsalary.clear();
       subtotal.clear();
       loandeduction.clear();
       topay.clear();
@@ -296,7 +294,7 @@ class _GratuityState extends State<Gratuity> {
                             borderRadius: BorderRadius.circular(5.r)),
                         child: TextFormField(
                           controller: joindate,
-                          
+
                           // Make the field non-editable so only date picker is used
                           onTap: () async {},
                           textInputAction: TextInputAction.next,
@@ -496,7 +494,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: dateofleaving,
-                   
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -546,7 +543,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: dateofjoinservice,
-                       
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -596,7 +592,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: dateofexit,
-                    
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -697,7 +692,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: lastbasicpay,
-                       
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -747,7 +741,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: lastda,
-                        
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -797,7 +790,6 @@ class _GratuityState extends State<Gratuity> {
                           borderRadius: BorderRadius.circular(5.r)),
                       child: TextFormField(
                         controller: noofdays,
-                    
                         textInputAction: TextInputAction.next,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
@@ -825,7 +817,7 @@ class _GratuityState extends State<Gratuity> {
                 ),
               ),
             ]),
-             Row(children: [
+            Row(children: [
               Padding(
                 padding: EdgeInsets.only(left: 20.w),
                 child: Column(
@@ -873,7 +865,8 @@ class _GratuityState extends State<Gratuity> {
                     )
                   ],
                 ),
-              ),]),
+              ),
+            ]),
 
             SizedBox(
               height: 30.h,
@@ -892,7 +885,7 @@ class _GratuityState extends State<Gratuity> {
                     decoration: BoxDecoration(color: Colors.red[900]),
                     children: const [
                       Padding(
-                        padding:  EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
                           style: TextStyle(
@@ -902,7 +895,7 @@ class _GratuityState extends State<Gratuity> {
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
                           style: TextStyle(
@@ -968,7 +961,7 @@ class _GratuityState extends State<Gratuity> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
-                        controller: month,
+                        controller: monthsalary,
                         textAlign: TextAlign.left,
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
@@ -1028,7 +1021,7 @@ class _GratuityState extends State<Gratuity> {
                             child: Text(
                               'LOAN DEDUCTION',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold, 
+                                fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16,
                               ),
@@ -1190,7 +1183,24 @@ class _GratuityState extends State<Gratuity> {
                                     data['totalserviceperiod']?.toString() ??
                                         '';
                                 total.text = data['total']?.toString() ?? '';
-                                month.text = data['month']?.toString() ?? '';
+                                // ✅ Correct mapping
+                                monthsalary.text =
+                                    data['monthsalary']?.toString() ?? '';
+
+// ✅ Restore selected month from Firestore (if any)
+                                if (data['month'] != null &&
+                                    data['month'].toString().isNotEmpty) {
+                                  final foundMonth = months.firstWhere(
+                                    (m) =>
+                                        m['label'].toString().toLowerCase() ==
+                                        data['month'].toString().toLowerCase(),
+                                    orElse: () => {'id': null},
+                                  );
+                                  selectedpmonth = foundMonth['id'];
+                                } else {
+                                  selectedpmonth = null;
+                                }
+
                                 subtotal.text =
                                     data['subtotal']?.toString() ?? '';
                                 loandeduction.text =
@@ -1233,7 +1243,11 @@ class _GratuityState extends State<Gratuity> {
                             'noofdays': noofdays.text,
                             'totalserviceperiod': totalserviceperiod.text,
                             'total': total.text,
-                            'month': month.text,
+                            'month': selectedpmonth != null
+                                ? months.firstWhere(
+                                    (m) => m['id'] == selectedpmonth)['label']
+                                : '',
+                            'monthsalary': monthsalary.text,
                             'subtotal': subtotal.text,
                             'loandeduction': loandeduction.text,
                             'topay': topay.text,
@@ -1302,27 +1316,25 @@ class _GratuityState extends State<Gratuity> {
                                     dateofresign: dateofresign.text,
                                     department: department.text,
                                     dateofleaving: dateofleaving.text,
-                                    dateofjoinservice:
-                                        dateofjoinservice.text,
+                                    dateofjoinservice: dateofjoinservice.text,
                                     dateofexit: dateofexit.text,
                                     totalnoofdays:
                                         double.parse(totalnoofdays.text),
                                     lastbasicpay:
                                         double.parse(lastbasicpay.text),
-                                    lastda:
-                                        double.parse(lastda.text),
-                                    noofdays:
-                                        double.parse(noofdays.text),
-                                    totalserviceperiod:
-                                        totalserviceperiod.text,
+                                    lastda: double.parse(lastda.text),
+                                    noofdays: double.parse(noofdays.text),
+                                    totalserviceperiod: totalserviceperiod.text,
                                     total: double.parse(total.text),
-                                    month: month.text,
-                                    monthsalary: double.parse(month.text),
+                                    month: selectedpmonth != null
+                                        ? months.firstWhere((m) =>
+                                            m['id'] == selectedpmonth)['label']
+                                        : '', 
+                                    monthsalary: double.parse(monthsalary.text),
                                     subtotal: double.parse(subtotal.text),
                                     loandeduction:
                                         double.parse(loandeduction.text),
                                     topay: double.parse(topay.text)),
-                                    
                               ));
                         },
                         child: Container(
@@ -1368,9 +1380,7 @@ class _GratuityState extends State<Gratuity> {
                           }
                           // collectFormData();
                           try {
-                            await gratuityRef
-                                .doc(selectedDocumentId)
-                                .update({
+                            await gratuityRef.doc(selectedDocumentId).update({
                               'employeeName': name.text,
                               'designation': designation.text,
                               'joindate': joindate.text,
@@ -1385,7 +1395,11 @@ class _GratuityState extends State<Gratuity> {
                               'noofdays': noofdays.text,
                               'totalserviceperiod': totalserviceperiod.text,
                               'total': total.text,
-                              'month': month.text,
+                              'month': selectedpmonth != null
+                                  ? months.firstWhere(
+                                      (m) => m['id'] == selectedpmonth)['label']
+                                  : '',
+                              'monthsalary': monthsalary.text,
                               'subtotal': subtotal.text,
                               'loandeduction': loandeduction.text,
                               'topay': dateofleaving.text,

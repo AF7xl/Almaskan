@@ -791,17 +791,17 @@ class _VatadminState extends State<Vatadmin> {
                                       keyboardType: TextInputType.multiline,
                                       cursorHeight: 25.h,
                                       textAlignVertical: TextAlignVertical.center,
-                                      style: TextStyle(color: Colors.black),
+                                      style:const TextStyle(color: Colors.black),
                                       textAlign: TextAlign.start,
                                       cursorColor: Colors.black45,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.only(
                                             top: 2.h, left: 5.w, bottom: 15.h),
                                         border: InputBorder.none,
-                                        enabledBorder: OutlineInputBorder(
+                                        enabledBorder:const OutlineInputBorder(
                                             borderSide: BorderSide.none),
                                         hintText: "",
-                                        hintStyle: TextStyle(
+                                        hintStyle:const TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 16,
                                           color: Colors.black,

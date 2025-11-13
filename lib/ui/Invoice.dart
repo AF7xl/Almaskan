@@ -15,6 +15,7 @@ class invoice1 extends StatefulWidget {
   final String trn;
   final Map<String, dynamic>? prefillData;
   final int index;
+  
 
   const invoice1({
     super.key,
@@ -91,6 +92,13 @@ class _invoice1State extends State<invoice1> {
   bool isDiscountEnabled = false;
   bool ispaymentcheck = false;
   bool ischeked = false;
+  
+  final List<Map<String, dynamic>> options = [
+    {'label': 'YES', 'id': 1},
+    {'label': 'NO', 'id': 2},
+  ];
+
+  int? selectedoption;
 
   //function to add header text
   void addNewHeader() {
@@ -1977,6 +1985,47 @@ class _invoice1State extends State<invoice1> {
                 ],
               ),
             ),
+               Padding(
+              padding: EdgeInsets.only(top: 15.h),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 725.w, top: 10.h),
+                    child: Text(
+                      "Sign Section ",
+                      style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.red),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 7.w),
+                    child: Container(
+                      height: 50.h,
+                      width: 150.w,
+                      child: DropdownButtonFormField<int>(
+                        hint: const Text("Select option"),
+                        items: options.map((option) {
+                          return DropdownMenuItem<int>(
+                            value: option['id'],
+                            child: Text(option['label']),
+                          );
+                        }).toList(),
+                        onChanged: (id) {
+                          setState(() {
+                            selectedoption = id;
+                            // recalc
+                          });
+                        },
+                        value: selectedoption,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Padding(
               padding: EdgeInsets.only(top: 15.h, left: 20.w),
               child: Column(
@@ -2398,6 +2447,10 @@ class _invoice1State extends State<invoice1> {
                                     trn: widget.trn,
                                     invoiceId: '',
                                     selectedCompany: selectedCompany,
+                                    option: selectedoption != null
+                                        ? options.firstWhere((m) =>
+                                            m['id'] == selectedoption)['label']
+                                        : '',
                                     // newfeild: newfeild.text,
                                   ),
                                 ),
