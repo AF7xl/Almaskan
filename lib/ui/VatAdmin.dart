@@ -407,8 +407,8 @@ class _VatadminState extends State<Vatadmin> {
       builder: (_) => AlertDialog(
         title: const Text("Edit Entry"),
         content: SizedBox(
-          width: 400,
-          height: 350,
+          width: 400.w,
+          height: 350.h,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -416,7 +416,7 @@ class _VatadminState extends State<Vatadmin> {
                 TextField(
                   controller: date,
                   textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: "Date"),
+                  decoration: const InputDecoration(labelText: "Date",),
                 ),
                 TextField(
                   controller: invoice,
@@ -494,9 +494,10 @@ class _VatadminState extends State<Vatadmin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
+     
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor: const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -504,12 +505,12 @@ class _VatadminState extends State<Vatadmin> {
             icon: Icon(
               Icons.arrow_back,
               size: 24.sp,
-              color: Colors.black,
+              color: Colors.white,
             )),
         title: Text(
           "Vat Adminexpense",
           style:
-              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp,color: Colors.white),
         ),
         actions: [
           InkWell(
@@ -523,13 +524,13 @@ class _VatadminState extends State<Vatadmin> {
                 Icon(
                   Icons.filter_list,
                   size: 16.sp,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15.w),
                   child: Text(
                     "Filter",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                 )
               ],
@@ -544,7 +545,7 @@ class _VatadminState extends State<Vatadmin> {
               ? Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color:  Color.fromARGB(255, 223, 163, 163),
                   child: Center(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,7 +562,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -569,7 +570,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: date,
@@ -597,7 +598,7 @@ class _VatadminState extends State<Vatadmin> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 12.sp,
                                     ),
                                     textAlign: TextAlign.start,
@@ -634,7 +635,7 @@ class _VatadminState extends State<Vatadmin> {
                                       style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 12.sp,
-                                          color: Colors.black),
+                                          color: Colors.white),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(left: 5.w),
@@ -652,7 +653,7 @@ class _VatadminState extends State<Vatadmin> {
                                                     BorderRadius.circular(4.r)),
                                                 title: Text("Add INV Suggestion"),
                                                 insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
+                                                    horizontal: 40.w, vertical: 24.w),
                                                 // Controls width and height
                                                 content: SizedBox(
                                                   width: 400.w, // Custom width
@@ -751,7 +752,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Autocomplete(
                                   optionsBuilder: (TextEditingValue textEditingValue) {
                                     if (textEditingValue.text.isEmpty) {
@@ -791,7 +792,7 @@ class _VatadminState extends State<Vatadmin> {
                                       keyboardType: TextInputType.multiline,
                                       cursorHeight: 25.h,
                                       textAlignVertical: TextAlignVertical.center,
-                                      style:const TextStyle(color: Colors.black),
+                                      style:const TextStyle(color: Colors.white),
                                       textAlign: TextAlign.start,
                                       cursorColor: Colors.black45,
                                       decoration: InputDecoration(
@@ -804,7 +805,7 @@ class _VatadminState extends State<Vatadmin> {
                                         hintStyle:const TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 16,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     );
@@ -826,7 +827,7 @@ class _VatadminState extends State<Vatadmin> {
                                                 onSelected(option);
                                               },
                                               child: Padding(
-                                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
                                                 child: Text(option),
                                               ),
                                             );
@@ -855,7 +856,7 @@ class _VatadminState extends State<Vatadmin> {
                                       style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 12.sp,
-                                          color: Colors.black),
+                                          color: Colors.white),
                                     ), Padding(
                                       padding: EdgeInsets.only(left: 5.w),
                                       child: GestureDetector(
@@ -872,7 +873,7 @@ class _VatadminState extends State<Vatadmin> {
                                                     BorderRadius.circular(4.r)),
                                                 title: Text("Add Acc Suggestion"),
                                                 insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
+                                                    horizontal: 40.w, vertical: 24.w),
                                                 // Controls width and height
                                                 content: SizedBox(
                                                   width: 400.w, // Custom width
@@ -971,7 +972,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Autocomplete(
                                     optionsBuilder: (TextEditingValue textEditingValue) {
@@ -1012,7 +1013,7 @@ class _VatadminState extends State<Vatadmin> {
                                         keyboardType: TextInputType.multiline,
                                         cursorHeight: 25.h,
                                         textAlignVertical: TextAlignVertical.center,
-                                        style: TextStyle(color: Colors.black),
+                                        style: TextStyle(color: Colors.white),
                                         textAlign: TextAlign.start,
                                         cursorColor: Colors.black45,
                                         decoration: InputDecoration(
@@ -1024,8 +1025,8 @@ class _VatadminState extends State<Vatadmin> {
                                           hintText: "",
                                           hintStyle: TextStyle(
                                             fontWeight: FontWeight.w300,
-                                            fontSize: 16,
-                                            color: Colors.black,
+                                            fontSize: 16.sp,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       );
@@ -1047,7 +1048,7 @@ class _VatadminState extends State<Vatadmin> {
                                                   onSelected(option);
                                                 },
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -1075,7 +1076,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -1083,7 +1084,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: invoiceamount,
@@ -1094,7 +1095,7 @@ class _VatadminState extends State<Vatadmin> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1122,7 +1123,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -1130,7 +1131,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: tax,
@@ -1141,7 +1142,7 @@ class _VatadminState extends State<Vatadmin> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1169,7 +1170,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -1177,7 +1178,7 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: totalamount,
@@ -1188,7 +1189,7 @@ class _VatadminState extends State<Vatadmin> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1236,12 +1237,12 @@ class _VatadminState extends State<Vatadmin> {
                                 width: 70.w,
                                 height: 35.h,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(3.r)),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.r)), 
                                 child: Center(
                                     child: Text(
                                   "ADD",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.black),
                                 )),
                               ),
                             ),
@@ -1254,7 +1255,7 @@ class _VatadminState extends State<Vatadmin> {
               : Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color: const Color.fromARGB(255, 223, 163, 163),
                   child: Row(
                     children: [
                       Padding(
@@ -1269,7 +1270,7 @@ class _VatadminState extends State<Vatadmin> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1279,13 +1280,13 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _startDate != null
                                         ? _formatter.format(_startDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1298,7 +1299,7 @@ class _VatadminState extends State<Vatadmin> {
                         child: Icon(
                           Icons.arrow_right_alt,
                           size: 40.sp,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       Padding(
@@ -1313,7 +1314,7 @@ class _VatadminState extends State<Vatadmin> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1323,13 +1324,13 @@ class _VatadminState extends State<Vatadmin> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _endDate != null
                                         ? _formatter.format(_endDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1352,7 +1353,7 @@ class _VatadminState extends State<Vatadmin> {
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.black),
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -1366,7 +1367,7 @@ class _VatadminState extends State<Vatadmin> {
                             "Generate PDF",
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                                 color: Colors.red),
                           ),
                         ),
@@ -1377,7 +1378,7 @@ class _VatadminState extends State<Vatadmin> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color: Colors.blueGrey[300],
+            color: const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
@@ -1389,7 +1390,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1402,7 +1403,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1415,7 +1416,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1428,7 +1429,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1441,7 +1442,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1454,7 +1455,7 @@ class _VatadminState extends State<Vatadmin> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 )
@@ -1469,7 +1470,7 @@ class _VatadminState extends State<Vatadmin> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ? Colors.blueGrey[100] : Colors.white,
+                    color: index % 2 == 0 ?  Color.fromARGB(255, 223, 163, 163) : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1484,7 +1485,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1499,7 +1500,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1514,7 +1515,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1529,7 +1530,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1544,7 +1545,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1559,7 +1560,7 @@ class _VatadminState extends State<Vatadmin> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),

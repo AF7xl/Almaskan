@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Profile extends StatefulWidget {
   final String id;
@@ -69,12 +70,22 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        
+        backgroundColor: const Color(0xFFC62828),
         title: Text(
           'Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.72.sp,
+          style:  GoogleFonts.poppins(
+            color: Colors.white,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -108,7 +119,7 @@ class _ProfileState extends State<Profile> {
                     children: [
                       Text(
                         widget.name,
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 18.72.sp,
                           fontWeight: FontWeight.w500,
@@ -119,7 +130,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       Text(
                         widget.work,
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,
@@ -145,7 +156,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Fullname",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -164,7 +175,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -174,9 +185,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -193,7 +204,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Nationality",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -212,7 +223,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -222,9 +233,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -249,7 +260,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Work",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -268,7 +279,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -278,9 +289,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -297,7 +308,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date of birth",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -316,7 +327,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -326,9 +337,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -353,7 +364,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Emirates id",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -372,7 +383,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -382,9 +393,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -401,7 +412,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Join date",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -420,7 +431,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -430,9 +441,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -457,7 +468,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Visa Reniew date",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -476,7 +487,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -486,9 +497,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -505,7 +516,7 @@ class _ProfileState extends State<Profile> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Vacation Date",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -524,7 +535,7 @@ class _ProfileState extends State<Profile> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins (color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -534,9 +545,9 @@ class _ProfileState extends State<Profile> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -618,7 +629,7 @@ class _ProfileState extends State<Profile> {
                     child: Center(
                       child: Text(
                         "Update",
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,

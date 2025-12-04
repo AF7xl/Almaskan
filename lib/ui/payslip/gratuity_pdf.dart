@@ -3,6 +3,7 @@ import 'package:almaskan/ui/Quotationpdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -119,7 +120,7 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                     child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.SizedBox(height: 5),
+                        pw.SizedBox(height: 5.h),
                         pw.Text('AL MASKAN PLASTER & TILE CONTRACTING',
                             style: headerStyle),
                         pw.SizedBox(height: 5.h),
@@ -149,11 +150,11 @@ class _GratuitypdfState extends State<Gratuitypdf> {
               // Employee info box (table-like)
               pw.Container(
                 child: pw.Table(
-                  columnWidths: const {
-                    0: pw.FlexColumnWidth(3),
-                    1: pw.FlexColumnWidth(5),
-                    2: pw.FlexColumnWidth(2),
-                    3: pw.FlexColumnWidth(2),
+                  columnWidths:  {
+                    0: pw.FlexColumnWidth(3.w),
+                    1: pw.FlexColumnWidth(5.w),
+                    2: pw.FlexColumnWidth(2.w),
+                    3: pw.FlexColumnWidth(2.w),
                   },
                   border:
                       pw.TableBorder.all(color: PdfColors.black, width: 0.5.h),
@@ -558,13 +559,26 @@ class _GratuitypdfState extends State<Gratuitypdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
-        title: const Text('Gratuity PDF Preview'), 
+         leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
+        title:  Text('Gratuity PDF Preview', style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
             child: IconButton(
-              icon: Icon(Icons.download, size: 25.sp, color: Colors.black),
+              icon: Icon(Icons.download, size: 25.sp, color: Colors.white),
               onPressed: _saveFile,
             ),
           ),

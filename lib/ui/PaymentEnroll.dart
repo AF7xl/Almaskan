@@ -97,7 +97,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 15.w, top: 15.h),
                     child: Text(
                       "Record Payment",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w600, fontSize: 20.sp),
                     ),
                   ),
@@ -137,7 +137,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 10.w),
                       child: Text(
                         "Customer Name",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -183,7 +183,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 20.w),
                       child: Text(
                         "Payment Type",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -207,7 +207,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value,
-                                    style: TextStyle(
+                                    style: GoogleFonts.poppins(
                                         fontSize: 12.sp, color: Colors.black)),
                               );
                             }).toList(),
@@ -233,7 +233,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           padding: EdgeInsets.only(left: 10.w),
                           child: Text(
                             "Project",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black),
@@ -283,7 +283,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 20.w),
                       child: Text(
                         "Emirate",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -338,7 +338,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 10.w),
                       child: Text(
                         "Invoice Number",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -393,7 +393,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 10.w),
                       child: Text(
                         "Date",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -466,7 +466,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 10.w),
                       child: Text(
                         "Invoice Amount",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -486,7 +486,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         child: Center(
                           child: Text(
                             "AED",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 15.sp,
                                 color: Colors.black),
@@ -539,7 +539,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       padding: EdgeInsets.only(left: 10.w),
                       child: Text(
                         "Total Amount",
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color: Colors.black),
@@ -559,7 +559,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         child: Center(
                           child: Text(
                             "AED",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 15.sp,
                                 color: Colors.black),
@@ -659,7 +659,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           child: Center(
                             child: Text(
                               "Save",
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w500),
@@ -697,7 +697,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                   child: Text(
                     "OVERDUE Payment",
                     style:
-                        TextStyle(fontWeight: FontWeight.w600, fontSize: 20.sp),
+                        GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 20.sp),
                   ),
                 ),
                 Padding(
@@ -735,7 +735,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "Customer Name",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -789,7 +789,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "Project Name",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -843,7 +843,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "Invoice Number",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -897,7 +897,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "Date",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -967,7 +967,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "LPO Number",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -1022,7 +1022,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     padding: EdgeInsets.only(left: 10.w),
                     child: Text(
                       "Total Amount",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
                           color: Colors.black),
@@ -1041,7 +1041,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       child: Center(
                         child: Text(
                           "AED",
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400,
                               fontSize: 15.sp,
                               color: Colors.black),
@@ -1133,7 +1133,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         child: Center(
                           child: Text(
                             "Save",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w500),
@@ -1300,7 +1300,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             padding: EdgeInsets.only(top: 20.h, left: 20.w),
                             child: Text(
                               "PAYMENT ENROLLMENT",
-                              style: GoogleFonts.workSans(
+                              style: GoogleFonts.poppins(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black),
@@ -1330,7 +1330,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                             topLeft: Radius.circular(8.r),
                                             topRight: Radius.circular(8.r),
                                           ),
-                                          color: Colors.grey[300],
+                                          color: Color.fromARGB(255, 223, 163, 163),
                                         ),
                                         child: Row(
                                           children: [
@@ -1340,10 +1340,10 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                 onTap: tooglecontainer1,
                                                 child: Text(
                                                   "Total Receivables",
-                                                  style: TextStyle(
+                                                  style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 20.sp,
-                                                    color: Colors.black,
+                                                    color: Colors.white,
                                                   ),
                                                 ),
                                               ),
@@ -1355,15 +1355,16 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                 dropdownColor: Colors.white,
                                                 hint: Text(
                                                   "ADD PAYMENT",
-                                                  style: GoogleFonts.workSans(
+                                                  style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 15.sp,
+                                                    color: Colors.white
                                                   ),
                                                 ),
                                                 icon: Icon(
                                                   Icons.add_circle_rounded,
                                                   size: 20.sp,
-                                                  color: Colors.blue,
+                                                  color: Color(0xFFC62828),
                                                 ),
                                                 value: selectedcontainer,
                                                 items: [
@@ -1400,7 +1401,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                   children: [
                                                     Text(
                                                       "CURRENT",
-                                                      style: GoogleFonts.workSans(
+                                                      style: GoogleFonts.poppins(
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 15.sp,
                                                         color: Colors.lightBlue,
@@ -1409,7 +1410,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                     SizedBox(height: 5.h),
                                                     Text(
                                                       totalText,
-                                                      style: GoogleFonts.workSans(
+                                                      style: GoogleFonts.poppins(
                                                         fontSize: 18.sp,
                                                         fontWeight: FontWeight.w500,
                                                         color: Colors.black,
@@ -1436,7 +1437,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                   children: [
                                                     Text(
                                                       "OVERDUE",
-                                                      style: GoogleFonts.workSans(
+                                                      style: GoogleFonts.poppins(
                                                         fontWeight: FontWeight.w400,
                                                         fontSize: 15.sp,
                                                         color: Colors.orange,
@@ -1445,7 +1446,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                                     SizedBox(height: 5.h),
                                                     Text(
                                                       overduetotaltext,
-                                                      style: GoogleFonts.workSans(
+                                                      style:GoogleFonts.poppins(
                                                         fontSize: 18.sp,
                                                         fontWeight: FontWeight.w500,
                                                         color: Colors.black,
@@ -1470,7 +1471,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             padding: EdgeInsets.only(left: 20.w, top: 20.h),
                             child: Text(
                               "FINANCIAL DASHBOARD",
-                              style: GoogleFonts.workSans(
+                              style:GoogleFonts.poppins(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20.sp,
                                   color: Colors.black),
@@ -1542,8 +1543,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                       padding: const EdgeInsets.all(24),
                                       child: Text(
                                         "Chart disabled in month view. Switch to 'All Months' to view full year.",
-                                        style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14.sp, color: Colors.grey),
                                       ),
                                     ),
                                   Padding(
@@ -1562,7 +1563,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                           padding: EdgeInsets.only(left: 8.w),
                                           child: Text(
                                             "Income Data",
-                                            style: TextStyle(
+                                            style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w300,
                                                 fontSize: 12.sp,
                                                 color: Colors.black),
@@ -1580,7 +1581,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                           padding: EdgeInsets.only(left: 8.w),
                                           child: Text(
                                             "Expense Data",
-                                            style: TextStyle(
+                                            style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w300,
                                                 fontSize: 12.sp,
                                                 color: Colors.black),
@@ -1642,13 +1643,13 @@ class _PaymentenrollState extends State<Paymentenroll> {
             barRods: [
               BarChartRodData(
                 toY: value.income.clamp(0, double.infinity),
-                width: 10,
+                width: 10.w,
                 color: Colors.blue,
                 borderRadius: BorderRadius.zero,
               ),
               BarChartRodData(
                 toY: value.expenses.clamp(0, double.infinity),
-                width: 10,
+                width: 10.w,
                 color: Colors.orange,
                 borderRadius: BorderRadius.zero,
               ),
@@ -1666,8 +1667,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                 final name =
                     DateFormat.MMM().format(DateTime(0, value.toInt()));
                 return Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Text(name, style: TextStyle(fontSize: 10)),
+                  padding:  EdgeInsets.only(top: 4.h),
+                  child: Text(name, style: TextStyle(fontSize: 10.sp)),
                 );
               },
             ),
@@ -1678,10 +1679,10 @@ class _PaymentenrollState extends State<Paymentenroll> {
               reservedSize: 40,
               getTitlesWidget: (value, _) {
                 return Padding(
-                  padding: const EdgeInsets.only(right: 5),
+                  padding:  EdgeInsets.only(right: 5.w),
                   child: Text(
                     value.toInt().toString(),
-                    style: TextStyle(fontSize: 10),
+                    style: TextStyle(fontSize: 10.sp),
                     textAlign: TextAlign.right,
                   ),
                 );
@@ -1710,8 +1711,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
         borderData: FlBorderData(
           show: true,
           border: Border(
-            left: BorderSide(color: Colors.black, width: 1),
-            bottom: BorderSide(color: Colors.black, width: 1),
+            left: BorderSide(color: Colors.black, width: 1.w),
+            bottom: BorderSide(color: Colors.black, width: 1.w),
           ),
         ),
       ),
@@ -1742,8 +1743,8 @@ class SummaryCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          SizedBox(height: 12),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold)),
+          SizedBox(height: 12.h),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [

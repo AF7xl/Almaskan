@@ -44,127 +44,131 @@ class _homeState extends State<home> {
           // Sidebar with EasySideMenu
           Container(
             width: 235.w,
-            child: SideMenu(
-              style: SideMenuStyle(
-                selectedTitleTextStyle: GoogleFonts.workSans(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white),
-                unselectedTitleTextStyle: GoogleFonts.workSans(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white),
-                displayMode: SideMenuDisplayMode.auto,
-                backgroundColor: Colors.blueGrey[300],
-                showHamburger: true,
-                hoverColor: Colors.blue[300],
+            child: IconTheme(
+               data: IconThemeData(color: Colors.white),
+              child: SideMenu(
+                style: SideMenuStyle(
+                  selectedTitleTextStyle: GoogleFonts.workSans(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  unselectedTitleTextStyle: GoogleFonts.workSans(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                  displayMode: SideMenuDisplayMode.auto,
+                  backgroundColor:const Color(0xFFC62828),
+                  showHamburger: true,
+                  hoverColor: Colors.blue[300],
+                  
+                ),
+                controller: sideMenuController,
+                items: [
+                  SideMenuItem(
+                    title: 'Payment',
+                    onTap: (index, controller) {
+                      pageController.jumpToPage(index);
+                    },
+                  ),
+                  SideMenuItem(
+                    title: 'Dashboard',
+                    onTap: (index, controller) {
+                      pageController.jumpToPage(index);
+                    },
+                  ),
+                  SideMenuItem(
+                    title: 'Sales',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>const Sales()),
+                      );
+                    },
+                  ),
+                  SideMenuItem(
+                    title: 'Overdue Payment',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>const Overduepayment()),
+                      );
+                    },
+                  ),
+                  // Parent Item
+                  SideMenuItem(
+                    title: 'Vat Admin Expense',
+                    onTap: (index, controller) {
+                      setState(() {
+                        isVatAdminExpanded = !isVatAdminExpanded;
+                      });
+                    },
+                  ),
+              
+                  // Conditionally shown sub-items
+                  if (isVatAdminExpanded)
+                    SideMenuItem(
+                      title: '   └ Almaskan',
+                      onTap: (index, controller) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>const Vatadmin()),
+                        );
+                      },
+                    ),
+                  if (isVatAdminExpanded)
+                    SideMenuItem(
+                      title: '   └ Reyah Almaskan',
+                      onTap: (index, controller) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>const Vatadminreyah()),
+                        );
+                      },
+                    ),
+              
+                  SideMenuItem(
+                    title: 'Vat Admin Purchase',
+                    onTap: (index, controller) {
+                      setState(() {
+                        isVatpurchaseExpanded = !isVatpurchaseExpanded;
+                      });
+                    },
+                  ),
+              
+                  // Conditionally shown sub-items
+                  if (isVatpurchaseExpanded)
+                    SideMenuItem(
+                      title: '   └ Almaskan',
+                      onTap: (index, controller) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>const Vatpurchase()),
+                        );
+                      },
+                    ),
+                  if (isVatpurchaseExpanded)
+                    SideMenuItem(
+                      title: '   └ Reyah Almaskan',
+                      onTap: (index, controller) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>const Vatpurchasereyah()),
+                        );
+                      },
+                    ),
+                  SideMenuItem(
+                    title: 'Payslip',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>const Payslip()),
+                      );
+                    },
+                  )
+                ],
               ),
-              controller: sideMenuController,
-              items: [
-                SideMenuItem(
-                  title: 'Payment',
-                  onTap: (index, controller) {
-                    pageController.jumpToPage(index);
-                  },
-                ),
-                SideMenuItem(
-                  title: 'Dashboard',
-                  onTap: (index, controller) {
-                    pageController.jumpToPage(index);
-                  },
-                ),
-                SideMenuItem(
-                  title: 'Sales',
-                  onTap: (index, controller) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>const Sales()),
-                    );
-                  },
-                ),
-                SideMenuItem(
-                  title: 'Overdue Payment',
-                  onTap: (index, controller) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>const Overduepayment()),
-                    );
-                  },
-                ),
-                // Parent Item
-                SideMenuItem(
-                  title: 'Vat Admin Expense',
-                  onTap: (index, controller) {
-                    setState(() {
-                      isVatAdminExpanded = !isVatAdminExpanded;
-                    });
-                  },
-                ),
-
-                // Conditionally shown sub-items
-                if (isVatAdminExpanded)
-                  SideMenuItem(
-                    title: '   └ Almaskan',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>const Vatadmin()),
-                      );
-                    },
-                  ),
-                if (isVatAdminExpanded)
-                  SideMenuItem(
-                    title: '   └ Reyah Almaskan',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>const Vatadminreyah()),
-                      );
-                    },
-                  ),
-
-                SideMenuItem(
-                  title: 'Vat Admin Purchase',
-                  onTap: (index, controller) {
-                    setState(() {
-                      isVatpurchaseExpanded = !isVatpurchaseExpanded;
-                    });
-                  },
-                ),
-
-                // Conditionally shown sub-items
-                if (isVatpurchaseExpanded)
-                  SideMenuItem(
-                    title: '   └ Almaskan',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) =>const Vatpurchase()),
-                      );
-                    },
-                  ),
-                if (isVatpurchaseExpanded)
-                  SideMenuItem(
-                    title: '   └ Reyah Almaskan',
-                    onTap: (index, controller) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>const Vatpurchasereyah()),
-                      );
-                    },
-                  ),
-                SideMenuItem(
-                  title: 'Payslip',
-                  onTap: (index, controller) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>const Payslip()),
-                    );
-                  },
-                )
-              ],
             ),
           ),
 

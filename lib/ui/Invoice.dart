@@ -1,4 +1,5 @@
 import 'package:almaskan/ui/Invpdf.dart';
+import 'package:almaskan/ui/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +16,6 @@ class invoice1 extends StatefulWidget {
   final String trn;
   final Map<String, dynamic>? prefillData;
   final int index;
-  
 
   const invoice1({
     super.key,
@@ -89,10 +89,11 @@ class _invoice1State extends State<invoice1> {
 
   bool showPercentageFields = false;
   String selectedCompany = 'Reyah Al Maskan';
+  String? selectedCompany2;
   bool isDiscountEnabled = false;
   bool ispaymentcheck = false;
   bool ischeked = false;
-  
+
   final List<Map<String, dynamic>> options = [
     {'label': 'YES', 'id': 1},
     {'label': 'NO', 'id': 2},
@@ -134,7 +135,7 @@ class _invoice1State extends State<invoice1> {
     fetchnbqSuggestions();
     fetchdescSuggestions();
     fetchunitSuggestions();
-    loadNewinvno();
+    // loadNextQtnNo();
   }
 
   // Add a helper function to handle async initialization
@@ -148,126 +149,83 @@ class _invoice1State extends State<invoice1> {
       .collection('invoice');
 
 // 1. QTN Load function (for initState)
-  void loadNewinvno() async {
+  Future<String> previewInvNo(String company) async {
+    String docName = company == "Al Maskan"
+        ? "inv_al_maskan"
+        : company == "Reyah Al Maskan"
+            ? "inv_reyah"
+            : "inv_other";
+
+    final docRef =
+        FirebaseFirestore.instance.collection('counters2').doc(docName);
+    final snap = await docRef.get();
+
+    final year = DateTime.now().year;
+    final shortYear = year % 100;
+
+    if (!snap.exists) return "$shortYear-01";
+
+    int last = snap.data()?['last'] ?? 0;
+
+    return "$shortYear-${(last + 1).toString().padLeft(2, '0')}";
+  }
+
+// 1. QTN Load function (for initState)
+  Future<void> loadNextInvNo() async {
+    if (selectedCompany2 == null || selectedCompany2!.isEmpty) {
+      setState(() {
+        invno.text = "Select Company First";
+      });
+      return;
+    }
+
+    final next = await previewInvNo(selectedCompany2!);
+    setState(() {
+      invno.text = next;
+    });
+  }
+
+  int extractSequence(String invNo) {
     try {
-      // Note: This calls the safe read-only fetch
-      final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
-      if (mounted) {
-        setState(() {
-          invno.text = nextinvno;
-        });
-      }
+      // invNo format: "25-32"
+      final parts = invNo.split("-");
+      return int.tryParse(parts[1]) ?? 0;
     } catch (e) {
-      print('Failed to pre-load invno No.: $e');
-      if (mounted) {
-        setState(() {
-          invno.text = 'Failed to load';
-        });
-      }
+      return 0;
     }
   }
 
-// 2. QTN Reserve function (for save button)
-  Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore,
-      TextEditingController qtnnoController) async {
-    final DocumentReference invnoCounterRef =
-        firestore.collection('counters2').doc('invoice_counter');
+  Future<String> safeCompanyInvCounter(
+      String company, String manualInvNo) async {
+    String docName = company == "Al Maskan"
+        ? "inv_al_maskan"
+        : company == "Reyah Al Maskan"
+            ? "inv_reyah"
+            : "inv_other";
 
-    final currentFullYear = DateTime.now().year;
-    final currentShortYear = currentFullYear % 100;
-    String reservedinvNumber =
-        ''; // Store the number calculated inside the transaction
+    final docRef =
+        FirebaseFirestore.instance.collection('counters2').doc(docName);
 
-    await firestore.runTransaction((Transaction transaction) async {
-      final counterSnapshot = await transaction.get(invnoCounterRef);
+    final year = DateTime.now().year;
+    final shortYear = year % 100;
 
-      int yearInDb = counterSnapshot.exists
-          ? counterSnapshot.get('currentYear') as int
-          : 0;
-      int lastSequence = counterSnapshot.exists
-          ? counterSnapshot.get('lastSequence') as int
-          : 0;
+    final snap = await docRef.get();
 
-      int newSequence;
+    // ✔ FIXED LINE (no syntax error)
+    int last = snap.exists ? (snap.data()?['last'] ?? 0) : 0;
 
-      if (yearInDb != currentFullYear) {
-        newSequence = 1;
-      } else {
-        newSequence = lastSequence + 1;
-      }
+    int manualSeq = extractSequence(manualInvNo);
 
-      // 1. Format the reserved number
-      final sequenceString = newSequence.toString().padLeft(2, '0');
-      reservedinvNumber = '$currentShortYear-$sequenceString';
+    int newSeq = manualSeq > last ? manualSeq : last + 1;
 
-      // 2. Safely commit the new sequence to the counter
-      if (yearInDb != currentFullYear) {
-        transaction.set(invnoCounterRef, {
-          'currentYear': currentFullYear,
-          'lastSequence': newSequence,
-          'lastUpdated': FieldValue.serverTimestamp(),
-        });
-      } else {
-        transaction.update(invnoCounterRef, {
-          'lastSequence': newSequence,
-          'lastUpdated': FieldValue.serverTimestamp(),
-        });
-      }
-    }); // End of Transaction
+    await docRef.set({
+      'year': year,
+      'last': newSeq,
+      'company': company,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
 
-    // Update the local controller with the reserved number ONLY if the transaction succeeded
-    qtnnoController.text = reservedinvNumber;
-  }
-
-  Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
-    final DocumentReference invnoCounterRef =
-        firestore.collection('counters2').doc('invoice_counter');
-
-    final currentFullYear = DateTime.now().year;
-    final currentShortYear = currentFullYear % 100;
-
-    try {
-      // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
-      final counterSnapshot = await invnoCounterRef.get();
-
-      int yearInDb = counterSnapshot.exists
-          ? counterSnapshot.get('currentYear') as int
-          : 0;
-      int lastSequence = counterSnapshot.exists
-          ? counterSnapshot.get('lastSequence') as int
-          : 0;
-
-      int nextSequence;
-
-      // Check for year change (the first number of the new year is 1)
-      if (yearInDb != currentFullYear) {
-        nextSequence = 1;
-      } else {
-        // Get the next number (e.g., if lastSequence was 5, the next is 6)
-        nextSequence = lastSequence + 1;
-      }
-
-      final sequenceString = nextSequence.toString().padLeft(2, '0');
-      return '$currentShortYear-$sequenceString';
-    } catch (e) {
-      print('Error fetching next QTN No.: $e');
-      return 'XX-00'; // Return a fallback value
-    }
-  }
-
-// You will need to pass the FirebaseFirestore instance to this function
-  Future<bool> isinvnoUnique(
-      FirebaseFirestore firestore, String invNumber) async {
-    // Use a Collection Group Query to search all 'quotation' sub-collections
-    // regardless of the parent client document.
-    final querySnapshot = await firestore
-        .collectionGroup('invoice') // Searches all 'quotation' sub-collections
-        .where('inv no', isEqualTo: invNumber)
-        .limit(1)
-        .get();
-
-    // If the query returns any documents, the QTN number is NOT unique
-    return querySnapshot.docs.isEmpty;
+    return "$shortYear-${newSeq.toString().padLeft(2, '0')}";
   }
 
   void fetchnbqSuggestions() async {
@@ -413,6 +371,71 @@ class _invoice1State extends State<invoice1> {
     calculateTotal(); // Recalculate total after updating subtotal
   }
 
+   void insertHeaderAfter(int formIndex) {
+    setState(() {
+      final controller = TextEditingController();
+      headerControllers.add(controller);
+
+      formStructure.insert(formIndex + 1, {
+        'type': 'header',
+        'controller': controller,
+      });
+
+      rebuildRows();
+    });
+  }
+
+  void insertRowAfter(int formIndex) {
+    setState(() {
+      // Create controllers for new row
+      final rateController = TextEditingController();
+      final qtyController = TextEditingController();
+      final amountController = TextEditingController();
+      final sn = TextEditingController();
+      final desc = TextEditingController();
+      final uni = TextEditingController();
+
+      // Find the next row index relative to formStructure
+      // (needed to insert controllers at correct place)
+      int insertAtRowIndex = 0;
+      for (var j = 0; j <= formIndex; j++) {
+        if (formStructure[j]['type'] == 'row') {
+          insertAtRowIndex++;
+        }
+      }
+
+      // Insert controllers at the correct place
+      rateControllers.insert(insertAtRowIndex, rateController);
+      qtyControllers.insert(insertAtRowIndex, qtyController);
+      amountControllers.insert(insertAtRowIndex, amountController);
+      sno.insert(insertAtRowIndex, sn);
+      description.insert(insertAtRowIndex, desc);
+      unit.insert(insertAtRowIndex, uni);
+      //isAmountManuallyEdited.insert(insertAtRowIndex, false);
+
+      // Add listeners
+      rateController.addListener(() => calculateAmount(insertAtRowIndex));
+      qtyController.addListener(() => calculateAmount(insertAtRowIndex));
+
+      // Insert into formStructure
+      formStructure.insert(formIndex + 1, {
+        'type': 'row',
+        'index': insertAtRowIndex,
+      });
+
+      // Reindex all rows in formStructure
+      int rowCounter = 0;
+      for (var item in formStructure) {
+        if (item['type'] == 'row') {
+          item['index'] = rowCounter;
+          rowCounter++;
+        }
+      }
+
+      rebuildRows();
+    });
+  }
+
   // void calculateTotal() {
   //   taxableAmount = subtotal - discount;
   //   vat = taxableAmount * 0.05;
@@ -501,15 +524,15 @@ class _invoice1State extends State<invoice1> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: TextFormField(
                           controller: controller,
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                           decoration: InputDecoration.collapsed(
                               hintText: ' Header Title',
-                              hintStyle:
-                                  TextStyle(fontWeight: FontWeight.w300)),
+                              hintStyle: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w300)),
                         ),
                       ),
                     ),
@@ -581,7 +604,8 @@ class _invoice1State extends State<invoice1> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:
+                    GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -642,7 +666,8 @@ class _invoice1State extends State<invoice1> {
                         enabledBorder:
                             OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      style: GoogleFonts.poppins(
+                          color: Colors.black, fontSize: 15.sp),
                       cursorColor: Colors.black,
                     );
                   },
@@ -666,7 +691,67 @@ class _invoice1State extends State<invoice1> {
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 10),
-                                  child: Text(option),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                          child: Text(
+                                        option,
+                                      )),
+                                      GestureDetector(
+                                        behavior: HitTestBehavior.translucent,
+                                        onTapDown:
+                                            (_) {}, // 👈 Prevent autocomplete from closing
+                                        child: IconButton(
+                                            onPressed: () async {
+                                              // The item we want to remove
+                                              final optionToRemove = option;
+
+                                              // 1. Remove locally
+                                              setState(() {
+                                                desoptions
+                                                    .remove(optionToRemove);
+                                              });
+
+                                              // 2. Update Firestore document
+                                              try {
+                                                await desfirestore.update({
+                                                  'suggestions':
+                                                      FieldValue.arrayRemove(
+                                                          [optionToRemove]),
+                                                });
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        'Item removed successfully'),
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                  ),
+                                                );
+                                                // 👇 Close the dropdown after a small delay (auto close)
+                                                Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 200), () {
+                                                  FocusScope.of(context)
+                                                      .unfocus(); // closes autocomplete
+                                                });
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Failed to remove item: $e'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            icon: Icon(Icons.close)),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -709,7 +794,8 @@ class _invoice1State extends State<invoice1> {
                           EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                       border: InputBorder.none,
                     ),
-                    style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                    style: GoogleFonts.poppins(
+                        color: Colors.black, fontSize: 15.sp),
                   ),
                 ),
 
@@ -760,7 +846,7 @@ class _invoice1State extends State<invoice1> {
                           );
                         });
                       },
-                      style: TextStyle(fontSize: 13.sp),
+                      style: GoogleFonts.poppins(fontSize: 13.sp),
                     ),
                   ),
               ],
@@ -815,7 +901,8 @@ class _invoice1State extends State<invoice1> {
                         enabledBorder:
                             OutlineInputBorder(borderSide: BorderSide.none),
                       ),
-                      style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                      style: GoogleFonts.poppins(
+                          color: Colors.black, fontSize: 15.sp),
                       cursorColor: Colors.black,
                     );
                   },
@@ -870,7 +957,8 @@ class _invoice1State extends State<invoice1> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:
+                    GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -906,7 +994,8 @@ class _invoice1State extends State<invoice1> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:
+                    GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -952,6 +1041,32 @@ class _invoice1State extends State<invoice1> {
                   calculateSubtotal();
                 }
               });
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline, color: Colors.green),
+            onPressed: () async {
+              final choice = await showMenu<String>(
+                context: context,
+                position: const RelativeRect.fromLTRB(100, 100, 0, 0),
+                items: [
+                  const PopupMenuItem(value: 'row', child: Text('Add Row')),
+                  const PopupMenuItem(
+                      value: 'header', child: Text('Add Header')),
+                ],
+              );
+
+              final formIndex = formStructure.indexWhere(
+                (item) => item['type'] == 'row' && item['index'] == index,
+              );
+
+              if (formIndex == -1) return;
+
+              if (choice == 'row') {
+                insertRowAfter(formIndex);
+              } else if (choice == 'header') {
+                insertHeaderAfter(formIndex);
+              }
             },
           ),
         ],
@@ -1042,12 +1157,29 @@ class _invoice1State extends State<invoice1> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const home()),
+              ).then((value) {
+                setState(() {}); // 🔥 rebuild dashboard when returning
+              });
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
         titleSpacing: 1,
         toolbarHeight: 60.h,
         title: Text(
           "Create Invoice",
-          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),
+          style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
         ),
       ),
       backgroundColor: Colors.white,
@@ -1065,8 +1197,55 @@ class _invoice1State extends State<invoice1> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
+                          "Select Company",
+                          style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                      ),
+                      Container(
+                        height: 60.h,
+                        width: 250.w,
+                        child: DropdownButtonFormField<String>(
+                         decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.r),
+                            ),
+                          ),
+                          value: selectedCompany2,
+                          items:
+                              ["Al Maskan", "Reyah Al Maskan"].map((company) {
+                            return DropdownMenuItem(
+                              value: company,
+                              child: Text(company),
+                            );
+                          }).toList(),
+                          onChanged: (value) async {
+                            if (value == null) return;
+
+                            setState(() {
+                              selectedCompany2 =
+                                  value; // 🔥 This must run BEFORE calling loadNextQtnNo()
+                            });
+
+                            await loadNextInvNo(); // 🔥 QTN updates based on correct company
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.h),
+                        child: Text(
                           "INV No",
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -1085,7 +1264,7 @@ class _invoice1State extends State<invoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1095,7 +1274,7 @@ class _invoice1State extends State<invoice1> {
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16,
                                 color: Colors.black),
@@ -1114,7 +1293,7 @@ class _invoice1State extends State<invoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date",
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -1168,7 +1347,7 @@ class _invoice1State extends State<invoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1178,7 +1357,7 @@ class _invoice1State extends State<invoice1> {
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: 'Select date',
-                            hintStyle: TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16,
                               color: Colors.black,
@@ -1198,7 +1377,7 @@ class _invoice1State extends State<invoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "# LPO / QTN ",
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -1217,7 +1396,7 @@ class _invoice1State extends State<invoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1227,57 +1406,9 @@ class _invoice1State extends State<invoice1> {
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
-                                color: Colors.black),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 20.h),
-                        child: Text(
-                          "Project:",
-                          style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black),
-                        ),
-                      ),
-                      Container(
-                        width: 250.w,
-                        height: 60.h,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          controller: project,
-                          maxLines: null,
-                          keyboardType: TextInputType.multiline,
-                          cursorHeight: 25.h,
-                          textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
-                          textAlign: TextAlign.start,
-                          cursorColor: Colors.black45,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.only(
-                                top: 2.h, left: 5.w, bottom: 15.h),
-                            border: InputBorder.none,
-                            enabledBorder:
-                                OutlineInputBorder(borderSide: BorderSide.none),
-                            hintText: "",
-                            hintStyle: TextStyle(
-                                fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -1296,11 +1427,59 @@ class _invoice1State extends State<invoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
+                        child: Text(
+                          "Project:",
+                          style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                      ),
+                      Container(
+                        width: 250.w,
+                        height: 60.h,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius: BorderRadius.circular(5.r)),
+                        child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          controller: project,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          cursorHeight: 25.h,
+                          textAlignVertical: TextAlignVertical.center,
+                          style: GoogleFonts.poppins(color: Colors.black),
+                          textAlign: TextAlign.start,
+                          cursorColor: Colors.black45,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(
+                                top: 2.h, left: 5.w, bottom: 15.h),
+                            border: InputBorder.none,
+                            enabledBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                            hintText: "",
+                            hintStyle: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 16.sp,
+                                color: Colors.black),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.h),
                         child: Row(
                           children: [
                             Text(
                               "NOTE Before Quote",
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.black),
@@ -1408,8 +1587,8 @@ class _invoice1State extends State<invoice1> {
                                     },
                                   );
                                 },
-                                child:
-                                    Icon(Icons.add_circle, color: Colors.blue),
+                                child: Icon(Icons.add_circle,
+                                    color: Color(0xFFC62828)),
                               ),
                             )
                           ],
@@ -1459,7 +1638,7 @@ class _invoice1State extends State<invoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: TextStyle(color: Colors.black),
+                            style: GoogleFonts.poppins(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
@@ -1469,9 +1648,9 @@ class _invoice1State extends State<invoice1> {
                               enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: TextStyle(
+                              hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -1497,7 +1676,82 @@ class _invoice1State extends State<invoice1> {
                                       child: Padding(
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 8, vertical: 10),
-                                        child: Text(option),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                                child: Text(
+                                              option,
+                                            )),
+                                            GestureDetector(
+                                              behavior:
+                                                  HitTestBehavior.translucent,
+                                              onTapDown:
+                                                  (_) {}, // 👈 Prevent autocomplete from closing
+                                              child: IconButton(
+                                                  onPressed: () async {
+                                                    // The item we want to remove
+                                                    final optionToRemove =
+                                                        option
+                                                            .toString()
+                                                            .trim();
+
+                                                    // 1) immediate local UI update
+                                                    setState(() {
+                                                      nbqoptions.removeWhere(
+                                                          (e) =>
+                                                              e
+                                                                  .toString()
+                                                                  .trim() ==
+                                                              optionToRemove);
+                                                    });
+
+                                                    // 2. Update Firestore document
+                                                    try {
+                                                      await nbqfirestore
+                                                          .update({
+                                                        'suggestions':
+                                                            FieldValue
+                                                                .arrayRemove([
+                                                          optionToRemove
+                                                        ]),
+                                                      });
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                              'Item removed successfully'),
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                        ),
+                                                      );
+                                                      // 👇 Close the dropdown after a small delay (auto close)
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  200), () {
+                                                        FocusScope.of(context)
+                                                            .unfocus(); // closes autocomplete
+                                                      });
+                                                    } catch (e) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          content: Text(
+                                                              'Failed to remove item: $e'),
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                  icon: Icon(Icons.close)),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },
@@ -1517,8 +1771,8 @@ class _invoice1State extends State<invoice1> {
                 Padding(
                   padding: EdgeInsets.only(top: 40.h),
                   child: CircleAvatar(
-                    radius: 30.r,
-                    backgroundColor: Colors.blue,
+                    radius: 25.r,
+                    backgroundColor: Color(0xFFC62828),
                     child: IconButton(
                         onPressed: () {
                           setState(() {
@@ -1528,11 +1782,11 @@ class _invoice1State extends State<invoice1> {
                         icon: Icon(
                           Icons.add,
                           color: Colors.white,
-                          size: 40.sp,
+                          size: 20.sp, 
                         )),
                   ),
                 )
-              ],
+              ], 
             ),
             isclicked == true
                 ? Padding(
@@ -1552,7 +1806,7 @@ class _invoice1State extends State<invoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: const TextStyle(color: Colors.black),
+                            style: GoogleFonts.poppins(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
@@ -1562,9 +1816,9 @@ class _invoice1State extends State<invoice1> {
                               enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: const TextStyle(
+                              hintStyle: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w300,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: Colors.black),
                             ),
                           ),
@@ -1630,7 +1884,7 @@ class _invoice1State extends State<invoice1> {
                               padding: EdgeInsets.only(left: 5.w),
                               child: Icon(
                                 Icons.add_circle,
-                                color: Colors.blue,
+                                color: Color(0xFFC62828),
                                 size: 15.sp,
                               ),
                             ),
@@ -1725,31 +1979,33 @@ class _invoice1State extends State<invoice1> {
                       children: [
                         Padding(
                           padding: EdgeInsets.only(left: 15.w),
-                          child: Text("SNo", style: TextStyle(fontSize: 15.sp)),
+                          child: Text("SNo",
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 40.w),
                           child: Text("Description",
-                              style: TextStyle(fontSize: 15.sp)),
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 440.w),
-                          child: Text("qty", style: TextStyle(fontSize: 15.sp)),
+                          child: Text("qty",
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 60.w),
-                          child:
-                              Text("Unit", style: TextStyle(fontSize: 15.sp)),
+                          child: Text("Unit",
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 70.w),
-                          child:
-                              Text("Rate", style: TextStyle(fontSize: 15.sp)),
+                          child: Text("Rate",
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 70.w),
-                          child:
-                              Text("Amount", style: TextStyle(fontSize: 15.sp)),
+                          child: Text("Amount",
+                              style: GoogleFonts.poppins(fontSize: 15.sp)),
                         ),
                       ],
                     ),
@@ -1767,7 +2023,7 @@ class _invoice1State extends State<invoice1> {
                     padding: EdgeInsets.only(left: 750.w, top: 10.h),
                     child: Text(
                       "Sub Total",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black),
@@ -1785,7 +2041,7 @@ class _invoice1State extends State<invoice1> {
                           padding: EdgeInsets.only(left: 3.w, top: 2.h),
                           child: Text(
                             "\$ ${subtotal.toStringAsFixed(2)}",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 18.sp,
                                 color: Colors.black),
@@ -1819,7 +2075,7 @@ class _invoice1State extends State<invoice1> {
                         ),
                         Text(
                           "Discount",
-                          style: TextStyle(
+                          style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black,
@@ -1848,14 +2104,14 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
                           prefixText: '\$ ',
-                          prefixStyle: const TextStyle(
+                          prefixStyle: GoogleFonts.poppins(
                             color: Colors.black,
-                            fontSize: 20,
+                            fontSize: 20.sp,
                             fontWeight: FontWeight.w400,
                           ),
                           contentPadding: EdgeInsets.only(
@@ -1863,9 +2119,9 @@ class _invoice1State extends State<invoice1> {
                           border: InputBorder.none,
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
-                          hintStyle: const TextStyle(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black),
                         ),
                       ),
@@ -1883,7 +2139,7 @@ class _invoice1State extends State<invoice1> {
                     padding: EdgeInsets.only(left: 700.w, top: 10.h),
                     child: Text(
                       "Taxable Amount",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black),
@@ -1901,7 +2157,7 @@ class _invoice1State extends State<invoice1> {
                           padding: EdgeInsets.only(left: 3.w, top: 2.h),
                           child: Text(
                             "\$ ${taxableAmount.toStringAsFixed(2)}",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 18.sp,
                                 color: Colors.black),
@@ -1920,7 +2176,7 @@ class _invoice1State extends State<invoice1> {
                     padding: EdgeInsets.only(left: 770.w, top: 10.h),
                     child: Text(
                       "Vat 5%",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.black),
@@ -1938,7 +2194,7 @@ class _invoice1State extends State<invoice1> {
                           padding: EdgeInsets.only(left: 3.w, top: 2.h),
                           child: Text(
                             "\$ ${vat.toStringAsFixed(2)}",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 18.sp,
                                 color: Colors.black),
@@ -1957,7 +2213,7 @@ class _invoice1State extends State<invoice1> {
                     padding: EdgeInsets.only(left: 725.w, top: 10.h),
                     child: Text(
                       "Total Amount",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.red),
@@ -1975,7 +2231,7 @@ class _invoice1State extends State<invoice1> {
                           padding: EdgeInsets.only(left: 3.w, top: 2.h),
                           child: Text(
                             "\$ ${totalAmount.toStringAsFixed(2)}",
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                                 color: Colors.red,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18.sp),
@@ -1985,7 +2241,7 @@ class _invoice1State extends State<invoice1> {
                 ],
               ),
             ),
-               Padding(
+            Padding(
               padding: EdgeInsets.only(top: 15.h),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1994,7 +2250,7 @@ class _invoice1State extends State<invoice1> {
                     padding: EdgeInsets.only(left: 725.w, top: 10.h),
                     child: Text(
                       "Sign Section ",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.red),
@@ -2033,7 +2289,7 @@ class _invoice1State extends State<invoice1> {
                 children: [
                   Text(
                     "Total Amount in Name",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -2053,7 +2309,7 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -2076,7 +2332,7 @@ class _invoice1State extends State<invoice1> {
                 children: [
                   Text(
                     "Note after quote",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -2096,7 +2352,7 @@ class _invoice1State extends State<invoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -2105,9 +2361,9 @@ class _invoice1State extends State<invoice1> {
                           border: InputBorder.none,
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
-                          hintStyle: const TextStyle(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black),
                         ),
                       ),
@@ -2294,13 +2550,15 @@ class _invoice1State extends State<invoice1> {
                           padding: EdgeInsets.only(left: 100.w),
                           child: InkWell(
                             onTap: () async {
-                              collectFormData();
-                              final id = DateTime.now()
-                                  .microsecondsSinceEpoch
-                                  .toString();
                               try {
-                                await _reserveAndIncrementinvno(
-                                    _firestore, invno);
+                                collectFormData();
+                                final id = DateTime.now()
+                                    .microsecondsSinceEpoch
+                                    .toString();
+                                final generated = await safeCompanyInvCounter(
+                                    selectedCompany2!, invno.text);
+
+                                invno.text = generated;
                                 await quotationRef.doc(id).set({
                                   'id': id,
                                   'project': project.text,
@@ -2335,7 +2593,7 @@ class _invoice1State extends State<invoice1> {
                                         30), // only works with floating behavior
                                   ),
                                 );
-                                loadNewinvno();
+                                await loadNextInvNo();
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -2362,7 +2620,7 @@ class _invoice1State extends State<invoice1> {
                               child: Center(
                                 child: Text(
                                   "Save",
-                                  style: TextStyle(
+                                  style: GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w500),
@@ -2467,7 +2725,7 @@ class _invoice1State extends State<invoice1> {
                             child: Center(
                               child: Text(
                                 "Preview",
-                                style: TextStyle(
+                                style: GoogleFonts.poppins(
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
@@ -2556,7 +2814,7 @@ class _invoice1State extends State<invoice1> {
                             child: Center(
                               child: Text(
                                 "Update",
-                                style: TextStyle(
+                                style: GoogleFonts.poppins(
                                     color: Colors.white,
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w500),

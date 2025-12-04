@@ -1,5 +1,8 @@
 
+import 'dart:io';
+
 import 'package:almaskan/ui/splashscreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,10 +11,18 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(const MyApp());
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.windows,
+    options: DefaultFirebaseOptions.currentPlatform,
   );
+   // 🔥 FIX FOR WINDOWS CRASH
+  // if (Platform.isWindows) {
+  //   await FirebaseFirestore.instance.disableNetwork();
+  //   FirebaseFirestore.instance.settings = const Settings(
+  //     persistenceEnabled: false,
+  //   );
+  // }
 }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -46,7 +57,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:const splashscreen(),
+      home:const SplashScreen(),
     );});
   }
 }

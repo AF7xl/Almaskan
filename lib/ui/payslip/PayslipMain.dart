@@ -150,7 +150,7 @@ class _PayslipmainState extends State<Payslipmain> {
                   keyboardType: TextInputType.multiline,
                   cursorHeight: 25.h,
                   textAlignVertical: TextAlignVertical.center,
-                  style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                  style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                   textAlign: TextAlign.start,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -180,7 +180,7 @@ class _PayslipmainState extends State<Payslipmain> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -225,7 +225,7 @@ class _PayslipmainState extends State<Payslipmain> {
                   keyboardType: TextInputType.multiline,
                   cursorHeight: 25.h,
                   textAlignVertical: TextAlignVertical.center,
-                  style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                  style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                   textAlign: TextAlign.start,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -255,7 +255,7 @@ class _PayslipmainState extends State<Payslipmain> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -336,15 +336,25 @@ class _PayslipmainState extends State<Payslipmain> {
         .collection("payslip");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor:Color(0xFFC62828),
         title: Text(
           'Create Payslip',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.72.sp,
+          style:  GoogleFonts.poppins(
+            color: Colors.white,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
+         leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+      
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -361,7 +371,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Numbers",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -380,7 +390,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -390,9 +400,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -409,7 +419,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Employee name",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -428,7 +438,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -438,9 +448,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -457,7 +467,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Address",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -479,7 +489,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -489,9 +499,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: '',
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
@@ -509,7 +519,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Company id",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -528,7 +538,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -538,9 +548,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -557,7 +567,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Join Month",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -576,7 +586,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -586,9 +596,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -609,7 +619,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Employee No",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -628,7 +638,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -638,9 +648,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -657,7 +667,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Job",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -676,7 +686,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -686,9 +696,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: '',
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
@@ -706,7 +716,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Pay From",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -725,7 +735,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -735,9 +745,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -754,7 +764,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Pay To",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -773,7 +783,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -783,9 +793,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -818,7 +828,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Icon(
                           Icons.add_circle,
-                          color: Colors.blue,
+                          color: Color(0xFFC62828),
                           size: 15.sp,
                         ),
                       ),
@@ -826,7 +836,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Text(
                           "Add New Row",
-                          style: GoogleFonts.workSans(
+                          style:  GoogleFonts.poppins(
                               fontSize: 13.sp, fontWeight: FontWeight.w400),
                         ),
                       ),
@@ -858,14 +868,14 @@ class _PayslipmainState extends State<Payslipmain> {
                           children: [
                             Text(
                               "Earnings",
-                              style: GoogleFonts.workSans(
+                              style: GoogleFonts.poppins(
                                   color: Colors.black,
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600),
                             ),
                             Text(
                               "Total",
-                              style: GoogleFonts.workSans(
+                              style:  GoogleFonts.poppins(
                                   color: Colors.black,
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600),
@@ -895,14 +905,14 @@ class _PayslipmainState extends State<Payslipmain> {
                           children: [
                             Text(
                               "Toatal Amount",
-                              style: GoogleFonts.workSans(
+                              style:  GoogleFonts.poppins(
                                   color: Colors.black,
                                   fontSize: 17.sp,
                                   fontWeight: FontWeight.w500),
                             ),
                             Text(
                               totalpayment.toStringAsFixed(2),
-                              style: GoogleFonts.workSans(
+                              style: GoogleFonts.poppins(
                                   color: Colors.black,
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600),
@@ -936,7 +946,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Icon(
                           Icons.add_circle,
-                          color: Colors.blue,
+                          color: Color(0xFFC62828),
                           size: 15.sp,
                         ),
                       ),
@@ -944,7 +954,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Text(
                           "Add New Row",
-                          style: GoogleFonts.workSans(
+                          style:  GoogleFonts.poppins(
                               fontSize: 13.sp, fontWeight: FontWeight.w400),
                         ),
                       ),
@@ -1045,7 +1055,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Loan Balance",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -1064,7 +1074,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1074,9 +1084,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -1093,7 +1103,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "payment method",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -1112,7 +1122,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -1122,9 +1132,9 @@ class _PayslipmainState extends State<Payslipmain> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -1141,7 +1151,7 @@ class _PayslipmainState extends State<Payslipmain> {
                         padding: EdgeInsets.only(left: 300.w, top: 10.h),
                         child: Text(
                           "Net Pay",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.red),
@@ -1159,7 +1169,7 @@ class _PayslipmainState extends State<Payslipmain> {
                               padding: EdgeInsets.only(left: 5.w, top: 8.h),
                               child: Text(
                                 netpay.toStringAsFixed(2),
-                                style: TextStyle(
+                                style:  GoogleFonts.poppins(
                                     color: Colors.red,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18.sp),
@@ -1379,7 +1389,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           child: Center(
                             child: Text(
                               "save",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1425,7 +1435,7 @@ class _PayslipmainState extends State<Payslipmain> {
                               ));
                         },
                         child: Container(
-                          width: 65.w,
+                          width: 80.w,
                           height: 35.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.r),
@@ -1434,7 +1444,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           child: Center(
                             child: Text(
                               "Generate",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1536,7 +1546,7 @@ class _PayslipmainState extends State<Payslipmain> {
                           child: Center(
                             child: Text(
                               "Update",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,

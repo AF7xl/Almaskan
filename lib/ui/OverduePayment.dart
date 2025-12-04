@@ -434,7 +434,7 @@ class _OverduepaymentState extends State<Overduepayment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor:const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -442,12 +442,12 @@ class _OverduepaymentState extends State<Overduepayment> {
             icon: Icon(
               Icons.arrow_back,
               size: 24.sp,
-              color: Colors.black,
+              color: Colors.white,
             )),
         title: Text(
           "Overdue Payments",
           style:
-              GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 20.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 20.sp,color: Colors.white),
         ),
       ),
       backgroundColor: Colors.white,
@@ -457,7 +457,7 @@ class _OverduepaymentState extends State<Overduepayment> {
           Container(
             width: double.infinity,
             height: 75.h,
-            color: Colors.blueGrey[100],
+            color:  Color.fromARGB(255, 223, 163, 163),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -473,7 +473,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                           style: GoogleFonts.poppins(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w300,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
                       ),
                       Container(
@@ -481,7 +481,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                         height: 40.h,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4.r),
-                            border: Border.all(color: Colors.black)),
+                            border: Border.all(color: Colors.white)),
                         child: Center(
                           child: TextFormField(
                             onChanged: updateSearch,
@@ -492,7 +492,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                             cursorWidth: 0.5,
                             textAlignVertical: TextAlignVertical.center,
                             style:
-                                TextStyle(color: Colors.black, fontSize: 12.sp),
+                                TextStyle(color: Colors.white, fontSize: 12.sp),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black,
                             decoration: InputDecoration(
@@ -506,11 +506,11 @@ class _OverduepaymentState extends State<Overduepayment> {
                                 hintStyle: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.grey),
+                                    color: Colors.white),
                                 prefixIcon: Icon(
                                   Icons.search,
                                   size: 15.sp,
-                                  color: Colors.grey,
+                                  color: Colors.white,
                                 )),
                           ),
                         ),
@@ -537,9 +537,9 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white, // A rich violet color
-                                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.w),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(12.r),
                                 ),
                                 elevation: 6,
 
@@ -549,7 +549,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w300,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -562,9 +562,9 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white, // A rich violet color
-                                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.w),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     elevation: 6,
 
@@ -572,9 +572,9 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   child: Text(
                                     "Reyah Almaskan",
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 16.sp,
                                       fontWeight: FontWeight.w300,
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       letterSpacing: 1.0,
                                     ),
                                   ),
@@ -604,7 +604,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                           style: GoogleFonts.poppins(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
                       ),
                       Container(
@@ -612,12 +612,12 @@ class _OverduepaymentState extends State<Overduepayment> {
                         height: 40.h,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4.r),
-                            border: Border.all(color: Colors.black)),
+                            border: Border.all(color: Colors.white)),
                         child: Center(
                           child: Text(
                             getTotalAmount(),
                             style: TextStyle(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -633,7 +633,7 @@ class _OverduepaymentState extends State<Overduepayment> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color: Colors.blueGrey[300],
+            color: const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
@@ -645,7 +645,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -658,7 +658,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -671,7 +671,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -684,7 +684,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -697,7 +697,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -710,7 +710,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 15.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 )
@@ -725,7 +725,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ? Colors.blueGrey[100] : Colors.white,
+                    color: index % 2 == 0 ?  Color.fromARGB(255, 223, 163, 163) : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -740,7 +740,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -755,7 +755,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -770,7 +770,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -785,7 +785,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -800,7 +800,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -815,7 +815,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -826,6 +826,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                 icon: Icon(
                                   Icons.more_vert,
                                   size: 15.sp,
+                                  color: Colors.white,
                                 ),
                                 offset: const Offset(0, 40),
                                 onSelected: (value) {

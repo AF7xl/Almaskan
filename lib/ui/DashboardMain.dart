@@ -45,6 +45,39 @@ class _DashboardState extends State<Dashboard> {
       showcontainer = !showcontainer;
     });
   }
+Future<String> getLatestCompanyCounter(String docName) async {
+  final ref = FirebaseFirestore.instance.collection("counters").doc(docName);
+
+  final snap = await ref.get();
+  if (!snap.exists) return "00-00";
+
+  final int year = snap.data()?["year"] ?? DateTime.now().year;
+  final int last = snap.data()?["last"] ?? 0;
+
+  final String shortYear = year.toString().substring(2);
+
+  // If last == 0, means no quotation created yet
+  if (last == 0) return "00-00";
+
+  return "$shortYear-${last.toString().padLeft(2, '0')}";
+}
+Future<String> getLatestCompanyCounter2(String docName) async {
+  final ref = FirebaseFirestore.instance.collection("counters2").doc(docName);
+
+  final snap = await ref.get();
+  if (!snap.exists) return "00-00";
+
+  final int year = snap.data()?["year"] ?? DateTime.now().year;
+  final int last = snap.data()?["last"] ?? 0;
+
+  final String shortYear = year.toString().substring(2);
+
+  // If last == 0, means no quotation created yet
+  if (last == 0) return "00-00";
+
+  return "$shortYear-${last.toString().padLeft(2, '0')}";
+}
+
 
 //container
   Widget container() {
@@ -63,7 +96,7 @@ class _DashboardState extends State<Dashboard> {
               padding: EdgeInsets.only(top: 10.h),
               child: Text(
                 "ADD BENIFICIERY",
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
                     fontSize: 18.sp,
                     color: Colors.black),
@@ -76,7 +109,7 @@ class _DashboardState extends State<Dashboard> {
                   padding: EdgeInsets.only(top: 20.h),
                   child: Text(
                     "Name",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.black),
@@ -114,7 +147,7 @@ class _DashboardState extends State<Dashboard> {
                   padding: EdgeInsets.only(top: 20.h),
                   child: Text(
                     "Address",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.black),
@@ -151,7 +184,7 @@ class _DashboardState extends State<Dashboard> {
                   padding: EdgeInsets.only(top: 20.h),
                   child: Text(
                     "Tax Registration Number (TRN)",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.black),
@@ -205,15 +238,15 @@ class _DashboardState extends State<Dashboard> {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content:const Text('Client Created'),
-                        duration:const Duration(seconds: 2),
+                        content: const Text('Client Created'),
+                        duration: const Duration(seconds: 2),
                         backgroundColor: Colors.green,
                         behavior: SnackBarBehavior.floating,
                         // optional for a floating snackbar
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        margin:const EdgeInsets.all(
+                        margin: const EdgeInsets.all(
                             30), // only works with floating behavior
                       ),
                     );
@@ -222,14 +255,14 @@ class _DashboardState extends State<Dashboard> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Failed to Create Client ${e}'),
-                        duration:const Duration(seconds: 2),
+                        duration: const Duration(seconds: 2),
                         backgroundColor: Colors.black54,
                         behavior: SnackBarBehavior.floating,
                         // optional for a floating snackbar
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        margin:const EdgeInsets.all(
+                        margin: const EdgeInsets.all(
                             30), // only works with floating behavior
                       ),
                     );
@@ -243,12 +276,12 @@ class _DashboardState extends State<Dashboard> {
                   width: 90.w,
                   height: 35.h,
                   decoration: BoxDecoration(
-                      color: Colors.blueGrey[300],
-                      borderRadius: BorderRadius.circular(2.r)),
+                      color: Color(0xFFC62828),
+                      borderRadius: BorderRadius.circular(8.r)),
                   child: Center(
                     child: Text(
                       "Save",
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w400,
                           fontSize: 12.sp,
                           color: Colors.white),
@@ -279,7 +312,7 @@ class _DashboardState extends State<Dashboard> {
                         padding: EdgeInsets.only(top: 20.h, left: 20.w),
                         child: Text(
                           "RECENTLY",
-                          style: GoogleFonts.workSans(
+                          style: GoogleFonts.poppins(
                               fontSize: 20.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.black),
@@ -287,85 +320,135 @@ class _DashboardState extends State<Dashboard> {
                       ),
                     ],
                   ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 20.h, left: 20.w),
-                      child: Row(
-                        children: [
-                          StreamBuilder<QuerySnapshot>(
-                              stream: counter,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text(
-                                    'error',
-                                    style: TextStyle(color: Colors.purple),
-                                  );
-                                }
-                                if (snapshot.hasData) {
-                                  return Container(
-                                    height: 60.h,
-                                    width: 200.w,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.r))),
-                                    child: Center(
-                                      child: Text(
-                                        "QTN no:  ${snapshot.data!.docs[0]['currentYear'].toString().substring(2)}-${snapshot.data!.docs[0]['lastSequence'].toString()}",
-                                        style: GoogleFonts.workSans(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
-                              }),
-                          SizedBox(
-                            width: 5.w,
+
+                  //new table
+
+                  FutureBuilder(
+                    future: Future.wait([
+                      getLatestCompanyCounter("qtn_al_maskan"),
+                      getLatestCompanyCounter("qtn_reyah"),
+                      getLatestCompanyCounter2("inv_al_maskan"),
+                      getLatestCompanyCounter2("inv_reyah"),
+                    ]),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      final qtnAlMaskan = snapshot.data![0];
+                      final qtnReyah = snapshot.data![1];
+                      final invAlMaskan = snapshot.data![2];
+                      final invReyah = snapshot.data![3];
+
+                      return Padding(
+                        padding: EdgeInsets.only(
+                            top: 15.h, left: 20.w, right: 150.w),
+                        child: Table(
+                          border: TableBorder.all(
+                            color: Colors.grey,
+                            width: 1,
+                            borderRadius: BorderRadius.circular(8.r),
                           ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: counter2,
-                              builder: (context, snapshot) {
-                                if (!snapshot.hasData) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text(
-                                    'error',
-                                    style: TextStyle(color: Colors.purple),
-                                  );
-                                }
-                                if (snapshot.hasData) {
-                                  return Container(
-                                    height: 60.h,
-                                    width: 200.w,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10.r))),
-                                    child: Center(
-                                      child: Text(
-                                        "INV no:  ${snapshot.data!.docs[0]['currentYear'].toString().substring(2)}-${snapshot.data!.docs[0]['lastSequence'].toString()}",
-                                        style: GoogleFonts.workSans(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.black),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
-                              })
-                        ],
-                      )),
+                          columnWidths: const {
+                            0: FlexColumnWidth(3),
+                            1: FlexColumnWidth(2),
+                            2: FlexColumnWidth(2),
+                          },
+                          children: [
+                            TableRow(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFC62828),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(8.r),
+                                  topRight: Radius.circular(8.r),
+                                ),
+                              ),
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text('Company Name',
+                                      style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16.sp)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text('QTN No',
+                                      textAlign: TextAlign.right,
+                                      style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16.sp)),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text('INV No',
+                                      textAlign: TextAlign.right,
+                                      style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 16.sp)),
+                                ),
+                              ],
+                            ),
+
+                            // Row — Al Maskan
+                            TableRow(children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text("Al Maskan",
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(qtnAlMaskan,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(invAlMaskan,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                            ]),
+
+                            // Row — Reyah Al Maskan
+                            TableRow(children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text("Reyah Al Maskan",
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(qtnReyah,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(invReyah,
+                                    style: GoogleFonts.poppins(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp)),
+                              ),
+                            ]),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  
                   Padding(
                     padding:
                         EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
@@ -375,7 +458,8 @@ class _DashboardState extends State<Dashboard> {
                       stream: firestor,
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         }
                         if (snapshot.hasError) {
                           return const Text(
@@ -396,639 +480,646 @@ class _DashboardState extends State<Dashboard> {
                             children: List.generate(snapshot.data!.docs.length,
                                 (index) {
                               return Card(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.blueGrey[100],
-                                      borderRadius: BorderRadius.circular(4.r),
-                                      border:
-                                          Border.all(color: Colors.black12)),
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 15.w),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 15.h),
-                                          child: Text(
-                                            snapshot.data!.docs[index]['name'],
-                                            style: GoogleFonts.workSans(
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16.sp,
-                                                letterSpacing: 0.5),
-                                          ),
+                                elevation: 8,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 15.w),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 15.h),
+                                        child: Text(
+                                          snapshot.data!.docs[index]['name'],
+                                          style: GoogleFonts.poppins(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16.sp,
+                                              letterSpacing: 0.5),
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 5.h),
-                                          child: Text(
-                                            snapshot.data!.docs[index]
-                                                ['address'],
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.black),
-                                          ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 5.h),
+                                        child: Text(
+                                          snapshot.data!.docs[index]['address'],
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 13.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.black),
                                         ),
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 8.h),
-                                            child: Text("United Arab Emirates",
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.black))),
-                                        Padding(
-                                            padding: EdgeInsets.only(top: 8.h),
-                                            child: Text(
-                                                "TRN : ${snapshot.data!.docs[index]['TRN NO']}",
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 13.sp,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: Colors.black))),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 180.w),
-                                              child: PopupMenuButton(
-                                                  icon: Icon(
-                                                    Icons.more_vert,
-                                                    size: 20.sp,
-                                                  ),
-                                                  offset: const Offset(0, 40),
-                                                  onSelected: (value) {
-                                                    if (value == 'quote') {
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  Quotation2(
-                                                                    id: snapshot
-                                                                        .data!
-                                                                        .docs[
-                                                                            index]
-                                                                        .id,
-                                                                    name: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'name'],
-                                                                    address: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'address'],
-                                                                    index:
-                                                                        index,
-                                                                  )));
-                                                    }
-                                                    if (value == 'invoice') {
-                                                      Navigator.of(context)
-                                                          .push(
-                                                              MaterialPageRoute(
-                                                                  builder: (_) =>
-                                                                      invoice1(
-                                                                        id: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                            .id,
-                                                                        name: snapshot
-                                                                            .data!
-                                                                            .docs[index]['name'],
-                                                                        address: snapshot
-                                                                            .data!
-                                                                            .docs[index]['address'],
-                                                                        trn: snapshot
-                                                                            .data!
-                                                                            .docs[index]['TRN NO'],
-                                                                        index:
-                                                                            index,
-                                                                      )));
-                                                    }
-                                                    if (value == 'taxinvoice') {
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder: (_) =>
-                                                                  Taxinvoice1(
-                                                                    id: snapshot
-                                                                        .data!
-                                                                        .docs[
-                                                                            index]
-                                                                        .id,
-                                                                    name: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'name'],
-                                                                    address: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'address'],
-                                                                    trn: snapshot
-                                                                            .data!
-                                                                            .docs[index]
-                                                                        [
-                                                                        'TRN NO'],
-                                                                    index:
-                                                                        index,
-                                                                  )));
-                                                    }
-                                                  },
-                                                  itemBuilder: (context) =>const [
-                                                        PopupMenuItem(
-                                                          value: 'quote',
-                                                          child: Text(
-                                                              "Create Quote"),
-                                                        ),
-                                                        PopupMenuItem(
-                                                          value: 'invoice',
-                                                          child: Text(
-                                                              "Create Invoice"),
-                                                        ),
-                                                        PopupMenuItem(
-                                                          value: 'taxinvoice',
-                                                          child: Text(
-                                                              "Create Tax Invoice"),
-                                                        )
-                                                      ]),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 5.w),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.r),
-                                                        ),
-                                                        title: Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .warning_amber_rounded,
-                                                                color:
-                                                                    Colors.red,
-                                                                size: 24.sp),
-                                                            SizedBox(
-                                                                width: 8.w),
-                                                            Text(
-                                                              "Confirm Delete",
-                                                              style: TextStyle(
-                                                                fontSize: 18.sp,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black87,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        content: Text(
-                                                          "Are you sure you want to delete this item?",
-                                                          style: TextStyle(
-                                                              fontSize: 14.sp,
-                                                              color: Colors
-                                                                  .black54),
-                                                        ),
-                                                        actionsPadding:
-                                                            EdgeInsets
-                                                                .symmetric(
-                                                                    horizontal:
-                                                                        10.w,
-                                                                    vertical:
-                                                                        5.h),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(),
-                                                            child: Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                fontSize: 14.sp,
-                                                                color: Colors
-                                                                    .blueGrey,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          ElevatedButton(
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              backgroundColor:
-                                                                  Colors.red,
-                                                              shape:
-                                                                  RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.r),
-                                                              ),
-                                                            ),
-                                                            onPressed: () {
-                                                              firestore
-                                                                  .doc(snapshot
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 8.h),
+                                          child: Text("United Arab Emirates",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black))),
+                                      Padding(
+                                          padding: EdgeInsets.only(top: 8.h),
+                                          child: Text(
+                                              "TRN : ${snapshot.data!.docs[index]['TRN NO']}",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.black))),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 180.w),
+                                            child: PopupMenuButton(
+                                                icon: Icon(
+                                                  Icons.more_vert,
+                                                  size: 20.sp,
+                                                ),
+                                                offset: const Offset(0, 40),
+                                                onSelected: (value) {
+                                                  if (value == 'quote') {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder:
+                                                                (_) =>
+                                                                    Quotation2(
+                                                                      id: snapshot
                                                                           .data!
                                                                           .docs[
-                                                                      index]['id'])
-                                                                  .delete();
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                              ScaffoldMessenger
-                                                                      .of(context)
-                                                                  .showSnackBar(
-                                                                SnackBar(
-                                                                  content: const Text(
-                                                                      'Client Deleted Successfully'),
-                                                                  duration:
-                                                                      const Duration(
-                                                                          seconds:
-                                                                              2),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .red,
-                                                                  behavior:
-                                                                      SnackBarBehavior
-                                                                          .floating,
-                                                                  // optional for a floating snackbar
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  margin: const EdgeInsets
-                                                                      .all(
-                                                                          30), // only works with floating behavior
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14.sp,
-                                                                  color: Colors
-                                                                      .white),
+                                                                              index]
+                                                                          .id,
+                                                                      name: snapshot
+                                                                          .data!
+                                                                          .docs[index]['name'],
+                                                                      address: snapshot
+                                                                          .data!
+                                                                          .docs[index]['address'],
+                                                                      index:
+                                                                          index,
+                                                                    )));
+                                                  }
+                                                  if (value == 'invoice') {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder:
+                                                                (_) => invoice1(
+                                                                      id: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                              index]
+                                                                          .id,
+                                                                      name: snapshot
+                                                                          .data!
+                                                                          .docs[index]['name'],
+                                                                      address: snapshot
+                                                                          .data!
+                                                                          .docs[index]['address'],
+                                                                      trn: snapshot
+                                                                          .data!
+                                                                          .docs[index]['TRN NO'],
+                                                                      index:
+                                                                          index,
+                                                                    )));
+                                                  }
+                                                  if (value == 'taxinvoice') {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder:
+                                                                (_) =>
+                                                                    Taxinvoice1(
+                                                                      id: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                              index]
+                                                                          .id,
+                                                                      name: snapshot
+                                                                          .data!
+                                                                          .docs[index]['name'],
+                                                                      address: snapshot
+                                                                          .data!
+                                                                          .docs[index]['address'],
+                                                                      trn: snapshot
+                                                                          .data!
+                                                                          .docs[index]['TRN NO'],
+                                                                      index:
+                                                                          index,
+                                                                    )));
+                                                  }
+                                                },
+                                                itemBuilder: (context) =>
+                                                    const [
+                                                      PopupMenuItem(
+                                                        value: 'quote',
+                                                        child: Text(
+                                                            "Create Quote"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'invoice',
+                                                        child: Text(
+                                                            "Create Invoice"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'taxinvoice',
+                                                        child: Text(
+                                                            "Create Tax Invoice"),
+                                                      )
+                                                    ]),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 5.w),
+                                            child: InkWell(
+                                              onTap: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10.r),
+                                                      ),
+                                                      title: Row(
+                                                        children: [
+                                                          Icon(
+                                                              Icons
+                                                                  .warning_amber_rounded,
+                                                              color: Colors.red,
+                                                              size: 24.sp),
+                                                          SizedBox(width: 8.w),
+                                                          Text(
+                                                            "Confirm Delete",
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 18.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color: Colors
+                                                                  .black87,
                                                             ),
                                                           ),
                                                         ],
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                child: Container(
-                                                  width: 30.w,
-                                                  height: 30.h,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            2.r),
-                                                    color: Colors.blueGrey[100],
-                                                  ),
-                                                  child: Icon(
-                                                    CupertinoIcons.delete,
-                                                    size: 25.sp,
-                                                    color: Colors.black,
-                                                  ),
+                                                      ),
+                                                      content: Text(
+                                                        "Are you sure you want to delete this item?",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontSize: 14.sp,
+                                                                color: Colors
+                                                                    .black54),
+                                                      ),
+                                                      actionsPadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10.w,
+                                                              vertical: 5.h),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                          child: Text(
+                                                            "Cancel",
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                              fontSize: 14.sp,
+                                                              color: Colors
+                                                                  .blueGrey,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.red,
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5.r),
+                                                            ),
+                                                          ),
+                                                          onPressed: () {
+                                                            firestore
+                                                                .doc(snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                    index]['id'])
+                                                                .delete();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                content: const Text(
+                                                                    'Client Deleted Successfully'),
+                                                                duration:
+                                                                    const Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                behavior:
+                                                                    SnackBarBehavior
+                                                                        .floating,
+                                                                // optional for a floating snackbar
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                margin: const EdgeInsets
+                                                                    .all(
+                                                                    30), // only works with floating behavior
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            "Delete",
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontSize:
+                                                                        14.sp,
+                                                                    color: Colors
+                                                                        .white),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              child: Container(
+                                                width: 30.w,
+                                                height: 30.h,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          2.r),
+                                                ),
+                                                child: Icon(
+                                                  CupertinoIcons.delete,
+                                                  size: 25.sp,
+                                                  color: Colors.red,
                                                 ),
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 5.w),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  TextEditingController
-                                                      updname =
-                                                      TextEditingController(
-                                                          text: snapshot.data!
-                                                                  .docs[index]
-                                                              ['name']);
-                                                  TextEditingController
-                                                      updaddress =
-                                                      TextEditingController(
-                                                          text: snapshot.data!
-                                                                  .docs[index]
-                                                              ['address']);
-                                                  TextEditingController updtrn =
-                                                      TextEditingController(
-                                                          text: snapshot.data!
-                                                                  .docs[index]
-                                                              ['TRN NO']);
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return Dialog(
-                                                          shape: RoundedRectangleBorder(
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 5.w),
+                                            child: InkWell(
+                                              onTap: () {
+                                                TextEditingController updname =
+                                                    TextEditingController(
+                                                        text: snapshot.data!
+                                                                .docs[index]
+                                                            ['name']);
+                                                TextEditingController
+                                                    updaddress =
+                                                    TextEditingController(
+                                                        text: snapshot.data!
+                                                                .docs[index]
+                                                            ['address']);
+                                                TextEditingController updtrn =
+                                                    TextEditingController(
+                                                        text: snapshot.data!
+                                                                .docs[index]
+                                                            ['TRN NO']);
+                                                showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Dialog(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5.r)),
+                                                        child: Container(
+                                                          width: 700.w,
+                                                          height: 450.h,
+                                                          decoration: BoxDecoration(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           5.r)),
-                                                          child: Container(
-                                                            width: 700.w,
-                                                            height: 450.h,
-                                                            decoration: BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5.r)),
-                                                            child: Column(
-                                                              children: [
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          top: 10
-                                                                              .h),
-                                                                  child: Text(
-                                                                    "UPDATE BENIFICIERY",
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
-                                                                        fontSize: 18
-                                                                            .sp,
-                                                                        color: Colors
-                                                                            .black),
+                                                          child: Column(
+                                                            children: [
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 10
+                                                                            .h),
+                                                                child: Text(
+                                                                  "UPDATE BENIFICIERY",
+                                                                  style: GoogleFonts.poppins(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          18.sp,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 20
+                                                                            .h),
+                                                                    child: Text(
+                                                                      "Name",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize: 16
+                                                                              .sp,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 20
-                                                                              .h),
-                                                                      child:
-                                                                          Text(
-                                                                        "Name",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16.sp,
-                                                                            fontWeight: FontWeight.w500,
-                                                                            color: Colors.black),
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 5
-                                                                              .h),
-                                                                      child: Container(
-                                                                          width: 600.w,
-                                                                          height: 50.h,
-                                                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.only(
-                                                                                left: 15.w,
-                                                                                right: 15.w,
-                                                                                bottom: 5.h),
-                                                                            child:
-                                                                                TextFormField(
-                                                                              textInputAction: TextInputAction.next,
-                                                                              controller: updname,
-                                                                              cursorColor: Colors.black,
-                                                                            ),
-                                                                          )),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 20
-                                                                              .h),
-                                                                      child:
-                                                                          Text(
-                                                                        "Address",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16.sp,
-                                                                            fontWeight: FontWeight.w500,
-                                                                            color: Colors.black),
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 5
-                                                                              .h),
-                                                                      child: Container(
-                                                                          width: 600.w,
-                                                                          height: 50.h,
-                                                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.only(
-                                                                                left: 15.w,
-                                                                                right: 15.w,
-                                                                                bottom: 5.h),
-                                                                            child:
-                                                                                TextFormField(
-                                                                              textInputAction: TextInputAction.next,
-                                                                              controller: updaddress,
-                                                                              cursorColor: Colors.black,
-                                                                            ),
-                                                                          )),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 20
-                                                                              .h),
-                                                                      child:
-                                                                          Text(
-                                                                        "Tax Registration Number (TRN)",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16.sp,
-                                                                            fontWeight: FontWeight.w500,
-                                                                            color: Colors.black),
-                                                                      ),
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          top: 5
-                                                                              .h),
-                                                                      child: Container(
-                                                                          width: 600.w,
-                                                                          height: 50.h,
-                                                                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
-                                                                          child: Padding(
-                                                                            padding: EdgeInsets.only(
-                                                                                left: 15.w,
-                                                                                right: 15.w,
-                                                                                bottom: 5.h),
-                                                                            child:
-                                                                                TextFormField(
-                                                                              controller: updtrn,
-                                                                              cursorColor: Colors.black,
-                                                                            ),
-                                                                          )),
-                                                                    )
-                                                                  ],
-                                                                ),
-                                                                Padding(
-                                                                  padding: EdgeInsets
-                                                                      .only(
-                                                                          top: 30
-                                                                              .h),
-                                                                  child:
-                                                                      InkWell(
-                                                                    onTap:
-                                                                        () async {
-                                                                      final docId = snapshot
-                                                                          .data!
-                                                                          .docs[
-                                                                              index]
-                                                                              [
-                                                                              'id']
-                                                                          .toString();
-
-                                                                      final updatedData =
-                                                                          {
-                                                                        'name':
-                                                                            updname.text,
-                                                                        'address':
-                                                                            updaddress.text,
-                                                                        'TRN NO':
-                                                                            updtrn.text
-                                                                      };
-
-                                                                      try {
-                                                                        // Update Clients
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection('Clients')
-                                                                            .doc(docId)
-                                                                            .update(updatedData);
-
-                                                                        // Update Customers using the same ID
-                                                                        await FirebaseFirestore
-                                                                            .instance
-                                                                            .collection('Customers')
-                                                                            .doc(docId)
-                                                                            .update(updatedData);
-
-                                                                        ScaffoldMessenger.of(context)
-                                                                            .showSnackBar(
-                                                                          SnackBar(
-                                                                            content:
-                                                                                Text('Client Data Updated'),
-                                                                            duration:
-                                                                                Duration(seconds: 2),
-                                                                            backgroundColor:
-                                                                                Colors.green,
-                                                                            behavior:
-                                                                                SnackBarBehavior.floating, // optional for a floating snackbar
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                            ),
-                                                                            margin:
-                                                                                EdgeInsets.all(16), // only works with floating behavior
+                                                                  Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                5.h),
+                                                                    child: Container(
+                                                                        width: 600.w,
+                                                                        height: 50.h,
+                                                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 15.w,
+                                                                              right: 15.w,
+                                                                              bottom: 5.h),
+                                                                          child:
+                                                                              TextFormField(
+                                                                            textInputAction:
+                                                                                TextInputAction.next,
+                                                                            controller:
+                                                                                updname,
+                                                                            cursorColor:
+                                                                                Colors.black,
                                                                           ),
-                                                                        );
-                                                                        Navigator.of(context)
-                                                                            .pop();
-                                                                      } catch (e) {
-                                                                        ScaffoldMessenger.of(context)
-                                                                            .showSnackBar(
-                                                                          SnackBar(
-                                                                            content:
-                                                                                Text('Update Failed ${e}'),
-                                                                            duration:
-                                                                                Duration(seconds: 2),
-                                                                            backgroundColor:
-                                                                                Colors.green,
-                                                                            behavior:
-                                                                                SnackBarBehavior.floating, // optional for a floating snackbar
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                            ),
-                                                                            margin:
-                                                                                EdgeInsets.all(16), // only works with floating behavior
+                                                                        )),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 20
+                                                                            .h),
+                                                                    child: Text(
+                                                                      "Address",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize: 16
+                                                                              .sp,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                5.h),
+                                                                    child: Container(
+                                                                        width: 600.w,
+                                                                        height: 50.h,
+                                                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 15.w,
+                                                                              right: 15.w,
+                                                                              bottom: 5.h),
+                                                                          child:
+                                                                              TextFormField(
+                                                                            textInputAction:
+                                                                                TextInputAction.next,
+                                                                            controller:
+                                                                                updaddress,
+                                                                            cursorColor:
+                                                                                Colors.black,
                                                                           ),
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width:
-                                                                          90.w,
-                                                                      height:
-                                                                          35.h,
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors.blueGrey[
-                                                                              300],
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(2.r)),
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            Text(
-                                                                          "Update",
-                                                                          style: TextStyle(
-                                                                              fontWeight: FontWeight.w400,
-                                                                              fontSize: 12.sp,
-                                                                              color: Colors.white),
+                                                                        )),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        top: 20
+                                                                            .h),
+                                                                    child: Text(
+                                                                      "Tax Registration Number (TRN)",
+                                                                      style: GoogleFonts.poppins(
+                                                                          fontSize: 16
+                                                                              .sp,
+                                                                          fontWeight: FontWeight
+                                                                              .w500,
+                                                                          color:
+                                                                              Colors.black),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            top:
+                                                                                5.h),
+                                                                    child: Container(
+                                                                        width: 600.w,
+                                                                        height: 50.h,
+                                                                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(3.r), border: Border.all(color: Colors.black26)),
+                                                                        child: Padding(
+                                                                          padding: EdgeInsets.only(
+                                                                              left: 15.w,
+                                                                              right: 15.w,
+                                                                              bottom: 5.h),
+                                                                          child:
+                                                                              TextFormField(
+                                                                            controller:
+                                                                                updtrn,
+                                                                            cursorColor:
+                                                                                Colors.black,
+                                                                          ),
+                                                                        )),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 30
+                                                                            .h),
+                                                                child: InkWell(
+                                                                  onTap:
+                                                                      () async {
+                                                                    final docId = snapshot
+                                                                        .data!
+                                                                        .docs[
+                                                                            index]
+                                                                            [
+                                                                            'id']
+                                                                        .toString();
+
+                                                                    final updatedData =
+                                                                        {
+                                                                      'name': updname
+                                                                          .text,
+                                                                      'address':
+                                                                          updaddress
+                                                                              .text,
+                                                                      'TRN NO':
+                                                                          updtrn
+                                                                              .text
+                                                                    };
+
+                                                                    try {
+                                                                      // Update Clients
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Clients')
+                                                                          .doc(
+                                                                              docId)
+                                                                          .update(
+                                                                              updatedData);
+
+                                                                      // Update Customers using the same ID
+                                                                      await FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'Customers')
+                                                                          .doc(
+                                                                              docId)
+                                                                          .update(
+                                                                              updatedData);
+
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                        SnackBar(
+                                                                          content:
+                                                                              Text('Client Data Updated'),
+                                                                          duration:
+                                                                              Duration(seconds: 2),
+                                                                          backgroundColor:
+                                                                              Colors.green,
+                                                                          behavior:
+                                                                              SnackBarBehavior.floating, // optional for a floating snackbar
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                          ),
+                                                                          margin:
+                                                                              EdgeInsets.all(16), // only works with floating behavior
                                                                         ),
+                                                                      );
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    } catch (e) {
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                        SnackBar(
+                                                                          content:
+                                                                              Text('Update Failed ${e}'),
+                                                                          duration:
+                                                                              Duration(seconds: 2),
+                                                                          backgroundColor:
+                                                                              Colors.green,
+                                                                          behavior:
+                                                                              SnackBarBehavior.floating, // optional for a floating snackbar
+                                                                          shape:
+                                                                              RoundedRectangleBorder(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                          ),
+                                                                          margin:
+                                                                              EdgeInsets.all(16), // only works with floating behavior
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    width: 90.w,
+                                                                    height:
+                                                                        35.h,
+                                                                    decoration: BoxDecoration(
+                                                                        color: Color(
+                                                                            0xFFC62828),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8.r)),
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
+                                                                        "Update",
+                                                                        style: GoogleFonts.poppins(
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                            fontSize: 12.sp,
+                                                                            color: Colors.white),
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                )
-                                                              ],
-                                                            ),
+                                                                ),
+                                                              )
+                                                            ],
                                                           ),
-                                                        );
-                                                      });
-                                                },
-                                                child: Container(
-                                                  width: 30.w,
-                                                  height: 30.w,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            2.r),
-                                                    color: Colors.blueGrey[100],
-                                                  ),
-                                                  child: Icon(
-                                                    Icons.edit,
-                                                    size: 25.sp,
-                                                    color: Colors.black,
-                                                  ),
+                                                        ),
+                                                      );
+                                                    });
+                                              },
+                                              child: Container(
+                                                width: 30.w,
+                                                height: 30.w,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          2.r),
+                                                ),
+                                                child: Icon(
+                                                  Icons.edit,
+                                                  size: 25.sp,
+                                                  color: Colors.green,
                                                 ),
                                               ),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
+                                            ),
+                                          )
+                                        ],
+                                      )
+                                    ],
                                   ),
                                 ),
                               );
@@ -1041,7 +1132,7 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(left: 900.w, top: 570.h),
+              padding: EdgeInsets.only(left: 930.w, top: 620.h),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: CircleBorder(),
@@ -1053,7 +1144,7 @@ class _DashboardState extends State<Dashboard> {
                 },
                 child: CircleAvatar(
                   radius: 30.r,
-                  backgroundColor: Colors.blueGrey[300],
+                  backgroundColor: const Color(0xFFC62828),
                   child: Center(
                     child: Icon(
                       Icons.add,

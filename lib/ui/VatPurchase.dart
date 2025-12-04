@@ -510,7 +510,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor: const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -518,12 +518,12 @@ class _VatpurchaseState extends State<Vatpurchase> {
             icon: Icon(
               Icons.arrow_back,
               size: 24.sp,
-              color: Colors.black,
+              color: Colors.white,
             )),
         title: Text(
           "Vat Purchase",
           style:
-              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp,color: Colors.white),
         ),
         actions: [
           InkWell(
@@ -537,13 +537,13 @@ class _VatpurchaseState extends State<Vatpurchase> {
                 Icon(
                   Icons.filter_list,
                   size: 16.sp,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15.w),
-                  child: Text(
+                  child:const Text(
                     "Filter",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                 )
               ],
@@ -558,7 +558,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
               ? Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color:const Color.fromARGB(255, 223, 163, 163),
                   child: Center(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,7 +575,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -583,7 +583,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: date,
@@ -607,7 +607,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 12.sp,
                                     ),
                                     textAlign: TextAlign.start,
@@ -645,7 +645,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                       style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 12.sp,
-                                          color: Colors.black),
+                                          color: Colors.white),
                                     ),
                                     Padding(
                                       padding: EdgeInsets.only(left: 5.w),
@@ -663,7 +663,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                     BorderRadius.circular(4.r)),
                                                 title: Text("Add INVNO Suggestion"),
                                                 insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
+                                                    horizontal: 40.w, vertical: 24.w),
                                                 // Controls width and height
                                                 content: SizedBox(
                                                   width: 400.w, // Custom width
@@ -725,7 +725,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                             RoundedRectangleBorder(
                                                               borderRadius:
                                                               BorderRadius.circular(
-                                                                  8),
+                                                                  8.r),
                                                             ),
                                                             margin: EdgeInsets.all(15),
                                                           ),
@@ -815,7 +815,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                           hintText: "",
                                           hintStyle: TextStyle(
                                             fontWeight: FontWeight.w300,
-                                            fontSize: 16,
+                                            fontSize: 16.sp,
                                             color: Colors.black,
                                           ),
                                         ),
@@ -838,7 +838,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                   onSelected(option);
                                                 },
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -885,7 +885,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                     BorderRadius.circular(4.r)),
                                                 title: Text("Add Supplier Suggestion"),
                                                 insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
+                                                    horizontal: 40.w, vertical: 24.w),
                                                 // Controls width and height
                                                 content: SizedBox(
                                                   width: 400.w, // Custom width
@@ -984,7 +984,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Autocomplete(
                                     optionsBuilder: (TextEditingValue textEditingValue) {
@@ -1038,7 +1038,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                           hintStyle: TextStyle(
                                             fontWeight: FontWeight.w300,
                                             fontSize: 16,
-                                            color: Colors.black,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       );
@@ -1060,7 +1060,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                   onSelected(option);
                                                 },
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -1090,7 +1090,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                       style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 12.sp,
-                                          color: Colors.black),
+                                          color: Colors.white),
                                     ),Padding(
                                       padding: EdgeInsets.only(left: 5.w),
                                       child: GestureDetector(
@@ -1107,7 +1107,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                     BorderRadius.circular(4.r)),
                                                 title: Text("Add Project Suggestion"),
                                                 insetPadding: EdgeInsets.symmetric(
-                                                    horizontal: 40, vertical: 24),
+                                                    horizontal: 40.w, vertical: 24.w),
                                                 // Controls width and height
                                                 content: SizedBox(
                                                   width: 400.w, // Custom width
@@ -1169,7 +1169,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                             RoundedRectangleBorder(
                                                               borderRadius:
                                                               BorderRadius.circular(
-                                                                  8),
+                                                                  8.r),
                                                             ),
                                                             margin: EdgeInsets.all(15),
                                                           ),
@@ -1247,7 +1247,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                         keyboardType: TextInputType.multiline,
                                         cursorHeight: 25.h,
                                         textAlignVertical: TextAlignVertical.center,
-                                        style: TextStyle(color: Colors.black),
+                                        style: TextStyle(color: Colors.white),
                                         textAlign: TextAlign.start,
                                         cursorColor: Colors.black45,
                                         decoration: InputDecoration(
@@ -1259,8 +1259,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                           hintText: "",
                                           hintStyle: TextStyle(
                                             fontWeight: FontWeight.w300,
-                                            fontSize: 16,
-                                            color: Colors.black,
+                                            fontSize: 16.sp,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       );
@@ -1282,7 +1282,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                                   onSelected(option);
                                                 },
                                                 child: Padding(
-                                                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.w),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -1318,7 +1318,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: invoiceamount,
@@ -1329,7 +1329,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1357,7 +1357,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -1365,7 +1365,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: tax,
@@ -1376,7 +1376,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1404,7 +1404,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -1412,7 +1412,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: totalamount,
@@ -1423,7 +1423,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -1474,8 +1474,8 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 35.h,
                                 decoration: BoxDecoration(
                                     color: Colors.black,
-                                    borderRadius: BorderRadius.circular(3.r)),
-                                child: Center(
+                                    borderRadius: BorderRadius.circular(8.r)),
+                                child:const Center(
                                     child: Text(
                                   "ADD",
                                   style: TextStyle(color: Colors.white),
@@ -1491,7 +1491,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
               : Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color: Color.fromARGB(255, 223, 163, 163),
                   child: Row(
                     children: [
                       Padding(
@@ -1506,7 +1506,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1516,13 +1516,13 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _startDate != null
                                         ? _formatter.format(_startDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1535,7 +1535,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                         child: Icon(
                           Icons.arrow_right_alt,
                           size: 40.sp,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       Padding(
@@ -1550,7 +1550,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1560,13 +1560,13 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _endDate != null
                                         ? _formatter.format(_endDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1589,7 +1589,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.black),
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -1603,7 +1603,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                             "Generate PDF",
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400,
                                 color: Colors.red),
                           ),
                         ),
@@ -1614,7 +1614,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color: Colors.blueGrey[300],
+            color:const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
@@ -1625,7 +1625,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1637,7 +1637,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1649,7 +1649,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1661,7 +1661,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1673,7 +1673,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1685,7 +1685,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1697,7 +1697,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 16.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 )
@@ -1712,7 +1712,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ? Colors.blueGrey[100] : Colors.white,
+                    color: index % 2 == 0 ?const Color.fromARGB(255, 223, 163, 163) : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1727,7 +1727,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1742,7 +1742,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1757,7 +1757,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1772,7 +1772,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1787,7 +1787,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1802,7 +1802,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1817,7 +1817,7 @@ class _VatpurchaseState extends State<Vatpurchase> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),

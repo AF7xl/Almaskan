@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:number_to_words/number_to_words.dart';
 
@@ -284,12 +285,21 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
         titleSpacing: 1,
         toolbarHeight: 60.h,
         title: Text(
           "Create TaxInvoice",
-          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w400),
+          style: GoogleFonts.poppins(fontSize: 20.sp, fontWeight: FontWeight.w400,color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
@@ -307,7 +317,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "INV No",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -326,7 +336,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -336,9 +346,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -355,7 +365,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -385,7 +395,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             }
                           },
                           cursorHeight: 25.h,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           textAlignVertical: TextAlignVertical.center,
@@ -396,9 +406,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "Select Date",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
@@ -416,7 +426,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "LPO/QTN #",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -435,7 +445,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -445,9 +455,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -464,7 +474,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Project:",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -483,7 +493,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -493,9 +503,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -516,7 +526,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "NOTE Before Quote",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -566,7 +576,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: const TextStyle(color: Colors.black),
+                            style: GoogleFonts.poppins(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
@@ -576,9 +586,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: const TextStyle(
+                              hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -625,7 +635,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   padding: EdgeInsets.only(top: 40.h),
                   child: CircleAvatar(
                     radius: 30.r,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Color(0xFFC62828),
                     child: IconButton(
                         onPressed: () {
                           setState(() {
@@ -659,7 +669,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style: const TextStyle(color: Colors.black),
+                            style:  GoogleFonts.poppins(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
@@ -669,9 +679,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle: const TextStyle(
+                              hintStyle:  GoogleFonts.poppins(
                                   fontWeight: FontWeight.w300,
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: Colors.black),
                             ),
                           ),
@@ -702,25 +712,25 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(color: Colors.red[900]),
-                    children: const [
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontSize: 16),
+                              fontSize: 16.sp),
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
-                              fontSize: 16),
+                              fontSize: 16.sp),
                           textAlign: TextAlign.right,
                         ),
                       ),
@@ -729,12 +739,12 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   TableRow(children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child: const Text(
+                      child:  Text(
                         'Subtotal Taxable Amount',
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
-                            fontSize: 16),
+                            fontSize: 16.sp),
                       ),
                     ),
                     Padding(
@@ -750,7 +760,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -805,6 +815,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               value: selectedpaymentId,
                             ),
                           ],
+
                         )
                         //  DropdownButtonFormField<int>(
                         //   hint: Text("Select Payment Method"),
@@ -840,7 +851,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style: TextStyle(
+                        style:  GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -849,16 +860,16 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child: const SizedBox(
+                        child:  SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'VAT (5%)',
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ),
@@ -871,7 +882,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           padding: EdgeInsets.only(top: 10.h, left: 20.w),
                           child: Text(
                             vat.toString(),
-                            style: TextStyle(
+                            style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                             ),
@@ -880,20 +891,21 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       ),
                     ],
                   ),
+
                   TableRow(
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child: const SizedBox(
+                        child:  SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Total Amount',
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                               ),
                             ),
                           ),
@@ -906,7 +918,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           padding: EdgeInsets.only(top: 10.h, left: 20.w),
                           child: Text(
                             total.toString(),
-                            style: TextStyle(
+                            style:  GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w800,
                             ),
@@ -927,7 +939,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     padding: EdgeInsets.only(left: 725.w, top: 10.h),
                     child: Text(
                       "Sign Section ",
-                      style: TextStyle(
+                      style:  GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.red),
@@ -966,7 +978,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                 children: [
                   Text(
                     "Total Amount in Name",
-                    style: TextStyle(
+                    style:  GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -986,7 +998,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black,
                         decoration: InputDecoration(
@@ -1009,7 +1021,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                 children: [
                   Text(
                     "Note after quote",
-                    style: TextStyle(
+                    style:  GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -1029,7 +1041,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style: const TextStyle(color: Colors.black),
+                        style:  GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -1038,9 +1050,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           border: InputBorder.none,
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
-                          hintStyle: const TextStyle(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black),
                         ),
                       ),
@@ -1221,7 +1233,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               child: Center(
                                 child: Text(
                                   "Save",
-                                  style: TextStyle(
+                                  style:  GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w500),
@@ -1327,7 +1339,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             child: Center(
                               child: Text(
                                 "Preview",
-                                style: TextStyle(
+                                style:  GoogleFonts.poppins(
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
@@ -1341,16 +1353,16 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             if (selectedDocumentId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text(
+                                  content:const Text(
                                       'Please select a document to update'),
-                                  duration: Duration(seconds: 2),
+                                  duration:const Duration(seconds: 2),
                                   backgroundColor: Colors.black54,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin: EdgeInsets.all(
+                                  margin:const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
@@ -1381,15 +1393,15 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Tax Invoice Updated'),
-                                  duration: Duration(seconds: 2),
+                                  content:const Text('Tax Invoice Updated'),
+                                  duration:const  Duration(seconds: 2),
                                   backgroundColor: Colors.green,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin: EdgeInsets.all(
+                                  margin:const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
@@ -1397,19 +1409,20 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Failed to update ${e}'),
-                                  duration: Duration(seconds: 2),
+                                  duration:const Duration(seconds: 2),
                                   backgroundColor: Colors.black54,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin: EdgeInsets.all(
+                                  margin:const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
                             }
                           },
+
                           child: Container(
                             width: 65.w,
                             height: 35.h,
@@ -1419,7 +1432,8 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             child: Center(
                               child: Text(
                                 "Update",
-                                style: TextStyle(
+
+                                style:  GoogleFonts.poppins(
                                     color: Colors.white,
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w500),

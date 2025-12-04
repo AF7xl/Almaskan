@@ -180,7 +180,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                   keyboardType: TextInputType.multiline,
                   cursorHeight: 25.h,
                   textAlignVertical: TextAlignVertical.center,
-                  style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                  style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                   textAlign: TextAlign.start,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -210,7 +210,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -255,7 +255,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                   keyboardType: TextInputType.multiline,
                   cursorHeight: 25.h,
                   textAlignVertical: TextAlignVertical.center,
-                  style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                  style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                   textAlign: TextAlign.start,
                   cursorColor: Colors.black,
                   decoration: InputDecoration(
@@ -285,7 +285,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                 keyboardType: TextInputType.number,
                 cursorHeight: 25.h,
                 textAlignVertical: TextAlignVertical.center,
-                style: TextStyle(color: Colors.black, fontSize: 15.sp),
+                style:  GoogleFonts.poppins(color: Colors.black, fontSize: 15.sp),
                 textAlign: TextAlign.start,
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
@@ -316,15 +316,25 @@ class _LeaveSalaryState extends State<LeaveSalary> {
         .collection("leavesalary");
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor:Color(0xFFC62828),
         title: Text(
           'Create Leave Salary',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.72.sp,
+          style:  GoogleFonts.poppins(
+            color: Colors.white,
+            fontSize:20.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
+         leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+  
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -341,7 +351,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Numbers",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -360,7 +370,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -370,9 +380,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -389,7 +399,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Employee name",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -408,7 +418,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -418,9 +428,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -437,7 +447,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Designation",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -459,7 +469,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -469,9 +479,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: '',
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
@@ -489,7 +499,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date of join",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -508,7 +518,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -518,9 +528,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -537,7 +547,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Pay Period",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -556,7 +566,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins (color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -566,9 +576,13 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp
+                                
+                                
+                                
+                                ,
                                 color: Colors.black),
                           ),
                         ),
@@ -589,7 +603,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date of Exit",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -608,7 +622,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins (color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -618,9 +632,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle: const TextStyle(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
-                                fontSize: 16,
+                                fontSize: 16.sp,
                                 color: Colors.black),
                           ),
                         ),
@@ -637,7 +651,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Department",
-                          style: TextStyle(
+                          style:  GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -659,7 +673,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style: const TextStyle(color: Colors.black),
+                          style:  GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -669,9 +683,9 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: '',
-                            hintStyle: const TextStyle(
+                            hintStyle:  GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                               color: Colors.black,
                             ),
                           ),
@@ -705,7 +719,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Icon(
                           Icons.add_circle,
-                          color: Colors.blue,
+                          color:Color(0xFFC62828),
                           size: 15.sp,
                         ),
                       ),
@@ -823,7 +837,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                         padding: EdgeInsets.only(left: 5.w),
                         child: Icon(
                           Icons.add_circle,
-                          color: Colors.blue,
+                          color: Color(0xFFC62828),
                           size: 15.sp,
                         ),
                       ),
@@ -930,7 +944,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                     padding: EdgeInsets.only(left: 820.w, top: 10.h),
                     child: Text(
                       "Net Pay",
-                      style: TextStyle(
+                      style:  GoogleFonts.poppins(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.red),
@@ -948,7 +962,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           padding: EdgeInsets.only(left: 5.w, top: 8.h),
                           child: Text(
                             netpay.toStringAsFixed(2),
-                            style: TextStyle(
+                            style:  GoogleFonts.poppins(
                                 color: Colors.red,
                                 fontWeight: FontWeight.w600,
                                 fontSize: 18.sp),
@@ -1155,7 +1169,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           child: Center(
                             child: Text(
                               "save",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1198,7 +1212,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                               ));
                         },
                         child: Container(
-                          width: 65.w,
+                          width: 80.w,
                           height: 35.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5.r),
@@ -1207,7 +1221,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           child: Center(
                             child: Text(
                               "Generate",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1308,7 +1322,7 @@ class _LeaveSalaryState extends State<LeaveSalary> {
                           child: Center(
                             child: Text(
                               "Update",
-                              style: TextStyle(
+                              style:  GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,

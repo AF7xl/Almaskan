@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -100,21 +101,23 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text("AL MASKAN PLASTER & TILE CONT",
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 3),
-            pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("United Arab Emirates", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("TRN 100342182100003", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
+                style: pw.TextStyle(
+                    fontSize: 10.sp, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("United Arab Emirates",
+                style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("TRN 100342182100003",
+                style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
             pw.Text("almaskandecor@gmail.com",
-                style: pw.TextStyle(fontSize: 10)),
+                style: pw.TextStyle(fontSize: 10.sp)),
           ],
         );
       } else {
@@ -122,19 +125,21 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
-                style:
-                    pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(height: 3),
-            pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("United Arab Emirates", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("TRN 100342182100003", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
-            pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
-            pw.SizedBox(height: 3),
+                style: pw.TextStyle(
+                    fontSize: 10.sp, fontWeight: pw.FontWeight.bold)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("Dubai", style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("United Arab Emirates",
+                style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("TRN 100342182100003",
+                style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
+            pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
+            pw.SizedBox(height: 3.h),
             pw.Text("reyahalmaskan@gmail.com",
-                style: pw.TextStyle(fontSize: 10)),
+                style: pw.TextStyle(fontSize: 10.sp)),
           ],
         );
       }
@@ -143,142 +148,146 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
     pw.Widget bankdetails() {
       if (widget.selectedCompany == 'Al Maskan') {
         return pw.SizedBox(
-            width: 300,
-            height: 90,
+            width: 300.w,
+            height: 90.h,
             child: pw.Table(
               columnWidths: {
                 0: pw.FlexColumnWidth(1),
                 1: pw.FlexColumnWidth(1),
               },
-              border: pw.TableBorder.all(width: 0.5),
+              border: pw.TableBorder.all(width: 0.5.w),
               children: [
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Account Name :",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Al Maskan Plaster & Tiles Cont.",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("Bank :", style: pw.TextStyle(fontSize: 7)),
+                    child:
+                        pw.Text("Bank :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Sharjah Islamic Bank",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Account No :",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("001-2079331-001",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("IBN :", style: pw.TextStyle(fontSize: 7)),
+                    child:
+                        pw.Text("IBN :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("AE06 0410 0000 1236 4478 001",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child:
-                        pw.Text("Branch :", style: pw.TextStyle(fontSize: 7)),
+                    child: pw.Text("Branch :",
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child:
-                        pw.Text("Al Wasit", style: pw.TextStyle(fontSize: 7)),
+                    child: pw.Text("Al Wasit",
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
               ],
             ));
       } else {
         return pw.SizedBox(
-            width: 300,
-            height: 100,
+            width: 300.w,
+            height: 100.h,
             child: pw.Table(
               columnWidths: {
-                0: pw.FlexColumnWidth(1),
-                1: pw.FlexColumnWidth(1),
+                0: pw.FlexColumnWidth(1.w),
+                1: pw.FlexColumnWidth(1.w),
               },
-              border: pw.TableBorder.all(width: 0.5),
+              border: pw.TableBorder.all(width: 0.5.w),
               children: [
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Account Name :",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("REYAH AL MASKAN TECHNICAL SER LLC.",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("Bank :", style: pw.TextStyle(fontSize: 7)),
+                    child:
+                        pw.Text("Bank :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Sharjah Islamic Bank",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("Account No :",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("0012364478001",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("IBN :", style: pw.TextStyle(fontSize: 7)),
+                    child:
+                        pw.Text("IBN :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
                     child: pw.Text("AE060410000012364478001",
-                        style: pw.TextStyle(fontSize: 7)),
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child:
-                        pw.Text("Branch :", style: pw.TextStyle(fontSize: 7)),
+                    child: pw.Text("Branch :",
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child:
-                        pw.Text("Al Wasit", style: pw.TextStyle(fontSize: 7)),
+                    child: pw.Text("Al Wasit",
+                        style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
               ],
@@ -301,12 +310,12 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(top: 20),
+                                padding: pw.EdgeInsets.only(top: 20.h),
                                 child: pw.Container(
-                                    width: 160,
-                                    height: 160,
+                                    width: 160.w,
+                                    height: 160.h,
                                     child: pw.Image(image))),
-                            pw.SizedBox(width: 290),
+                            pw.SizedBox(width: 290.w),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
@@ -314,19 +323,19 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                       padding: pw.EdgeInsets.only(top: 25.h),
                                       child: pw.Text("Tax Invoice",
                                           style: pw.TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 20.sp,
                                               fontWeight: pw.FontWeight.bold))),
                                   pw.Padding(
                                       padding: pw.EdgeInsets.only(left: 3.w),
                                       child: pw.Text("# INV-${widget.invno}",
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
-                                              fontSize: 9)))
+                                              fontSize: 9.sp)))
                                 ])
                           ]),
-                      pw.SizedBox(height: 10),
+                      pw.SizedBox(height: 10.h),
                       buildCompanyDetails(),
-                      pw.SizedBox(height: 20),
+                      pw.SizedBox(height: 20.h),
                       pw.Row(
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
@@ -336,132 +345,134 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                   pw.Text("To",
                                       style: pw.TextStyle(
                                           fontWeight: pw.FontWeight.normal,
-                                          fontSize: 10)),
-                                  pw.SizedBox(height: 3),
+                                          fontSize: 10.sp)),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text(widget.name,
                                       style: pw.TextStyle(
-                                          fontSize: 11,
+                                          fontSize: 11.sp,
                                           fontWeight: pw.FontWeight.bold)),
-                                  pw.SizedBox(height: 3),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text(widget.address,
                                       style: pw.TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 10.sp,
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
-                                  pw.SizedBox(height: 3),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text("TRN-${widget.trn}",
                                       style: pw.TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 10.sp,
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
-                                  pw.SizedBox(height: 3),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text("United Arab Emirates",
                                       style: pw.TextStyle(
-                                          fontSize: 10,
+                                          fontSize: 10.sp,
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
                                 ]),
-                            pw.SizedBox(width: 220),
+                            pw.SizedBox(width: 220.w),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
                                   pw.Padding(
-                                    padding: pw.EdgeInsets.only(top: 15),
+                                    padding: pw.EdgeInsets.only(top: 15.h),
                                     child:
                                         pw.Text("Invoice Date : ${widget.date}",
                                             style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
-                                              fontSize: 9,
+                                              fontSize: 9.sp,
                                             )),
                                   ),
-                                  pw.SizedBox(height: 3),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text("P.O (OR) QTN NO: ${widget.lpoqtn}",
                                       style: pw.TextStyle(
-                                        fontSize: 9,
+                                        fontSize: 9.sp,
                                         fontWeight: pw.FontWeight.normal,
                                       )),
-                                  pw.SizedBox(height: 3),
+                                  pw.SizedBox(height: 3.h),
                                   pw.Text("Project: ${widget.project}",
                                       textAlign: pw.TextAlign.right,
                                       style: pw.TextStyle(
-                                        fontSize: 9,
+                                        fontSize: 9.sp,
                                         fontWeight: pw.FontWeight.normal,
                                       )),
                                 ])
                           ]),
-                      pw.SizedBox(height: 10),
+                      pw.SizedBox(height: 10.h),
                       pw.Text("Subject :",
                           style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.normal, fontSize: 10)),
-                      pw.SizedBox(height: 3),
+                              fontWeight: pw.FontWeight.normal,
+                              fontSize: 10.sp)),
+                      pw.SizedBox(height: 3.h),
                       pw.Text(widget.nbq,
                           style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.normal, fontSize: 10)),
-                      pw.SizedBox(height: 10),
+                              fontWeight: pw.FontWeight.normal,
+                              fontSize: 10.sp)),
+                      pw.SizedBox(height: 10.h),
 
                       pw.Container(
-                        height: 25,
+                        height: 25.h,
                         color: widget.selectedCompany == 'Al Maskan'
                             ? PdfColors.black
                             : PdfColor.fromInt(0xFFC62828), // Reyah default red
                         child: pw.Row(
                           children: [
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 1,
                               child: pw.Text("#",
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold,
-                                      fontSize: 10,
+                                      fontSize: 10.sp,
                                       color: PdfColors.white)),
                             ),
-                            pw.SizedBox(width: 3),
+                            pw.SizedBox(width: 3.w),
                             pw.Expanded(
                               flex: 6,
                               child: pw.Text("Description",
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.white,
-                                      fontSize: 10)),
+                                      fontSize: 10.sp)),
                             ),
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text("Rate",
                                   style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     color: PdfColors.white,
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                   )),
                             ),
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text("Amount",
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.white,
-                                      fontSize: 10)),
+                                      fontSize: 10.sp)),
                             ),
                           ],
                         ),
                       ),
-                      pw.SizedBox(height: 5),
+                      pw.SizedBox(height: 5.h),
                       pw.Container(
-                        height: 25,
+                        height: 25.h,
                         color: PdfColors.white, // Reyah default red
                         child: pw.Row(
                           children: [
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 1,
                               child: pw.Text("1",
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.normal,
-                                      fontSize: 10,
+                                      fontSize: 10.sp,
                                       color: PdfColors.black)),
                             ),
-                            pw.SizedBox(width: 3),
+                            pw.SizedBox(width: 3.w),
                             pw.Expanded(
                               flex: 6,
                               child: pw.Column(
@@ -471,45 +482,45 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                     pw.Text("${widget.payment} Amount",
                                         style: pw.TextStyle(
                                             fontWeight: pw.FontWeight.bold,
-                                            fontSize: 10,
+                                            fontSize: 10.sp,
                                             color: PdfColors.black)),
                                     pw.Text(
                                         "SUBTOTAL TAXABLE QTN AMOUNT - ${widget.subtotal}",
                                         style: pw.TextStyle(
                                             fontWeight: pw.FontWeight.normal,
-                                            fontSize: 8,
+                                            fontSize: 8.sp,
                                             color: PdfColors.black))
                                   ]),
                             ),
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text(widget.advance,
                                   style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black,
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                   )),
                             ),
-                            pw.SizedBox(width: 5),
+                            pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text(widget.advance,
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black,
-                                      fontSize: 10)),
+                                      fontSize: 10.sp)),
                             ),
                           ],
                         ),
                       ),
-                      pw.Divider(thickness: 0.3), pw.SizedBox(height: 5),
+                      pw.Divider(thickness: 0.3), pw.SizedBox(height: 5.h),
                       pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 300),
+                        padding: pw.EdgeInsets.only(left: 300.w),
                         child: pw.Container(
-                          width: 200, // adjust width as needed
+                          width: 200.w, // adjust width as needed
                           padding: pw.EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 5),
+                              horizontal: 10.w, vertical: 5.w),
                           color: PdfColors.white, // optional background color
                           child: pw.Row(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -520,12 +531,12 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                 children: [
                                   pw.Text(
                                     "Total Taxable Amount",
-                                    style: pw.TextStyle(fontSize: 10),
+                                    style: pw.TextStyle(fontSize: 10.sp),
                                   ),
-                                  pw.SizedBox(height: 8),
+                                  pw.SizedBox(height: 8.h),
                                   pw.Text(
                                     "VAT (5%)",
-                                    style: pw.TextStyle(fontSize: 9),
+                                    style: pw.TextStyle(fontSize: 9.sp),
                                   ),
                                 ],
                               ),
@@ -538,12 +549,12 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                 children: [
                                   pw.Text(
                                     widget.advance,
-                                    style: pw.TextStyle(fontSize: 9),
+                                    style: pw.TextStyle(fontSize: 9.sp),
                                   ),
-                                  pw.SizedBox(height: 8),
+                                  pw.SizedBox(height: 8.h),
                                   pw.Text(
                                     widget.vat,
-                                    style: pw.TextStyle(fontSize: 9),
+                                    style: pw.TextStyle(fontSize: 9.sp),
                                   ),
                                 ],
                               ),
@@ -552,21 +563,21 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                         ),
                       ),
 
-                      pw.SizedBox(height: 8),
+                      pw.SizedBox(height: 8.h),
                       pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 310),
+                        padding: pw.EdgeInsets.only(left: 310.w),
                         child: pw.Container(
-                          width: 200,
-                          height: 25,
+                          width: 200.w,
+                          height: 25.h,
                           color: PdfColors.grey100,
                           child: pw.Row(
                             children: [
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 5),
+                                padding: pw.EdgeInsets.only(left: 5.w),
                                 child: pw.Text(
                                   "TOTAL AMOUNT ",
                                   style: pw.TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 9.sp,
                                     fontWeight: pw.FontWeight.bold,
                                   ),
                                 ),
@@ -574,11 +585,11 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                               pw.Spacer(),
                               // <-- This pushes the next widget to the right edge
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(right: 5),
+                                padding: pw.EdgeInsets.only(right: 5.w),
                                 child: pw.Text(
                                   "${widget.totalamount}AED",
                                   style: pw.TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 9.sp,
                                     fontWeight: pw.FontWeight.bold,
                                   ),
                                 ),
@@ -588,66 +599,65 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                         ),
                       ),
 
-                      pw.SizedBox(height: 8),
+                      pw.SizedBox(height: 8.h),
                       pw.Row(
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 315),
+                                padding: pw.EdgeInsets.only(left: 315.w),
                                 child: pw.Text("Total In Words:",
                                     style: pw.TextStyle(
-                                      fontSize: 9,
+                                      fontSize: 9.sp,
                                       fontWeight: pw.FontWeight.normal,
                                     ))),
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 5),
+                                padding: pw.EdgeInsets.only(left: 5.w),
                                 child: pw.Container(
-                                    width: 100,
-                                    height: 50,
+                                    width: 100.w,
+                                    height: 50.h,
                                     child: pw.Text(widget.totalamountinname,
                                         style: pw.TextStyle(
                                             fontWeight: pw.FontWeight.bold,
-                                            fontSize: 9,
+                                            fontSize: 9.sp,
                                             color: PdfColors.black,
                                             fontStyle: pw.FontStyle.italic))))
                           ]),
 
                       // Notes
-                      pw.SizedBox(height: 2),
-                      pw.Text("Notes", style: pw.TextStyle(fontSize: 10)),
-                      pw.SizedBox(height: 2),
-                      pw.Text(widget.naq, style: pw.TextStyle(fontSize: 8)),
-                      pw.SizedBox(height: 5),
+                      pw.SizedBox(height: 2.h),
+                      pw.Text("Notes", style: pw.TextStyle(fontSize: 10.sp)),
+                      pw.SizedBox(height: 2.h),
+                      pw.Text(widget.naq, style: pw.TextStyle(fontSize: 8.sp)),
+                      pw.SizedBox(height: 5.h),
 
                       pw.Text("Bank Details:",
                           style: pw.TextStyle(
-                            fontSize: 8,
+                            fontSize: 8.sp,
                             decoration: pw.TextDecoration.underline,
                           )),
 
                       pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             bankdetails(),
-                            pw.SizedBox(height: 20),
-                            widget.option.trim().toLowerCase() == 'yes'
-                                ? pw.Column(children: [
-                                    pw.Container(
-                                        width: 160,
-                                        height: 160,
-                                        child: pw.Image(sign)),
-                                    pw.Text("Authorized Signature",
-                                        style: pw.TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: pw.FontWeight.normal))
-                                  ])
-                                : widget.option.trim().toLowerCase() == 'no'
-                                    ? pw.Wrap(children: [
-                                        pw.Text(
-                                            'This is computer generated\ncode This not need to Sign'),
-                                      ])
-                                    : pw.SizedBox()
-                          ])
+                            pw.SizedBox(height: 20.h),
+                          ]),
+                      widget.option.trim().toLowerCase() == 'yes'
+                          ? pw.Column(children: [
+                              pw.Container(
+                                  width: 160.sp,
+                                  height: 160.sp,
+                                  child: pw.Image(sign)),
+                              pw.Text("Authorized Signature",
+                                  style: pw.TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: pw.FontWeight.normal))
+                            ])
+                          : widget.option.trim().toLowerCase() == 'no'
+                              ? pw.Wrap(children: [
+                                  pw.Text(
+                                      'This is computer generated\ncode This not need to Sign'),
+                                ])
+                              : pw.SizedBox()
                     ],
                   )),
             ];
@@ -734,8 +744,23 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: const Text('Tax Invoice PDF Preview'),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
+        title: Text(
+          'Tax Invoice PDF Preview',
+          style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),

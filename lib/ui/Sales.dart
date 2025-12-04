@@ -82,39 +82,39 @@ class _SalesState extends State<Sales> {
     pw.Widget buildCompanyDetails() {
       if (selectedCompany == 'al_maskan') {
         return pw.Padding(
-            padding: pw.EdgeInsets.only(top: 40),
+            padding: pw.EdgeInsets.only(top: 40.h),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text("AL MASKAN PLASTER & TILE CONT",
                     style: pw.TextStyle(
-                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 3),
-                pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
-                pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                        fontSize: 10.sp, fontWeight: pw.FontWeight.bold)),
+                pw.SizedBox(height: 3.h),
+                pw.Text("Industrial-8", style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
+                pw.Text("Sharjah", style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("United Arab Emirates",
-                    style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                    style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("TRN 100342182100003",
-                    style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
-                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                    style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("almaskandecor@gmail.com",
-                    style: pw.TextStyle(fontSize: 10)),
+                    style: pw.TextStyle(fontSize: 10.sp)),
               ],
             ));
       } else {
         return pw.Padding(
-            padding: pw.EdgeInsets.only(top: 40),
+            padding: pw.EdgeInsets.only(top: 40.h),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
                     style: pw.TextStyle(
-                        fontSize: 10, fontWeight: pw.FontWeight.bold)),
+                        fontSize: 10.sp, fontWeight: pw.FontWeight.bold)),
                 pw.SizedBox(height: 3),
                 pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
                 pw.SizedBox(height: 3),
@@ -425,7 +425,7 @@ class _SalesState extends State<Sales> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor:const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -433,14 +433,14 @@ class _SalesState extends State<Sales> {
             icon: Icon(
               Icons.arrow_back,
               size: 24.sp,
-              color: Colors.black,
+              color: Colors.white,
             )),
         title: Text(
           "All Recieved Payments",
           style: GoogleFonts.poppins(
               fontWeight: FontWeight.w600,
               fontSize: 20.sp,
-              color: Colors.black),
+              color: Colors.white),
         ),
       ),
       backgroundColor: Colors.white,
@@ -450,7 +450,7 @@ class _SalesState extends State<Sales> {
           Container(
             width: double.infinity,
             height: 80.h,
-            color: Colors.blueGrey[100],
+            color:  Color.fromARGB(255, 223, 163, 163),
             child: Row(
               children: [
                 Padding(
@@ -465,7 +465,7 @@ class _SalesState extends State<Sales> {
                           style: GoogleFonts.poppins(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w300,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
                       ),
                       GestureDetector(
@@ -475,13 +475,13 @@ class _SalesState extends State<Sales> {
                           height: 40.h,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(color: Colors.black)),
+                              border: Border.all(color: Colors.white)), 
                           child: Center(
                             child: Text(
                               _startdate != null
                                   ? _formatter.format(_startdate!)
                                   : 'Select',
-                              style: TextStyle(fontSize: 12.sp),
+                              style: TextStyle(fontSize: 12.sp,color: Colors.white),
                             ),
                           ),
                         ),
@@ -494,7 +494,7 @@ class _SalesState extends State<Sales> {
                   child: Icon(
                     Icons.arrow_right_alt,
                     size: 40.sp,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                 ),
                 Padding(
@@ -509,7 +509,7 @@ class _SalesState extends State<Sales> {
                           style: GoogleFonts.poppins(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w300,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
                       ),
                       GestureDetector(
@@ -519,13 +519,13 @@ class _SalesState extends State<Sales> {
                           height: 40.h,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(color: Colors.black)),
+                              border: Border.all(color: Colors.white)), 
                           child: Center(
                             child: Text(
                               _enddate != null
                                   ? _formatter.format(_enddate!)
                                   : 'Select',
-                              style: TextStyle(fontSize: 12.sp),
+                              style: GoogleFonts.poppins(fontSize: 12.sp,color: Colors.white),
                             ),
                           ),
                         ),
@@ -545,10 +545,10 @@ class _SalesState extends State<Sales> {
                     },
                     child: Text(
                       "Cancel Filter",
-                      style: GoogleFonts.workSans(
+                      style: GoogleFonts.poppins(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w300,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -564,7 +564,7 @@ class _SalesState extends State<Sales> {
                           style: GoogleFonts.poppins(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black),
+                              color: Colors.white),
                         ),
                       ),
                       Container(
@@ -572,12 +572,12 @@ class _SalesState extends State<Sales> {
                         height: 40.h,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(4.r),
-                            border: Border.all(color: Colors.black)),
+                            border: Border.all(color: Colors.white)),
                         child: Center(
                           child: Text(
                             _totalamount.toStringAsFixed(2),
-                            style: TextStyle(
-                              color: Colors.black,
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
                             ),
@@ -593,7 +593,7 @@ class _SalesState extends State<Sales> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color: Colors.blueGrey[300],
+            color:  const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
@@ -604,7 +604,7 @@ class _SalesState extends State<Sales> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -616,7 +616,7 @@ class _SalesState extends State<Sales> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -628,7 +628,7 @@ class _SalesState extends State<Sales> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -640,7 +640,7 @@ class _SalesState extends State<Sales> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -653,7 +653,7 @@ class _SalesState extends State<Sales> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 )
@@ -668,7 +668,7 @@ class _SalesState extends State<Sales> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ? Colors.blueGrey[100] : Colors.white,
+                    color: index % 2 == 0 ?  Color.fromARGB(255, 223, 163, 163) : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -682,7 +682,7 @@ class _SalesState extends State<Sales> {
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -695,7 +695,7 @@ class _SalesState extends State<Sales> {
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -708,7 +708,7 @@ class _SalesState extends State<Sales> {
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -721,7 +721,7 @@ class _SalesState extends State<Sales> {
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -735,7 +735,7 @@ class _SalesState extends State<Sales> {
                                 style: GoogleFonts.poppins(
                                     fontWeight: FontWeight.w300,
                                     fontSize: 12.sp,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -745,6 +745,7 @@ class _SalesState extends State<Sales> {
                                 icon: Icon(
                                   Icons.more_vert,
                                   size: 15.sp,
+                                  color: Colors.white,
                                 ),
                                 onSelected: (value) async {
                                   if (value == 'download') {
@@ -753,17 +754,17 @@ class _SalesState extends State<Sales> {
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: Text("Select Company"),
+                                          title: Text("Select Company",style: GoogleFonts.poppins(color: Colors.white),),
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               ListTile(
-                                                title: Text("Al Maskan"),
+                                                title: Text("Al Maskan",style: GoogleFonts.poppins(color: Colors.white),),
                                                 onTap: () => Navigator.pop(
                                                     context, 'al_maskan'),
                                               ),
                                               ListTile(
-                                                title: Text("Reyah Almaskan"),
+                                                title: Text("Reyah Almaskan",style: GoogleFonts.poppins(color: Colors.white),),
                                                 onTap: () => Navigator.pop(
                                                     context, 'reyah_almaskan'),
                                               ),

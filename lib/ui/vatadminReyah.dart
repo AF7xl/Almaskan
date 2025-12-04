@@ -509,7 +509,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
+        backgroundColor: const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -517,12 +517,12 @@ class _VatadminreyahState extends State<Vatadminreyah> {
             icon: Icon(
               Icons.arrow_back,
               size: 24.sp,
-              color: Colors.black,
+              color: Colors.white,
             )),
         title: Text(
           "Vat Adminexpense Reyah",
           style:
-              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp),
+              GoogleFonts.poppins(fontWeight: FontWeight.w400, fontSize: 20.sp,color: Colors.white),
         ),
         actions: [
           InkWell(
@@ -536,13 +536,13 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                 Icon(
                   Icons.filter_list,
                   size: 16.sp,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
                 Padding(
                   padding: EdgeInsets.only(right: 15.w),
-                  child: Text(
+                  child:const Text(
                     "Filter",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                 )
               ],
@@ -557,7 +557,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
               ? Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color:const  Color.fromARGB(255, 223, 163, 163),
                   child: Center(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,7 +574,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -582,7 +582,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: date,
@@ -610,7 +610,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                      color: Colors.black,
+                                      color: Colors.white,
                                       fontSize: 12.sp,
                                     ),
                                     textAlign: TextAlign.start,
@@ -645,7 +645,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -653,7 +653,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Autocomplete(optionsBuilder:
                                       (TextEditingValue textEditingValue) {
@@ -694,7 +694,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                       cursorHeight: 25.h,
                                       textAlignVertical:
                                           TextAlignVertical.center,
-                                      style: TextStyle(color: Colors.black),
+                                      style:const TextStyle(color: Colors.white),
                                       textAlign: TextAlign.start,
                                       cursorColor: Colors.black45,
                                       decoration: InputDecoration(
@@ -707,7 +707,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                         hintStyle: TextStyle(
                                           fontWeight: FontWeight.w300,
                                           fontSize: 16,
-                                          color: Colors.black,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     );
@@ -761,7 +761,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -769,7 +769,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Autocomplete(optionsBuilder:
                                       (TextEditingValue textEditingValue) {
@@ -810,7 +810,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                       cursorHeight: 25.h,
                                       textAlignVertical:
                                           TextAlignVertical.center,
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: Colors.white),
                                       textAlign: TextAlign.start,
                                       cursorColor: Colors.black45,
                                       decoration: InputDecoration(
@@ -822,8 +822,8 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                         hintText: "",
                                         hintStyle: TextStyle(
                                           fontWeight: FontWeight.w300,
-                                          fontSize: 16,
-                                          color: Colors.black,
+                                          fontSize: 16.sp,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     );
@@ -849,8 +849,8 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                                 },
                                                 child: Padding(
                                                   padding: EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 10),
+                                                      horizontal: 8.w,
+                                                      vertical: 10.w),
                                                   child: Text(option),
                                                 ),
                                               );
@@ -877,7 +877,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -885,7 +885,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: invoiceamount,
@@ -896,7 +896,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
@@ -924,7 +924,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -932,7 +932,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: tax,
@@ -943,14 +943,14 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.only(
                                           top: 2.h, left: 5.w, bottom: 18.h),
                                       border: InputBorder.none,
-                                      enabledBorder: OutlineInputBorder(
+                                      enabledBorder:const OutlineInputBorder(
                                           borderSide: BorderSide.none),
                                     ),
                                   ),
@@ -971,7 +971,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                               Container(
@@ -979,7 +979,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: TextFormField(
                                     controller: totalamount,
@@ -990,14 +990,14 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                     cursorWidth: 0.5,
                                     textAlignVertical: TextAlignVertical.center,
                                     style: TextStyle(
-                                        color: Colors.black, fontSize: 12.sp),
+                                        color: Colors.white, fontSize: 12.sp),
                                     textAlign: TextAlign.start,
                                     cursorColor: Colors.black,
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.only(
                                           top: 2.h, left: 5.w, bottom: 18.h),
                                       border: InputBorder.none,
-                                      enabledBorder: OutlineInputBorder(
+                                      enabledBorder:const OutlineInputBorder(
                                           borderSide: BorderSide.none),
                                     ),
                                   ),
@@ -1038,12 +1038,12 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 width: 70.w,
                                 height: 35.h,
                                 decoration: BoxDecoration(
-                                    color: Colors.black,
-                                    borderRadius: BorderRadius.circular(3.r)),
-                                child: Center(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.r)), 
+                                child:const Center(
                                     child: Text(
                                   "ADD",
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: Colors.black),
                                 )),
                               ),
                             ),
@@ -1056,7 +1056,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
               : Container(
                   width: double.infinity,
                   height: 80.h,
-                  color: Colors.blueGrey[100],
+                  color:  Color.fromARGB(255, 223, 163, 163),
                   child: Row(
                     children: [
                       Padding(
@@ -1071,7 +1071,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1081,13 +1081,13 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _startDate != null
                                         ? _formatter.format(_startDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1100,7 +1100,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                         child: Icon(
                           Icons.arrow_right_alt,
                           size: 40.sp,
-                          color: Colors.black,
+                          color: Colors.white,
                         ),
                       ),
                       Padding(
@@ -1115,7 +1115,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 style: GoogleFonts.poppins(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.black),
+                                    color: Colors.white),
                               ),
                             ),
                             GestureDetector(
@@ -1125,13 +1125,13 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                 height: 40.h,
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(4.r),
-                                    border: Border.all(color: Colors.black)),
+                                    border: Border.all(color: Colors.white)),
                                 child: Center(
                                   child: Text(
                                     _endDate != null
                                         ? _formatter.format(_endDate!)
                                         : 'Select',
-                                    style: TextStyle(fontSize: 12.sp),
+                                    style: TextStyle(fontSize: 12.sp,color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -1154,7 +1154,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.black),
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -1168,7 +1168,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                             "Generate PDF",
                             style: GoogleFonts.workSans(
                                 fontSize: 12.sp,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w400, 
                                 color: Colors.red),
                           ),
                         ),
@@ -1179,7 +1179,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color: Colors.blueGrey[300],
+            color: const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
@@ -1191,7 +1191,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1204,7 +1204,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1217,7 +1217,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1230,7 +1230,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1243,7 +1243,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -1256,7 +1256,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.w500,
                           fontSize: 18.sp,
-                          color: Colors.black),
+                          color: Colors.white),
                     ),
                   ),
                 )
@@ -1271,7 +1271,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ? Colors.blueGrey[100] : Colors.white,
+                    color: index % 2 == 0 ? Color.fromARGB(255, 223, 163, 163) : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1286,7 +1286,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1301,7 +1301,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1316,7 +1316,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1331,7 +1331,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1346,7 +1346,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1361,7 +1361,7 @@ class _VatadminreyahState extends State<Vatadminreyah> {
                                   style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.w300,
                                       fontSize: 12.sp,
-                                      color: Colors.black),
+                                      color: Colors.white),
                                 ),
                               ),
                             ),

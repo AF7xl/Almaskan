@@ -4,6 +4,7 @@ import 'package:almaskan/ui/Quotationpdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -129,14 +130,14 @@ class _LeavePdfState extends State<LeavePdf> {
 // --- START OF THE ALIGNED WIDGET ---
               pw.Table(
                 // Define column widths: Label | Colon | Value | Spacer | Label | Colon | Value
-                columnWidths: const {
-                  0: pw.FlexColumnWidth(0.25), // Left Label
-                  1: pw.FlexColumnWidth(0.02), // Colon
-                  2: pw.FlexColumnWidth(0.23), // Left Value
-                  3: pw.FlexColumnWidth(0.05), // Spacer between columns
-                  4: pw.FlexColumnWidth(0.25), // Right Label
-                  5: pw.FlexColumnWidth(0.02), // Colon
-                  6: pw.FlexColumnWidth(0.23), // Right Value
+                columnWidths:  {
+                  0: pw.FlexColumnWidth(0.25.w), // Left Label
+                  1: pw.FlexColumnWidth(0.02.w), // Colon
+                  2: pw.FlexColumnWidth(0.23.w), // Left Value
+                  3: pw.FlexColumnWidth(0.05.w), // Spacer between columns
+                  4: pw.FlexColumnWidth(0.25.w), // Right Label
+                  5: pw.FlexColumnWidth(0.02.w), // Colon
+                  6: pw.FlexColumnWidth(0.23.w), // Right Value
                 },
                 children: [
                   // --- ROW 1: Date of Joining & Employee Name ---
@@ -149,8 +150,8 @@ class _LeavePdfState extends State<LeavePdf> {
                             "Date of joining",
                           )),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding:  pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -164,8 +165,8 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Employee name")),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding:  pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -181,8 +182,8 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Pay Period")),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding:  pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -196,8 +197,8 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Designation")),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding: pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -213,8 +214,8 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Date of Exit")),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding:  pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -228,8 +229,8 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Department")),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.only(
-                              left: 3, top: 3, bottom: 3),
+                          padding:  pw.EdgeInsets.only(
+                              left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(3),
@@ -721,13 +722,26 @@ class _LeavePdfState extends State<LeavePdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
-        title: const Text('Leave Salary PDF Preview'),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
+        title:  Text('Leave Salary PDF Preview', style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
             child: IconButton(
-              icon: Icon(Icons.download, size: 25.sp, color: Colors.black),
+              icon: Icon(Icons.download, size: 25.sp, color: Colors.white),
               onPressed: _saveFile,
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:almaskan/ui/Quotationpdf.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -935,13 +936,26 @@ class _PayslippdfState extends State<Payslippdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[300],
-        title: const Text('Payslip PDF Preview'),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24.sp,
+              color: Colors.white,
+            )),
+        backgroundColor: const Color(0xFFC62828),
+        title:  Text('Payslip PDF Preview', style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
+        ),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
             child: IconButton(
-              icon: Icon(Icons.download, size: 25.sp, color: Colors.black),
+              icon: Icon(Icons.download, size: 25.sp, color: Colors.white),
               onPressed: _saveFile,
             ),
           ),
