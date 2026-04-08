@@ -229,6 +229,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                           pw.CrossAxisAlignment.start,
                                       children: [
                                         pw.Padding(
+                                         
                                           padding: pw.EdgeInsets.only(left: 10),
                                           child: pw.SizedBox(
                                             width: 50,
@@ -536,7 +537,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     generatePdf("almaskan");
                                   },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white, // A rich violet color
+                                backgroundColor: const Color(0xFFC62828), // A rich violet color
                                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.w),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12.r),
@@ -561,7 +562,7 @@ class _OverduepaymentState extends State<Overduepayment> {
                                     generatePdf("reyah_almaskan");
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white, // A rich violet color
+                                    backgroundColor: const Color(0xFFC62828), // A rich violet color
                                     padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.w),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12.r),

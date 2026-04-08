@@ -1,5 +1,6 @@
 import 'dart:core';
 import 'dart:io';
+import 'package:almaskan/ui/Taxinvoicepdf.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,7 @@ class Invpdf extends StatefulWidget {
   final bool fromSaved;
   final String trn;
   final String option;
+  final String newfeild;
 
   const Invpdf(
       {Key? key,
@@ -55,7 +57,8 @@ class Invpdf extends StatefulWidget {
       this.fromSaved = false,
       required this.lineItems,
       required this.selectedCompany,
-      required this.option})
+      required this.option,
+      required this.newfeild})
       : super(key: key);
 
   @override
@@ -113,6 +116,13 @@ class _InvpdfState extends State<Invpdf> {
           .buffer
           .asUint8List(),
     );
+    final sign2 = pw.MemoryImage(
+      (await rootBundle.load(widget.selectedCompany == 'Al Maskan'
+              ? 'assets/sign3.jpg'
+              : 'assets/sign4.jpg'))
+          .buffer
+          .asUint8List(),
+    );
     final showDiscount = isDiscountVisible(widget.discount);
     pw.Widget buildCompanyDetails() {
       if (widget.selectedCompany == 'Al Maskan') {
@@ -152,7 +162,7 @@ class _InvpdfState extends State<Invpdf> {
             pw.Text("United Arab Emirates",
                 style: pw.TextStyle(fontSize: 10.sp)),
             pw.SizedBox(height: 3.h),
-            pw.Text("TRN 100342182100003",
+            pw.Text("TRN 104688415900003",
                 style: pw.TextStyle(fontSize: 10.sp)),
             pw.SizedBox(height: 3.h),
             pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
@@ -220,7 +230,7 @@ class _InvpdfState extends State<Invpdf> {
                   ),
                   pw.Padding(
                     padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE06 0410 0000 1236 4478 001",
+                    child: pw.Text("AE480410000012079331001",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
@@ -326,15 +336,15 @@ class _InvpdfState extends State<Invpdf> {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(top: 20),
+                                padding: pw.EdgeInsets.only(top: 20.h),
                                 child: pw.Container(
                                     width: 160.w,
                                     height: 160.h,
                                     child: pw.Image(image))),
-                            pw.SizedBox(width: 290),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
@@ -349,14 +359,14 @@ class _InvpdfState extends State<Invpdf> {
                                       child: pw.Text("# INV-${widget.invno}",
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
-                                              fontSize: 9.sp)))
+                                              fontSize: 11.sp)))
                                 ])
                           ]),
                       pw.SizedBox(height: 10.h),
                       buildCompanyDetails(),
                       pw.SizedBox(height: 20.h),
                       pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -389,12 +399,11 @@ class _InvpdfState extends State<Invpdf> {
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
                                 ]),
-                            pw.SizedBox(width: 160.w),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
                                   pw.Padding(
-                                    padding: pw.EdgeInsets.only(top: 15),
+                                    padding: const pw.EdgeInsets.only(top: 15),
                                     child:
                                         pw.Text("Invoice Date : ${widget.date}",
                                             style: pw.TextStyle(
@@ -410,6 +419,13 @@ class _InvpdfState extends State<Invpdf> {
                                       )),
                                   pw.SizedBox(height: 3.h),
                                   pw.Text("Project: ${widget.project}",
+                                      textAlign: pw.TextAlign.right,
+                                      style: pw.TextStyle(
+                                        fontSize: 9.sp,
+                                        fontWeight: pw.FontWeight.normal,
+                                      )),
+                                  pw.SizedBox(height: 3.h),
+                                  pw.Text(widget.newfeild,
                                       textAlign: pw.TextAlign.right,
                                       style: pw.TextStyle(
                                         fontSize: 9.sp,
@@ -433,7 +449,7 @@ class _InvpdfState extends State<Invpdf> {
                         height: 25.h,
                         color: widget.selectedCompany == 'Al Maskan'
                             ? PdfColors.black
-                            : PdfColor.fromInt(0xFFC62828),
+                            : const PdfColor.fromInt(0xFFC62828),
                         child: pw.Row(
                           children: [
                             pw.SizedBox(width: 5.w),
@@ -456,6 +472,7 @@ class _InvpdfState extends State<Invpdf> {
                             pw.Expanded(
                                 flex: 1,
                                 child: pw.Text("Qty",
+                                    textAlign: pw.TextAlign.right,
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.white,
@@ -464,6 +481,7 @@ class _InvpdfState extends State<Invpdf> {
                             pw.Expanded(
                                 flex: 1,
                                 child: pw.Text("Unit",
+                                    textAlign: pw.TextAlign.right,
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.white,
@@ -472,6 +490,7 @@ class _InvpdfState extends State<Invpdf> {
                             pw.Expanded(
                                 flex: 1,
                                 child: pw.Text("Rate",
+                                    textAlign: pw.TextAlign.right,
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.white,
@@ -480,6 +499,7 @@ class _InvpdfState extends State<Invpdf> {
                             pw.Expanded(
                                 flex: 1,
                                 child: pw.Text("Amount",
+                                    textAlign: pw.TextAlign.right,
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.bold,
                                         color: PdfColors.white,
@@ -511,13 +531,22 @@ class _InvpdfState extends State<Invpdf> {
                                         style: pw.TextStyle(fontSize: 9.sp))),
                                 pw.SizedBox(width: 3.w),
                                 pw.Expanded(
-                                    flex: 5,
-                                    child: pw.Text(item['description'] ?? '',
-                                        style: pw.TextStyle(fontSize: 9.sp))),
-                                pw.SizedBox(width: 5.w),
+                                  flex: 5,
+                                  child: pw.Padding(
+                                    padding: const pw.EdgeInsets.all(4),
+                                    child: pw.Text(
+                                      item['description'] ?? '',
+                                      style: pw.TextStyle(fontSize: 9.sp),
+                                      textAlign: pw.TextAlign.left,
+                                      softWrap: true,
+                                    ),
+                                  ),
+                                ),
+                                pw.SizedBox(width: 5.w), 
                                 pw.Expanded(
                                   flex: 1,
                                   child: pw.RichText(
+                                    textAlign: pw.TextAlign.right,
                                     text: pw.TextSpan(
                                       children: [
                                         pw.TextSpan(
@@ -543,16 +572,20 @@ class _InvpdfState extends State<Invpdf> {
                                 pw.Expanded(
                                     flex: 1,
                                     child: pw.Text(item['unit'] ?? '',
+                                        textAlign: pw.TextAlign.right,
                                         style: pw.TextStyle(fontSize: 9.sp))),
                                 pw.SizedBox(width: 5.w),
                                 pw.Expanded(
                                     flex: 1,
                                     child: pw.Text(item['rate'] ?? '',
+                                        textAlign: pw.TextAlign.right,
                                         style: pw.TextStyle(fontSize: 9.sp))),
                                 pw.SizedBox(width: 5.w),
                                 pw.Expanded(
                                     flex: 1,
-                                    child: pw.Text(item['amount'] ?? '',
+                                    child: pw.Text(
+                                        textAlign: pw.TextAlign.right,
+                                        formatIndian(item['amount'] ?? ''),
                                         style: pw.TextStyle(fontSize: 9.sp))),
                               ],
                             ),
@@ -562,118 +595,193 @@ class _InvpdfState extends State<Invpdf> {
                       }).toList(),
 
                       pw.SizedBox(height: 5.h),
-
-                      // Subtotal and Total
-                      pw.Container(
-                        child: pw.Row(
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
                           children: [
-                            // Label Column
-                            pw.Padding(
-                              padding: pw.EdgeInsets.only(left: 370.w),
-                              child: pw.Column(
-                                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                children: [
-                                  pw.Text("SUBTOTAL :",
-                                      style: pw.TextStyle(fontSize: 10.sp)),
-                                  pw.SizedBox(height: 5.h),
-                                  if (showDiscount) ...[
-                                    pw.Text("DISCOUNT :",
-                                        style: pw.TextStyle(fontSize: 9.sp)),
-                                    pw.SizedBox(height: 5.h),
-                                  ],
-                                  pw.Text("VAT :",
-                                      style: pw.TextStyle(fontSize: 9.sp)),
-                                  pw.SizedBox(height: 5.h),
-                                  pw.Text("TAXABLE AMOUNT :",
-                                      style: pw.TextStyle(fontSize: 9.sp)),
-                                ],
-                              ),
-                            ),
-                            // Value Column
-                            pw.Padding(
-                              padding: pw.EdgeInsets.only(left: 40.w),
+                            pw.Container(
                               child: pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.end,
-                                // Align values to right
                                 children: [
-                                  pw.Text(widget.subtotal,
-                                      style: pw.TextStyle(fontSize: 9.sp),
-                                      textAlign: pw.TextAlign.right),
+                                  /// SUBTOTAL
+                                  pw.Row(
+                                    mainAxisSize: pw.MainAxisSize.min,
+                                    children: [
+                                      pw.SizedBox(
+                                        width: 120.w,
+                                        child: pw.Text(
+                                          "SUBTOTAL",
+                                          style: pw.TextStyle(fontSize: 10.sp),
+                                        ),
+                                      ),
+                                      pw.SizedBox(
+                                        width: 10.w,
+                                        child: pw.Text(":",
+                                            textAlign: pw.TextAlign.center),
+                                      ),
+                                      pw.SizedBox(
+                                        width: 80.w,
+                                        child: pw.Text(
+                                          formatIndian(widget.subtotal),
+                                          textAlign: pw.TextAlign.right,
+                                          style: pw.TextStyle(fontSize: 9.sp),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
                                   pw.SizedBox(height: 5.h),
-                                  if (showDiscount) ...[
-                                    pw.Text(widget.discount,
-                                        style: pw.TextStyle(fontSize: 9.sp),
-                                        textAlign: pw.TextAlign.right),
-                                    pw.SizedBox(height: 5.h),
-                                  ],
-                                  pw.Text(widget.vat,
-                                      style: pw.TextStyle(fontSize: 9.sp),
-                                      textAlign: pw.TextAlign.right),
-                                  pw.SizedBox(height: 5.h),
-                                  pw.Text(widget.taxableamount,
-                                      style: pw.TextStyle(fontSize: 9.sp),
-                                      textAlign: pw.TextAlign.right),
+
+                                  /// DISCOUNT
+                                  if (showDiscount)
+                                    pw.Row(
+                                      mainAxisSize: pw.MainAxisSize.min,
+                                      children: [
+                                        pw.SizedBox(
+                                          width: 120.w,
+                                          child: pw.Text(
+                                            "DISCOUNT",
+                                            style: pw.TextStyle(fontSize: 9.sp),
+                                          ),
+                                        ),
+                                        pw.SizedBox(
+                                          width: 10.w,
+                                          child: pw.Text(":",
+                                              textAlign: pw.TextAlign.center),
+                                        ),
+                                        pw.SizedBox(
+                                          width: 80.w,
+                                          child: pw.Text(
+                                            formatIndian(widget.discount),
+                                            textAlign: pw.TextAlign.right,
+                                            style: pw.TextStyle(fontSize: 9.sp),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                             
+                                    if (showDiscount) pw.SizedBox(height: 5.h),
+                                    if (showDiscount)
+                                      pw.Row(
+                                        mainAxisSize: pw.MainAxisSize.min,
+                                        children: [
+                                          pw.SizedBox(
+                                            width: 120.w,
+                                            child: pw.Text(
+                                              "TAXABLE AMOUNT",
+                                              style:
+                                                  pw.TextStyle(fontSize: 10.sp),
+                                            ),
+                                          ),
+                                          pw.SizedBox(
+                                            width: 10.w,
+                                            child: pw.Text(":",
+                                                textAlign: pw.TextAlign.center),
+                                          ),
+                                          pw.SizedBox(
+                                            width: 80.w,
+                                            child: pw.Text(
+                                              formatIndian(
+                                                  widget.taxableamount),
+                                              textAlign: pw.TextAlign.right,
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.sp),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    if (showDiscount) pw.SizedBox(height: 5.h),
+
+                                  /// VAT
+                                  pw.Row(
+                                    mainAxisSize: pw.MainAxisSize.min,
+                                    children: [
+                                      pw.SizedBox(
+                                        width: 120.w,
+                                        child: pw.Text(
+                                          "VAT (5%)",
+                                          style: pw.TextStyle(fontSize: 9.sp),
+                                        ),
+                                      ),
+                                      pw.SizedBox(
+                                        width: 10.w,
+                                        child: pw.Text(":",
+                                            textAlign: pw.TextAlign.center),
+                                      ),
+                                      pw.SizedBox(
+                                        width: 80.w,
+                                        child: pw.Text(
+                                          formatIndian(widget.vat),
+                                          textAlign: pw.TextAlign.right,
+                                          style: pw.TextStyle(fontSize: 9.sp),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ]),
+
                       pw.SizedBox(height: 5.h),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 365.w),
-                        child: pw.Container(
-                          width: 200.w,
-                          height: 25.h,
-                          color: PdfColors.grey100,
-                          child: pw.Row(
-                            children: [
-                              pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 5.w),
-                                child: pw.Text(
-                                  "TOTAL AMOUNT :",
-                                  style: pw.TextStyle(
-                                    fontSize: 9.sp,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              pw.Spacer(),
-                              // Push the total amount to the right edge
-                              pw.Padding(
-                                padding: pw.EdgeInsets.only(right: 5.w),
-                                child: pw.Text(
-                                  "${widget.totalamount} AED",
-                                  style: pw.TextStyle(
-                                    fontSize: 9.sp,
-                                    fontWeight: pw.FontWeight.bold,
-                                  ),
-                                  textAlign: pw.TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      pw.SizedBox(height: 8.h),
                       pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 365.w),
-                                child: pw.Text("Total In Words:",
+                        mainAxisAlignment: pw.MainAxisAlignment.end,
+                        children: [
+                          pw.Container(
+                            color: PdfColors.grey100,
+                            child: pw.Row(
+                              children: [
+                                pw.SizedBox(
+                                  width: 120.w,
+                                  child: pw.Text(
+                                    "TOTAL AMOUNT (AED)",
                                     style: pw.TextStyle(
                                       fontSize: 9.sp,
-                                      fontWeight: pw.FontWeight.normal,
-                                    ))),
+                                      fontWeight: pw.FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                pw.SizedBox(
+                                  width: 10.w,
+                                  child: pw.Text(":",
+                                      textAlign: pw.TextAlign.center),
+                                ),
+                                // Push the total amount to the right edge
+                                pw.SizedBox(
+                                  width: 80.w,
+                                  child: pw.Text(
+                                    formatIndian(widget.totalamount),
+                                    textAlign: pw.TextAlign.right,
+                                    style: pw.TextStyle(
+                                      fontSize: 9.sp,
+                                      fontWeight: pw.FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      pw.SizedBox(height: 8.h),
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text("Total In Words:",
+                                style: pw.TextStyle(
+                                  fontSize: 9.sp,
+                                  fontWeight: pw.FontWeight.normal,
+                                )),
                             pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 5.w),
                                 child: pw.Container(
-                                    width: 100.w,
                                     height: 50.h,
                                     child: pw.Text(widget.totalamountinname,
                                         style: pw.TextStyle(
-                                            fontWeight: pw.FontWeight.bold,
+                                            decoration:
+                                                pw.TextDecoration.underline,
                                             fontSize: 9.sp,
                                             color: PdfColors.black,
                                             fontStyle: pw.FontStyle.italic))))
@@ -691,31 +799,48 @@ class _InvpdfState extends State<Invpdf> {
                             decoration: pw.TextDecoration.underline,
                           )),
                       pw.SizedBox(height: 5.h),
-                      pw.Row(
-                          
-                          children: [
-                            bankdetails(),
-                            
-                          ]),
-                          widget.option.trim().toLowerCase() == 'yes'
-                                ? pw.Column(children: [
-                                    pw.Container(
-                                        width: 160.w,
-                                        height: 160.h,
-                                        child: pw.Image(sign)),
-                                    pw.Text("Authorized Signature",
-                                        style: pw.TextStyle(
-                                            fontSize: 10.sp,
-                                            fontWeight: pw.FontWeight.normal))
-                                  ])
-                                : widget.option.trim().toLowerCase() == 'no'
-                                    ? pw.Wrap(children: [
-                                        pw.Text(
-                                            'This is computer generated\ncode This not need to Sign'),
-                                      ])
-                                    : pw.SizedBox(),
+                      pw.Row(children: [
+                        bankdetails(),
+                      ]),
+                      pw.SizedBox(height: 15.h),
 
-                      pw.SizedBox(height: 20),
+                      pw.Wrap(
+                        spacing: 5,
+                        runSpacing: 5,
+                        children: [
+                          if (widget.option.toLowerCase().trim() == 'sign-1')
+                            pw.Column(
+                              children: [
+                                pw.Container(
+                                    width: 100.w,
+                                    height: 100.w,
+                                    child: pw.Image(sign)),
+                                pw.SizedBox(height: 5.h),
+                                pw.Text("Authorized Signature",
+                                    style: pw.TextStyle(fontSize: 10.sp))
+                              ],
+                            ),
+                          if (widget.option.toLowerCase().trim() == 'sign-2')
+                            pw.Column(
+                              children: [
+                                pw.Container(
+                                    width: 100.w,
+                                    height: 100.h,
+                                    child: pw.Image(sign2)),
+                                pw.SizedBox(height: 5.h),
+                                pw.Text("Authorized Signature",
+                                    style: pw.TextStyle(fontSize: 10.sp))
+                              ],
+                            ),
+                          if (widget.option.toLowerCase().trim() == 'no sign')
+                            pw.Text(
+                              'This is a computer-generated document.\nNo signature required.',
+                              style: pw.TextStyle(fontSize: 10.sp),
+                            ),
+                        ],
+                      ),
+
+                      pw.SizedBox(height: 20.h),
                     ],
                   ))
             ];
@@ -728,7 +853,7 @@ class _InvpdfState extends State<Invpdf> {
                     color: PdfColors.grey,
                     endIndent: 22,
                     indent: 22),
-                pw.SizedBox(height: 40)
+                pw.SizedBox(height: 10.h)
               ],
             );
           }),
@@ -824,7 +949,7 @@ class _InvpdfState extends State<Invpdf> {
             Padding(
               padding: EdgeInsets.only(right: 20.w),
               child: IconButton(
-                icon: Icon(Icons.download, size: 25.sp, color: Colors.black),
+                icon: Icon(Icons.download, size: 25.sp, color: Colors.white),
                 onPressed: _saveFile,
               ),
             ),

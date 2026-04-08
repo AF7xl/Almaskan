@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -29,6 +30,7 @@ class Taxinvoicepdf extends StatefulWidget {
   final String payment;
   final String selectedCompany;
   final String option;
+  final String newfeild;
 
   const Taxinvoicepdf(
       {super.key,
@@ -49,7 +51,7 @@ class Taxinvoicepdf extends StatefulWidget {
       required this.trn,
       required this.payment,
       required this.selectedCompany,
-      required this.option});
+      required this.option, required this.newfeild});
 
   @override
   State<Taxinvoicepdf> createState() => _TaxinvoicepdfState();
@@ -66,6 +68,17 @@ class Taxinvoicepdf extends StatefulWidget {
       await file.writeAsBytes(bytes);
     }
   }
+}
+
+String formatIndian(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return "0";
+  }
+
+  final number = double.tryParse(value.replaceAll(',', '')) ?? 0;
+
+  final formatter = NumberFormat('#,##,##0.00', 'en_IN');
+  return formatter.format(number);
 }
 
 class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
@@ -92,6 +105,13 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
       (await rootBundle.load(widget.selectedCompany == 'Al Maskan'
               ? 'assets/sign.png'
               : 'assets/sign2.jpg'))
+          .buffer
+          .asUint8List(),
+    );
+    final sign2 = pw.MemoryImage(
+      (await rootBundle.load(widget.selectedCompany == 'Al Maskan'
+              ? 'assets/sign3.jpg'
+              : 'assets/sign4.jpg'))
           .buffer
           .asUint8List(),
     );
@@ -133,7 +153,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
             pw.Text("United Arab Emirates",
                 style: pw.TextStyle(fontSize: 10.sp)),
             pw.SizedBox(height: 3.h),
-            pw.Text("TRN 100342182100003",
+            pw.Text("TRN 104688415900003",
                 style: pw.TextStyle(fontSize: 10.sp)),
             pw.SizedBox(height: 3.h),
             pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
@@ -152,67 +172,67 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
             height: 90.h,
             child: pw.Table(
               columnWidths: {
-                0: pw.FlexColumnWidth(1),
-                1: pw.FlexColumnWidth(1),
+                0:const pw.FlexColumnWidth(1),
+                1:const pw.FlexColumnWidth(1),
               },
               border: pw.TableBorder.all(width: 0.5.w),
               children: [
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding:const pw.EdgeInsets.all(4),
                     child: pw.Text("Account Name :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Al Maskan Plaster & Tiles Cont.",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child:
                         pw.Text("Bank :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Sharjah Islamic Bank",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Account No :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("001-2079331-001",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child:
                         pw.Text("IBN :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
-                    child: pw.Text("AE06 0410 0000 1236 4478 001",
+                    padding: const pw.EdgeInsets.all(4),
+                    child: pw.Text("AE480410000012079331001",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Branch :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Al Wasit",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
@@ -232,60 +252,60 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
               children: [
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Account Name :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("REYAH AL MASKAN TECHNICAL SER LLC.",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child:
                         pw.Text("Bank :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Sharjah Islamic Bank",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Account No :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("0012364478001",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child:
                         pw.Text("IBN :", style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("AE060410000012364478001",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                 ]),
                 pw.TableRow(children: [
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Branch :",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
                   pw.Padding(
-                    padding: pw.EdgeInsets.all(4),
+                    padding: const pw.EdgeInsets.all(4),
                     child: pw.Text("Al Wasit",
                         style: pw.TextStyle(fontSize: 7.sp)),
                   ),
@@ -307,6 +327,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
                             pw.Padding(
@@ -315,7 +336,6 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                     width: 160.w,
                                     height: 160.h,
                                     child: pw.Image(image))),
-                            pw.SizedBox(width: 290.w),
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
@@ -338,6 +358,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                       pw.SizedBox(height: 20.h),
                       pw.Row(
                           crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -370,7 +391,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                           fontWeight: pw.FontWeight.normal,
                                           letterSpacing: 0.5)),
                                 ]),
-                            pw.SizedBox(width: 220.w),
+                           
                             pw.Column(
                                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                                 children: [
@@ -396,6 +417,13 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                         fontSize: 9.sp,
                                         fontWeight: pw.FontWeight.normal,
                                       )),
+                                      pw.SizedBox(height: 3.h),
+                                  pw.Text(widget.newfeild,
+                                      textAlign: pw.TextAlign.right,
+                                      style: pw.TextStyle(
+                                        fontSize: 9.sp,
+                                        fontWeight: pw.FontWeight.normal,
+                                      )),
                                 ])
                           ]),
                       pw.SizedBox(height: 10.h),
@@ -414,7 +442,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                         height: 25.h,
                         color: widget.selectedCompany == 'Al Maskan'
                             ? PdfColors.black
-                            : PdfColor.fromInt(0xFFC62828), // Reyah default red
+                            : const PdfColor.fromInt(0xFFC62828), // Reyah default red
                         child: pw.Row(
                           children: [
                             pw.SizedBox(width: 5.w),
@@ -439,6 +467,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text("Rate",
+                                   textAlign: pw.TextAlign.right,
                                   style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     color: PdfColors.white,
@@ -449,7 +478,9 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.Expanded(
                               flex: 2,
                               child: pw.Text("Amount",
+                                    textAlign: pw.TextAlign.right,
                                   style: pw.TextStyle(
+                                    
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.white,
                                       fontSize: 10.sp)),
@@ -480,12 +511,14 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                                       pw.CrossAxisAlignment.start,
                                   children: [
                                     pw.Text("${widget.payment} Amount",
+                                         textAlign: pw.TextAlign.right,
                                         style: pw.TextStyle(
                                             fontWeight: pw.FontWeight.bold,
                                             fontSize: 10.sp,
                                             color: PdfColors.black)),
                                     pw.Text(
-                                        "SUBTOTAL TAXABLE QTN AMOUNT - ${widget.subtotal}",
+                                           textAlign: pw.TextAlign.right,
+                                        "SUBTOTAL TAXABLE QTN AMOUNT - ${formatIndian(widget.subtotal)}",
                                         style: pw.TextStyle(
                                             fontWeight: pw.FontWeight.normal,
                                             fontSize: 8.sp,
@@ -495,7 +528,8 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
-                              child: pw.Text(widget.advance,
+                              child: pw.Text(formatIndian(widget.advance),
+                                 textAlign: pw.TextAlign.right,
                                   style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black,
@@ -505,7 +539,8 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             pw.SizedBox(width: 5.w),
                             pw.Expanded(
                               flex: 2,
-                              child: pw.Text(widget.advance,
+                              child: pw.Text(formatIndian(widget.advance),
+                                 textAlign: pw.TextAlign.right,
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.normal,
                                       color: PdfColors.black,
@@ -515,58 +550,73 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                         ),
                       ),
                       pw.Divider(thickness: 0.3), pw.SizedBox(height: 5.h),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 300.w),
-                        child: pw.Container(
-                          width: 200.w, // adjust width as needed
-                          padding: pw.EdgeInsets.symmetric(
-                              horizontal: 10.w, vertical: 5.w),
-                          color: PdfColors.white, // optional background color
-                          child: pw.Row(
-                            crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: [
-                              // Left labels column
-                              pw.Column(
-                                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                                children: [
-                                  pw.Text(
-                                    "Total Taxable Amount",
-                                    style: pw.TextStyle(fontSize: 10.sp),
-                                  ),
-                                  pw.SizedBox(height: 8.h),
-                                  pw.Text(
-                                    "VAT (5%)",
-                                    style: pw.TextStyle(fontSize: 9.sp),
-                                  ),
-                                ],
-                              ),
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
+                          children: [
+                            pw.Container(
+                              width: 200.w, // adjust width as needed
+                              padding: pw.EdgeInsets.symmetric(
+                                  horizontal: 10.w, vertical: 5.w),
+                              color:
+                                  PdfColors.white, // optional background color
+                              child: pw.Row(
+                                  crossAxisAlignment:
+                                      pw.CrossAxisAlignment.start,
+                                  children: [
+                                    // Left labels column
+                                    pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.start,
+                                      children: [
+                                        pw.Text(
+                                          "Total Taxable Amount",
+                                          style: pw.TextStyle(fontSize: 10.sp),
+                                        ),
+                                        pw.SizedBox(height: 8.h),
+                                        pw.Text(
+                                          "VAT (5%)",
+                                          style: pw.TextStyle(fontSize: 9.sp),
+                                        ),
+                                      ],
+                                    ),
 
-                              pw.Spacer(), // pushes next column to the right
+                                    pw.Spacer(), // pushes next column to the right
 
-                              // Right amounts column
-                              pw.Column(
-                                crossAxisAlignment: pw.CrossAxisAlignment.end,
-                                children: [
-                                  pw.Text(
-                                    widget.advance,
-                                    style: pw.TextStyle(fontSize: 9.sp),
-                                  ),
-                                  pw.SizedBox(height: 8.h),
-                                  pw.Text(
-                                    widget.vat,
-                                    style: pw.TextStyle(fontSize: 9.sp),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                                    // Right amounts column
+
+                                    pw.Row(
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.end,
+                                      children: [
+                                        pw.Column(
+                                          crossAxisAlignment:
+                                              pw.CrossAxisAlignment.end,
+                                          children: [
+                                            pw.Text(
+                                              formatIndian(widget.advance),
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.sp),
+                                            ),
+                                            pw.SizedBox(height: 8.h),
+                                            pw.Text(
+                                             formatIndian( widget.vat),
+                                              style:
+                                                  pw.TextStyle(fontSize: 9.sp),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                            ),
+                          ]),
 
                       pw.SizedBox(height: 8.h),
-                      pw.Padding(
-                        padding: pw.EdgeInsets.only(left: 310.w),
-                        child: pw.Container(
+
+                      pw.Row(
+                                 mainAxisAlignment: pw.MainAxisAlignment.end,
+                        children: [
+                        pw.Container(
                           width: 200.w,
                           height: 25.h,
                           color: PdfColors.grey100,
@@ -587,7 +637,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                               pw.Padding(
                                 padding: pw.EdgeInsets.only(right: 5.w),
                                 child: pw.Text(
-                                  "${widget.totalamount}AED",
+                                  "${formatIndian(widget.totalamount)}AED",
                                   style: pw.TextStyle(
                                     fontSize: 9.sp,
                                     fontWeight: pw.FontWeight.bold,
@@ -597,19 +647,18 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             ],
                           ),
                         ),
-                      ),
+                      ]),
 
                       pw.SizedBox(height: 8.h),
                       pw.Row(
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.end,
                           children: [
-                            pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 315.w),
-                                child: pw.Text("Total In Words:",
+                             pw.Text("Total In Words:",
                                     style: pw.TextStyle(
                                       fontSize: 9.sp,
                                       fontWeight: pw.FontWeight.normal,
-                                    ))),
+                                    )),
                             pw.Padding(
                                 padding: pw.EdgeInsets.only(left: 5.w),
                                 child: pw.Container(
@@ -636,28 +685,46 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
                             decoration: pw.TextDecoration.underline,
                           )),
 
-                      pw.Row(
-                          children: [
-                            bankdetails(),
-                            pw.SizedBox(height: 20.h),
-                          ]),
-                      widget.option.trim().toLowerCase() == 'yes'
-                          ? pw.Column(children: [
-                              pw.Container(
-                                  width: 160.sp,
-                                  height: 160.sp,
-                                  child: pw.Image(sign)),
-                              pw.Text("Authorized Signature",
-                                  style: pw.TextStyle(
-                                      fontSize: 10.sp,
-                                      fontWeight: pw.FontWeight.normal))
-                            ])
-                          : widget.option.trim().toLowerCase() == 'no'
-                              ? pw.Wrap(children: [
-                                  pw.Text(
-                                      'This is computer generated\ncode This not need to Sign'),
-                                ])
-                              : pw.SizedBox()
+                      pw.Row(children: [
+                        bankdetails(),
+                        pw.SizedBox(height: 20.h),
+                      ]),
+
+                      pw.Wrap(
+                        spacing: 5,
+                        runSpacing: 5,
+                        children: [
+                          if (widget.option.toLowerCase().trim() == 'sign-1')
+                            pw.Column(
+                              children: [
+                                pw.Container(
+                                    width: 100.w,
+                                    height: 100.w,
+                                    child: pw.Image(sign)),
+                                pw.SizedBox(height: 5.h),
+                                pw.Text("Authorized Signature",
+                                    style: pw.TextStyle(fontSize: 10.sp))
+                              ],
+                            ),
+                          if (widget.option.toLowerCase().trim() == 'sign-2')
+                            pw.Column(
+                              children: [
+                                pw.Container(
+                                    width: 100.w,
+                                    height: 100.h,
+                                    child: pw.Image(sign2)),
+                                pw.SizedBox(height: 5.h),
+                                pw.Text("Authorized Signature",
+                                    style: pw.TextStyle(fontSize: 10.sp))
+                              ],
+                            ),
+                          if (widget.option.toLowerCase().trim() == 'no sign')
+                            pw.Text(
+                              'This is a computer-generated document.\nNo signature required.',
+                              style: pw.TextStyle(fontSize: 10.sp),
+                            ),
+                        ],
+                      ),
                     ],
                   )),
             ];
@@ -741,6 +808,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -768,7 +836,7 @@ class _TaxinvoicepdfState extends State<Taxinvoicepdf> {
               icon: Icon(
                 Icons.download,
                 size: 25.sp,
-                color: Colors.black,
+                color: Colors.white,
               ),
               onPressed: () {
                 _saveFile();

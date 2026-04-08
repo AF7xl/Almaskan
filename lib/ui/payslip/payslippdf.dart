@@ -26,6 +26,7 @@ class Payslippdf extends StatefulWidget {
   final double netPay;
   final String loanBalance;
   final String paymentMethod;
+  final String selectedCompany;
 
   Payslippdf(
       {super.key,
@@ -43,7 +44,8 @@ class Payslippdf extends StatefulWidget {
       required this.totalDeductions,
       required this.netPay,
       required this.loanBalance,
-      required this.paymentMethod});
+      required this.paymentMethod,
+      required this.selectedCompany});
 
   @override
   State<Payslippdf> createState() => _PayslippdfState();
@@ -81,6 +83,35 @@ class _PayslippdfState extends State<Payslippdf> {
         fontWeight: pw.FontWeight.bold);
     final smallStyle =
         pw.TextStyle(fontSize: 9.sp, color: PdfColor.fromInt(0xFFC62828));
+    pw.Widget buildCompanyDetails() {
+      if (widget.selectedCompany == 'Al Maskan') {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('PAYSLIP', style: headerStyle),
+            pw.SizedBox(height: 6.h),
+            pw.Text('AL MASKAN PLASTER & TILE CONTRACTING',
+                style: companyStyle),
+            pw.SizedBox(height: 2.h),
+            pw.Text('Sharjah - UAE', style: smallStyle),
+            pw.Text('almaskandecor@gmail.com', style: smallStyle),
+          ],
+        );
+      } else {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('PAYSLIP', style: headerStyle),
+            pw.SizedBox(height: 6.h),
+            pw.Text('REYAH AL MASKAN TECHNICAL SERVICES L.L.C',
+                style: companyStyle),
+            pw.SizedBox(height: 2.h),
+            pw.Text('Dubai - UAE', style: smallStyle),
+            pw.Text('reyahalmaskan@gmail.com', style: smallStyle),
+          ],
+        );
+      }
+    }
 
     pdf.addPage(
       pw.Page(
@@ -95,18 +126,7 @@ class _PayslippdfState extends State<Payslippdf> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Expanded(
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text('PAYSLIP', style: headerStyle),
-                        pw.SizedBox(height: 6.h),
-                        pw.Text('AL MASKAN PLASTER & TILE CONTRACTING',
-                            style: companyStyle),
-                        pw.SizedBox(height: 2.h),
-                        pw.Text('Sharjah - UAE', style: smallStyle),
-                        pw.Text('almaskandecor@gmail.com', style: smallStyle),
-                      ],
-                    ),
+                    child: buildCompanyDetails()
                   ),
                   // logo
                   pw.Container(
@@ -136,43 +156,28 @@ class _PayslippdfState extends State<Payslippdf> {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
-                          width: 0.5.w,
+                      padding: pw.EdgeInsets.only(left: 2.w),
+                      width: 450.w,
+                      height: 25.h,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                          color: PdfColors.black,
+                          width: .5.w,
                         ),
-                      )),
-                      // Gives some internal spacing
-                      padding: const pw.EdgeInsets.all(5),
-                      width: 430.w, // You can adjust the width as needed
-
-                      // Using a Column to stack the "EMPLOYEE" label and the name
+                      ),
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .start, // Align text to the start (left)
-                        children: [
-                          // 1. The "EMPLOYEE" label
-                          pw.Text(
-                            'EMPLOYEE',
-                            style: pw.TextStyle(
-                              // Adjust color and size to mimic the image's lighter, smaller text
-                              color: PdfColors.grey,
-                              fontSize: 6.sp,
-                              fontWeight: pw.FontWeight.bold,
-                              letterSpacing: 0.5,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "EMPLOYEE NAME",
+                              style: pw.TextStyle(
+                                color: PdfColors.grey,
+                                fontSize: 6.sp,
+                                fontWeight: pw.FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 5.h), // Small gap between the lines
-                            child: pw.Text(
+                            pw.Text(
                               widget.employeeName,
                               style: pw.TextStyle(
                                 color: PdfColors.black,
@@ -181,48 +186,31 @@ class _PayslippdfState extends State<Payslippdf> {
                                     .bold, // Name often appears bolder
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ]),
                     ),
                     pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
-                          width: 0.5.w,
+                      padding: pw.EdgeInsets.only(left: 2.w),
+                      width: 100.w,
+                      height: 25.h,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                          color: PdfColors.black,
+                          width: .5.w,
                         ),
-                      )),
-                      // Gives some internal spacing
-
-                      width: 100.w, // You can adjust the width as needed
-                      padding: const pw.EdgeInsets.all(5),
-                      // Using a Column to stack the "EMPLOYEE" label and the name
+                      ),
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .center, // Align text to the start (left)
-                        children: [
-                          // 1. The "EMPLOYEE" label
-                          pw.Text(
-                            'COMPANY ID NO',
-                            style: pw.TextStyle(
-                              // Adjust color and size to mimic the image's lighter, smaller text
-                              color: PdfColors.grey,
-                              fontSize: 6.sp,
-                              fontWeight: pw.FontWeight.bold,
-                              letterSpacing: 0.5,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "COMPANY ID NO",
+                              style: pw.TextStyle(
+                                color: PdfColors.grey,
+                                fontSize: 6.sp,
+                                fontWeight: pw.FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 5.h), // Small gap between the lines
-                            child: pw.Text(
+                            pw.Text(
                               widget.companyId,
                               style: pw.TextStyle(
                                 color: PdfColors.black,
@@ -231,9 +219,7 @@ class _PayslippdfState extends State<Payslippdf> {
                                     .bold, // Name often appears bolder
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ]),
                     ),
                   ]),
               pw.SizedBox(height: 15.h),
@@ -242,43 +228,28 @@ class _PayslippdfState extends State<Payslippdf> {
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
+                      padding: pw.EdgeInsets.only(left: 2.w),
+                      width: 350.w,
+                      height: 25.h,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                          color: PdfColors.black,
                           width: .5.w,
                         ),
-                      )),
-                      // Gives some internal spacing
-                      padding: const pw.EdgeInsets.all(5),
-                      width: 350.w, // You can adjust the width as needed
-
-                      // Using a Column to stack the "EMPLOYEE" label and the name
+                      ),
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .start, // Align text to the start (left)
-                        children: [
-                          // 1. The "EMPLOYEE" label
-                          pw.Text(
-                            'ADDRESS',
-                            style: pw.TextStyle(
-                              // Adjust color and size to mimic the image's lighter, smaller text
-                              color: PdfColors.grey,
-                              fontSize: 6.sp,
-                              fontWeight: pw.FontWeight.bold,
-                              letterSpacing: 0.5,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "ADDRESS",
+                              style: pw.TextStyle(
+                                color: PdfColors.grey,
+                                fontSize: 6.sp,
+                                fontWeight: pw.FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 5.h), // Small gap between the lines
-                            child: pw.Text(
+                            pw.Text(
                               widget.address,
                               style: pw.TextStyle(
                                 color: PdfColors.black,
@@ -287,13 +258,11 @@ class _PayslippdfState extends State<Payslippdf> {
                                     .bold, // Name often appears bolder
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ]),
                     ),
                     pw.Container(
                       // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
+                      decoration: pw.BoxDecoration(
                           border: pw.Border.fromBorderSide(
                         pw.BorderSide(
                           color: PdfColors
@@ -304,17 +273,13 @@ class _PayslippdfState extends State<Payslippdf> {
                       // Gives some internal spacing
 
                       width: 100.w, // You can adjust the width as needed
-
+                      height: 25.h,
                       // Using a Column to stack the "EMPLOYEE" label and the name
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .center, // Align text to the start (left)
                         children: [
                           // 1. The "EMPLOYEE" label
                           pw.Padding(
-                            padding: const pw.EdgeInsets.all(5),
+                            padding: const pw.EdgeInsets.all(2),
                             child: pw.Text(
                               'MONTH',
                               style: pw.TextStyle(
@@ -350,43 +315,28 @@ class _PayslippdfState extends State<Payslippdf> {
                       ),
                     ),
                     pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
+                      padding: pw.EdgeInsets.only(left: 2.w),
+                      width: 100.w,
+                      height: 25.h,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                          color: PdfColors.black,
                           width: .5.w,
                         ),
-                      )),
-                      // Gives some internal spacing
-
-                      width: 100.w, // You can adjust the width as needed
-                      padding: const pw.EdgeInsets.all(5),
-                      // Using a Column to stack the "EMPLOYEE" label and the name
+                      ),
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .center, // Align text to the start (left)
-                        children: [
-                          // 1. The "EMPLOYEE" label
-                          pw.Text(
-                            'EMPLOYEE NO',
-                            style: pw.TextStyle(
-                              // Adjust color and size to mimic the image's lighter, smaller text
-                              color: PdfColors.grey,
-                              fontSize: 6.sp,
-                              fontWeight: pw.FontWeight.bold,
-                              letterSpacing: 0.5,
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "EMPLOYEE NO",
+                              style: pw.TextStyle(
+                                color: PdfColors.grey,
+                                fontSize: 6.sp,
+                                fontWeight: pw.FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                          ),
-
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 5.h), // Small gap between the lines
-                            child: pw.Text(
+                            pw.Text(
                               widget.employeeNo,
                               style: pw.TextStyle(
                                 color: PdfColors.black,
@@ -395,65 +345,52 @@ class _PayslippdfState extends State<Payslippdf> {
                                     .bold, // Name often appears bolder
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ]),
                     ),
                   ]),
-              
-              pw.Padding(padding: pw.EdgeInsets.only(left: 360.w,top: 3.h,bottom: 3.h),child:pw.Text(
-                              'PAY MONTH',
+
+              // pw.Padding(
+              //   padding: pw.EdgeInsets.only(left: 360.w, top: 3.h, bottom: 3.h),
+              //   child: pw.Text(
+              //     'PAY MONTH',
+              //     style: pw.TextStyle(
+              //       // Adjust color and size to mimic the image's lighter, smaller text
+              //       color: PdfColors.grey,
+              //       fontSize: 6.sp,
+              //       fontWeight: pw.FontWeight.bold,
+              //       letterSpacing: 0.5,
+              //     ),
+              //   ),
+              // ),
+
+              //3
+              pw.SizedBox(height: 15.h),
+              pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Container(
+                      padding: pw.EdgeInsets.only(left: 2.w),
+                      width: 350.w,
+                      height: 25.h,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(
+                          color: PdfColors.black,
+                          width: .5.w,
+                        ),
+                      ),
+                      child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              "JOB",
                               style: pw.TextStyle(
-                                // Adjust color and size to mimic the image's lighter, smaller text
                                 color: PdfColors.grey,
                                 fontSize: 6.sp,
                                 fontWeight: pw.FontWeight.bold,
                                 letterSpacing: 0.5,
                               ),
-                            ), ),
-              
-              //3
-              pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
-                          width: .5.w,
-                        ),
-                      )),
-                      // Gives some internal spacing
-                      padding: const pw.EdgeInsets.all(5),
-                      width: 350.w, // You can adjust the width as needed
-
-                      // Using a Column to stack the "EMPLOYEE" label and the name
-                      child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .start, // Align text to the start (left)
-                        children: [
-                          // 1. The "EMPLOYEE" label
-                          pw.Text(
-                            'JOB',
-                            style: pw.TextStyle(
-                              // Adjust color and size to mimic the image's lighter, smaller text
-                              color: PdfColors.grey,
-                              fontSize: 6.sp,
-                              fontWeight: pw.FontWeight.bold,
-                              letterSpacing: 0.5,
                             ),
-                          ),
-
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 5.h), // Small gap between the lines
-                            child: pw.Text(
+                            pw.Text(
                               widget.job,
                               style: pw.TextStyle(
                                 color: PdfColors.black,
@@ -462,13 +399,11 @@ class _PayslippdfState extends State<Payslippdf> {
                                     .bold, // Name often appears bolder
                               ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ]),
                     ),
                     pw.Container(
                       // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
+                      decoration: pw.BoxDecoration(
                           border: pw.Border.fromBorderSide(
                         pw.BorderSide(
                           color: PdfColors
@@ -478,18 +413,16 @@ class _PayslippdfState extends State<Payslippdf> {
                       )),
                       // Gives some internal spacing
 
-                      width: 100.w, // You can adjust the width as needed
-
+                      width: 100.w, //  You can adjust the width as needed
+                      height: 25.h,
                       // Using a Column to stack the "EMPLOYEE" label and the name
                       child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .center, // Align text to the start (left)
+                        mainAxisAlignment: pw.MainAxisAlignment
+                            .spaceEvenly, // Align text to the start (left)
                         children: [
                           // 1. The "EMPLOYEE" label
                           pw.Padding(
-                            padding:  pw.EdgeInsets.all(2.3.h),
+                            padding: pw.EdgeInsets.all(2.3.h),
                             child: pw.Text(
                               widget.payFrom,
                               style: pw.TextStyle(
@@ -509,8 +442,8 @@ class _PayslippdfState extends State<Payslippdf> {
                           ),
                           // 2. The main name text
                           pw.Padding(
-                            padding:  pw.EdgeInsets.all(
-                                 2.3.h), // Small gap between the lines
+                            padding: pw.EdgeInsets.all(
+                                2.3.h), // Small gap between the lines
                             child: pw.Text(
                               widget.payTo,
                               style: pw.TextStyle(
@@ -524,43 +457,28 @@ class _PayslippdfState extends State<Payslippdf> {
                         ],
                       ),
                     ),
-                    pw.Container(
-                      // Applies the border to the Container
-                      decoration:  pw.BoxDecoration(
-                          border: pw.Border.fromBorderSide(
-                        pw.BorderSide(
-                          color: PdfColors
-                              .black, // Assuming a black or dark border
-                          width: .5.w,
-                        ),
-                      )),
-                      // Gives some internal spacing
-
-                      width: 100.w, // You can adjust the width as needed
-                      padding: const pw.EdgeInsets.all(5),
-                      // Using a Column to stack the "EMPLOYEE" label and the name
-                      child: pw.Column(
-                        mainAxisSize:
-                            pw.MainAxisSize.min, // Keep column size minimal
-                        crossAxisAlignment: pw.CrossAxisAlignment
-                            .center, // Align text to the start (left)
-                        children: [
-                          // 2. The main name text
-                          pw.Padding(
-                            padding:  pw.EdgeInsets.only(
-                                top: 15.h), // Small gap between the lines
-                            child: pw.Text(
-                              widget.employeeNo,
-                              style: pw.TextStyle(
-                                color: PdfColors.black,
-                                fontSize: 12.sp,
-                                fontWeight: pw.FontWeight
-                                    .bold, // Name often appears bolder
-                              ),
+                    pw.Column(
+                      children: [
+                        pw.Container(
+                          width: 100.w,
+                          height: 25.h,
+                          decoration: pw.BoxDecoration(
+                            border: pw.Border.all(
+                              color: PdfColors.black,
+                              width: .5.w,
                             ),
                           ),
-                        ],
-                      ),
+                          child: pw.Text(
+                            widget.companyId,
+                            style: pw.TextStyle(
+                              color: PdfColors.black,
+                              fontSize: 12.sp,
+                              fontWeight: pw
+                                  .FontWeight.bold, // Name often appears bolder
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ]),
 
@@ -573,7 +491,8 @@ class _PayslippdfState extends State<Payslippdf> {
               pw.Container(
                 padding: pw.EdgeInsets.all(5),
                 decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.black, width: 0.8.w)),
+                    border:
+                        pw.Border.all(color: PdfColors.black, width: 0.8.w)),
                 child: pw.Row(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -597,7 +516,8 @@ class _PayslippdfState extends State<Payslippdf> {
               // Earnings table container
               pw.Container(
                 decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.black, width: 0.8.w)),
+                    border:
+                        pw.Border.all(color: PdfColors.black, width: 0.8.w)),
                 child: pw.Column(
                   children: [
                     // Table rows
@@ -610,13 +530,15 @@ class _PayslippdfState extends State<Payslippdf> {
                         if (i < widget.earnings.length) {
                           final e = widget.earnings[i];
                           return pw.Container(
-                            padding:  pw.EdgeInsets.symmetric(
+                            padding: pw.EdgeInsets.symmetric(
                                 horizontal: 8.w, vertical: 6.h),
                             child: pw.Row(
                               children: [
                                 pw.Expanded(
                                     child: pw.Text(e['earnings'] ?? '',
-                                        style: smallStyle.copyWith(color: PdfColors.black,fontWeight: pw.FontWeight.bold))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black,
+                                            fontWeight: pw.FontWeight.bold))),
                                 pw.Container(
                                     width: 120.w,
                                     alignment: pw.Alignment.centerRight,
@@ -624,14 +546,16 @@ class _PayslippdfState extends State<Payslippdf> {
                                         (e['amount'] != null)
                                             ? e['amount'].toString()
                                             : '-',
-                                        style: smallStyle.copyWith(color: PdfColors.black,fontWeight: pw.FontWeight.bold))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black,
+                                            fontWeight: pw.FontWeight.bold))),
                               ],
                             ),
                           );
                         } else {
                           // empty row
                           return pw.Container(
-                            padding:  pw.EdgeInsets.symmetric(
+                            padding: pw.EdgeInsets.symmetric(
                                 horizontal: 8.w, vertical: 6.h),
                             child: pw.Row(
                               children: [
@@ -661,7 +585,7 @@ class _PayslippdfState extends State<Payslippdf> {
 
                     // Totals row
                     pw.Container(
-                      padding:  pw.EdgeInsets.symmetric(
+                      padding: pw.EdgeInsets.symmetric(
                           horizontal: 8.w, vertical: 6.h),
                       child: pw.Row(
                         children: [
@@ -677,8 +601,7 @@ class _PayslippdfState extends State<Payslippdf> {
                           pw.Container(
                               width: 80.w,
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                  widget.totalEarnings.toString(),
+                              child: pw.Text(widget.totalEarnings.toString(),
                                   style: smallStyle.copyWith(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.black))),
@@ -697,7 +620,8 @@ class _PayslippdfState extends State<Payslippdf> {
               pw.Container(
                 padding: pw.EdgeInsets.all(5),
                 decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.black, width: 0.8.w)),
+                    border:
+                        pw.Border.all(color: PdfColors.black, width: 0.8.w)),
                 child: pw.Row(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -722,7 +646,8 @@ class _PayslippdfState extends State<Payslippdf> {
               // Deductions table
               pw.Container(
                 decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.black, width: 0.8.w)),
+                    border:
+                        pw.Border.all(color: PdfColors.black, width: 0.8.w)),
                 child: pw.Column(
                   children: [
                     pw.ListView.builder(
@@ -733,13 +658,15 @@ class _PayslippdfState extends State<Payslippdf> {
                         if (i < widget.deductions.length) {
                           final d = widget.deductions[i];
                           return pw.Container(
-                            padding:  pw.EdgeInsets.symmetric(
+                            padding: pw.EdgeInsets.symmetric(
                                 horizontal: 8.w, vertical: 6.h),
                             child: pw.Row(
                               children: [
                                 pw.Expanded(
                                     child: pw.Text(d['dedection'] ?? '',
-                                        style: smallStyle.copyWith(color: PdfColors.black,fontWeight: pw.FontWeight.bold))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black,
+                                            fontWeight: pw.FontWeight.bold))),
                                 pw.Container(
                                     width: 120.w,
                                     alignment: pw.Alignment.centerRight,
@@ -747,13 +674,15 @@ class _PayslippdfState extends State<Payslippdf> {
                                         (d['amount2'] != null)
                                             ? d['amount2'].toString()
                                             : '-',
-                                        style: smallStyle.copyWith(color: PdfColors.black,fontWeight: pw.FontWeight.bold))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black,
+                                            fontWeight: pw.FontWeight.bold))),
                               ],
                             ),
                           );
                         } else {
                           return pw.Container(
-                            padding:  pw.EdgeInsets.symmetric(
+                            padding: pw.EdgeInsets.symmetric(
                                 horizontal: 8.w, vertical: 6.h),
                             child: pw.Row(
                               children: [
@@ -777,7 +706,7 @@ class _PayslippdfState extends State<Payslippdf> {
                     ),
                     pw.Divider(),
                     pw.Container(
-                      padding:  pw.EdgeInsets.symmetric(
+                      padding: pw.EdgeInsets.symmetric(
                           horizontal: 8.w, vertical: 6.h),
                       child: pw.Row(
                         children: [
@@ -793,8 +722,7 @@ class _PayslippdfState extends State<Payslippdf> {
                           pw.Container(
                               width: 80.w,
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                  widget.totalDeductions.toString(),
+                              child: pw.Text(widget.totalDeductions.toString(),
                                   style: smallStyle.copyWith(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.black))),
@@ -820,8 +748,7 @@ class _PayslippdfState extends State<Payslippdf> {
                               style: pw.TextStyle(
                                   fontSize: 9.sp, color: PdfColors.black)),
                           pw.SizedBox(height: 4.h),
-                          pw.Text(
-                              'LOAN BALANCE : ${widget.loanBalance}',
+                          pw.Text('LOAN BALANCE : ${widget.loanBalance}',
                               style: smallStyle.copyWith(
                                 color: PdfColor.fromInt(0xFFC62828),
                               )),
@@ -838,12 +765,14 @@ class _PayslippdfState extends State<Payslippdf> {
                     ),
                     pw.Expanded(
                       flex: 1,
-                      child: pw.Container(padding: pw.EdgeInsets.only(left: 10.w),
-                        child: pw.Container(color: PdfColors.grey300,
+                      child: pw.Container(
+                        padding: pw.EdgeInsets.only(left: 10.w),
+                        child: pw.Container(
+                          color: PdfColors.grey300,
                           child: pw.Row(
                             crossAxisAlignment: pw.CrossAxisAlignment.center,
                             children: [
-                               pw.SizedBox(width: 20.w),
+                              pw.SizedBox(width: 20.w),
                               pw.Text('NET PAY',
                                   style: pw.TextStyle(
                                       fontSize: 12.sp,
@@ -855,8 +784,8 @@ class _PayslippdfState extends State<Payslippdf> {
                                       fontSize: 12.sp,
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColor.fromInt(0xFFC62828))),
-                            ], 
-                          ), 
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -866,25 +795,31 @@ class _PayslippdfState extends State<Payslippdf> {
 
               // Signature lines
               pw.Row(
-     
                 children: [
-                pw.Padding(padding: pw.EdgeInsets.symmetric(horizontal: 10.w),child: pw.Column(
-                    children: [
-                      pw.Container(
-                          width: 300.w, height: 1.h, color: PdfColors.black),
-                      pw.SizedBox(height: 6.h),
-                      pw.Text('Signature of Employee', style: smallStyle.copyWith(color: PdfColors.black)),
-                    ],
-                  ), ),
-                 
-                   pw.Padding(padding: pw.EdgeInsets.symmetric(horizontal: 10.w),child: pw.Column(
-                    children: [
-                      pw.Container(
-                          width: 300.w, height: 1.h, color: PdfColors.black),
-                      pw.SizedBox(height: 6.h),
-                      pw.Text('Signature of Employer', style: smallStyle.copyWith(color: PdfColors.black)),
-                    ],
-                  ),),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
+                    child: pw.Column(
+                      children: [
+                        pw.Container(
+                            width: 300.w, height: 1.h, color: PdfColors.black),
+                        pw.SizedBox(height: 6.h),
+                        pw.Text('Signature of Employee',
+                            style: smallStyle.copyWith(color: PdfColors.black)),
+                      ],
+                    ),
+                  ),
+                  pw.Padding(
+                    padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
+                    child: pw.Column(
+                      children: [
+                        pw.Container(
+                            width: 300.w, height: 1.h, color: PdfColors.black),
+                        pw.SizedBox(height: 6.h),
+                        pw.Text('Signature of Employer',
+                            style: smallStyle.copyWith(color: PdfColors.black)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -946,7 +881,9 @@ class _PayslippdfState extends State<Payslippdf> {
               color: Colors.white,
             )),
         backgroundColor: const Color(0xFFC62828),
-        title:  Text('Payslip PDF Preview', style: GoogleFonts.poppins(
+        title: Text(
+          'Payslip PDF Preview',
+          style: GoogleFonts.poppins(
               fontSize: 20.sp,
               fontWeight: FontWeight.w400,
               color: Colors.white),

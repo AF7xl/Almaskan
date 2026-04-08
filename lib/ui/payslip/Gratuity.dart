@@ -33,6 +33,7 @@ class _GratuityState extends State<Gratuity> {
   TextEditingController loandeduction = TextEditingController();
   TextEditingController topay = TextEditingController();
   TextEditingController number = TextEditingController();
+  String selectedCompany = 'Reyah Al Maskan';
   int currentNumber = 1;
 
   @override
@@ -169,11 +170,10 @@ class _GratuityState extends State<Gratuity> {
               size: 24.sp,
               color: Colors.white,
             )),
-       
         backgroundColor: const Color(0xFFC62828),
         title: Text(
           'Create Gratuity',
-          style:  GoogleFonts.poppins(
+          style: GoogleFonts.poppins(
             color: Colors.white,
             fontSize: 20.sp,
             fontWeight: FontWeight.w500,
@@ -195,7 +195,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Numbers",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -214,7 +214,7 @@ class _GratuityState extends State<Gratuity> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -224,7 +224,7 @@ class _GratuityState extends State<Gratuity> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:  GoogleFonts.poppins(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16.sp,
                                 color: Colors.black),
@@ -243,7 +243,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Employee name",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -262,7 +262,7 @@ class _GratuityState extends State<Gratuity> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -291,7 +291,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Joining Date",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -313,7 +313,7 @@ class _GratuityState extends State<Gratuity> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -323,7 +323,7 @@ class _GratuityState extends State<Gratuity> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: '',
-                            hintStyle:  GoogleFonts.poppins(
+                            hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
                               color: Colors.black,
@@ -343,7 +343,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Designation",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -362,7 +362,7 @@ class _GratuityState extends State<Gratuity> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -391,7 +391,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date of Resignation",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -420,7 +420,7 @@ class _GratuityState extends State<Gratuity> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:  GoogleFonts.poppins(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16.sp,
                                 color: Colors.black),
@@ -443,7 +443,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Department",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -472,7 +472,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: "",
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
                               color: Colors.black),
@@ -491,7 +491,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Date of Leaving",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -510,7 +510,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -520,7 +520,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: '',
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
                             fontSize: 16.sp,
                             color: Colors.black,
@@ -540,7 +540,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Date of Joining Service",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -559,7 +559,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -569,7 +569,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: '',
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
                             fontSize: 16.sp,
                             color: Colors.black,
@@ -589,7 +589,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Date of Exit",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -608,7 +608,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -618,7 +618,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: '',
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
                             fontSize: 16.sp,
                             color: Colors.black,
@@ -641,7 +641,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Total No of Days",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -670,7 +670,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: "",
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
                               color: Colors.black),
@@ -689,7 +689,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Last Basic pay(At Exit)",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -708,7 +708,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -738,7 +738,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Last DA (At Exit)",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -767,7 +767,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: '',
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
                             fontSize: 16.sp,
                             color: Colors.black,
@@ -787,7 +787,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "No of days",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -806,7 +806,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -838,7 +838,7 @@ class _GratuityState extends State<Gratuity> {
                       padding: EdgeInsets.only(top: 20.h),
                       child: Text(
                         "Total Service Period",
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w400,
                             color: Colors.black),
@@ -857,7 +857,7 @@ class _GratuityState extends State<Gratuity> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -867,7 +867,7 @@ class _GratuityState extends State<Gratuity> {
                           enabledBorder: const OutlineInputBorder(
                               borderSide: BorderSide.none),
                           hintText: "",
-                          hintStyle:  GoogleFonts.poppins(
+                          hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
                               color: Colors.black),
@@ -894,12 +894,12 @@ class _GratuityState extends State<Gratuity> {
                   // Header Row
                   TableRow(
                     decoration: BoxDecoration(color: Colors.red[900]),
-                    children:  [
+                    children: [
                       Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 16),
@@ -909,7 +909,7 @@ class _GratuityState extends State<Gratuity> {
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 16.sp),
@@ -921,9 +921,9 @@ class _GratuityState extends State<Gratuity> {
                   TableRow(children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child:  Text(
+                      child: Text(
                         'TOTAL',
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                             fontSize: 16.sp),
@@ -942,7 +942,7 @@ class _GratuityState extends State<Gratuity> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -980,7 +980,7 @@ class _GratuityState extends State<Gratuity> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -989,13 +989,13 @@ class _GratuityState extends State<Gratuity> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:  SizedBox(
+                        child: SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'SUB TOTAL',
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16.sp,
@@ -1015,7 +1015,7 @@ class _GratuityState extends State<Gratuity> {
                                 vertical: 8, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400, fontSize: 15.sp),
                         ),
                       ),
@@ -1025,13 +1025,13 @@ class _GratuityState extends State<Gratuity> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:  SizedBox(
+                        child: SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'LOAN DEDUCTION',
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16.sp,
@@ -1051,7 +1051,7 @@ class _GratuityState extends State<Gratuity> {
                                 vertical: 8, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400, fontSize: 15.sp),
                         ),
                       ),
@@ -1061,13 +1061,13 @@ class _GratuityState extends State<Gratuity> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:  SizedBox(
+                        child: SizedBox(
                           height: 40.sp, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'TO PAY',
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16,
@@ -1087,7 +1087,7 @@ class _GratuityState extends State<Gratuity> {
                                 vertical: 8, horizontal: 8),
                           ),
                           keyboardType: TextInputType.number,
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.w400, fontSize: 15.sp),
                         ),
                       ),
@@ -1303,7 +1303,7 @@ class _GratuityState extends State<Gratuity> {
                           child: Center(
                             child: Text(
                               "save",
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1317,36 +1317,88 @@ class _GratuityState extends State<Gratuity> {
                       ),
                       InkWell(
                         onTap: () async {
-                          Navigator.push(
+                          String? selected = await showDialog<String>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              String tempSelectedCompany = selectedCompany;
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(3.r)),
+                                title: Text('Select Company'),
+                                content: StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return DropdownButtonFormField<String>(
+                                      value: tempSelectedCompany,
+                                      items: ['Reyah Al Maskan', 'Al Maskan']
+                                          .map((company) {
+                                        return DropdownMenuItem(
+                                          value: company,
+                                          child: Text(company),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          tempSelectedCompany = value!;
+                                        });
+                                      },
+                                    );
+                                  },
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context); // cancel
+                                    },
+                                    child: Text("Cancel"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context,
+                                          tempSelectedCompany); // return selected
+                                    },
+                                    child: Text("Continue"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          // If user selected a company, proceed
+                          if (selected != null) {
+                            selectedCompany = selected;
+
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Gratuitypdf(
-                                    employeeName: name.text,
-                                    joindate: joindate.text,
-                                    designation: designation.text,
-                                    dateofresign: dateofresign.text,
-                                    department: department.text,
-                                    dateofleaving: dateofleaving.text,
-                                    dateofjoinservice: dateofjoinservice.text,
-                                    dateofexit: dateofexit.text,
-                                    totalnoofdays:
-                                        double.parse(totalnoofdays.text),
-                                    lastbasicpay:
-                                        double.parse(lastbasicpay.text),
-                                    lastda: double.parse(lastda.text),
-                                    noofdays: double.parse(noofdays.text),
-                                    totalserviceperiod: totalserviceperiod.text,
-                                    total: double.parse(total.text),
-                                    month: selectedpmonth != null
-                                        ? months.firstWhere((m) =>
-                                            m['id'] == selectedpmonth)['label']
-                                        : '', 
-                                    monthsalary: double.parse(monthsalary.text),
-                                    subtotal: double.parse(subtotal.text),
-                                    loandeduction:
-                                        double.parse(loandeduction.text),
-                                    topay: double.parse(topay.text)),
-                              ));
+                                  builder: (context) => Gratuitypdf(
+                                      employeeName: name.text,
+                                      joindate: joindate.text,
+                                      designation: designation.text,
+                                      dateofresign: dateofresign.text,
+                                      department: department.text,
+                                      dateofleaving: dateofleaving.text,
+                                      dateofjoinservice: dateofjoinservice.text,
+                                      dateofexit: dateofexit.text,
+                                      totalnoofdays: totalnoofdays.text,
+                                      lastbasicpay: lastbasicpay.text,
+                                      lastda: lastda.text,
+                                      noofdays: noofdays.text,
+                                      totalserviceperiod:
+                                          totalserviceperiod.text,
+                                      total: total.text,
+                                      month: selectedpmonth != null
+                                          ? months.firstWhere((m) =>
+                                              m['id'] ==
+                                              selectedpmonth)['label']
+                                          : '',
+                                      monthsalary: monthsalary.text,
+                                      subtotal: subtotal.text,
+                                      loandeduction: loandeduction.text,
+                                      topay: topay.text,
+                                      selectedCompany: selectedCompany,)),
+                            );
+                          }
                         },
                         child: Container(
                           width: 80.w,
@@ -1358,7 +1410,7 @@ class _GratuityState extends State<Gratuity> {
                           child: Center(
                             child: Text(
                               "Generate",
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,
@@ -1367,6 +1419,58 @@ class _GratuityState extends State<Gratuity> {
                           ),
                         ),
                       ),
+                      // InkWell(
+                      //   onTap: () async {
+                      //     Navigator.push(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //           builder: (context) => Gratuitypdf(
+                      //               employeeName: name.text,
+                      //               joindate: joindate.text,
+                      //               designation: designation.text,
+                      //               dateofresign: dateofresign.text,
+                      //               department: department.text,
+                      //               dateofleaving: dateofleaving.text,
+                      //               dateofjoinservice: dateofjoinservice.text,
+                      //               dateofexit: dateofexit.text,
+                      //               totalnoofdays:
+                      //                   double.parse(totalnoofdays.text),
+                      //               lastbasicpay:
+                      //                   double.parse(lastbasicpay.text),
+                      //               lastda: double.parse(lastda.text),
+                      //               noofdays: double.parse(noofdays.text),
+                      //               totalserviceperiod: totalserviceperiod.text,
+                      //               total: double.parse(total.text),
+                      //               month: selectedpmonth != null
+                      //                   ? months.firstWhere((m) =>
+                      //                       m['id'] == selectedpmonth)['label']
+                      //                   : '',
+                      //               monthsalary: double.parse(monthsalary.text),
+                      //               subtotal: double.parse(subtotal.text),
+                      //               loandeduction:
+                      //                   double.parse(loandeduction.text),
+                      //               topay: double.parse(topay.text)),
+                      //         ));
+                      //   },
+                      //   child: Container(
+                      //     width: 80.w,
+                      //     height: 35.h,
+                      //     decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(5.r),
+                      //       color: Colors.green,
+                      //     ),
+                      //     child: Center(
+                      //       child: Text(
+                      //         "Generate",
+                      //         style:  GoogleFonts.poppins(
+                      //           color: Colors.white,
+                      //           fontSize: 15.sp,
+                      //           fontWeight: FontWeight.w400,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(
                         width: 10.w,
                       ),
@@ -1457,7 +1561,7 @@ class _GratuityState extends State<Gratuity> {
                           child: Center(
                             child: Text(
                               "Update",
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 color: Colors.white,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w400,

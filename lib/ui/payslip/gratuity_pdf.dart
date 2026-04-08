@@ -18,17 +18,18 @@ class Gratuitypdf extends StatefulWidget {
   final String dateofleaving;
   final String dateofjoinservice;
   final String dateofexit;
-  final double totalnoofdays;
-  final double lastbasicpay;
-  final double lastda;
-  final double noofdays;
+  final String totalnoofdays;
+  final String lastbasicpay;
+  final String lastda;
+  final String noofdays;
   final String totalserviceperiod;
-  final double total;
+  final String total;
   final String month;
-  final double monthsalary;
-  final double subtotal;
-  final double loandeduction;
-  final double topay;
+  final String monthsalary;
+  final String subtotal;
+  final String loandeduction;
+  final String topay;
+  final String selectedCompany;
 
   const Gratuitypdf({
     super.key,
@@ -51,6 +52,7 @@ class Gratuitypdf extends StatefulWidget {
     required this.subtotal,
     required this.loandeduction,
     required this.topay,
+    required this.selectedCompany,
   });
 
   @override
@@ -88,6 +90,51 @@ class _GratuitypdfState extends State<Gratuitypdf> {
 
     final smallStyle = pw.TextStyle(fontSize: 9.sp, color: PdfColors.black);
 
+    pw.Widget buildCompanyDetails() {
+      if (widget.selectedCompany == 'Al Maskan') {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.SizedBox(height: 5.h),
+            pw.Text('AL MASKAN PLASTER & TILE CONTRACTING', style: headerStyle),
+            pw.SizedBox(height: 5.h),
+            pw.Text('[Sharjah - UAE]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+            pw.SizedBox(height: 3.h),
+            pw.Text('[almaskandecor@gmail.com]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+            pw.SizedBox(height: 3.h),
+            pw.Text('[almaskandecor.in]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+          ],
+        );
+      } else {
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.SizedBox(height: 5.h),
+            pw.Text('REYAH AL MASKAN TECHNICAL SERVICES L.L.C',
+                style: headerStyle),
+            pw.SizedBox(height: 5.h),
+            pw.Text('[Dubai - UAE]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+            pw.SizedBox(height: 3.h),
+            pw.Text('[reyahalmaskan@gmail.com]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+            pw.SizedBox(height: 3.h),
+            pw.Text('[almaskandecor.in]',
+                style: smallStyle.copyWith(
+                    color: const PdfColor.fromInt(0xFFC62828))),
+          ],
+        );
+      }
+    }
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -117,26 +164,7 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Expanded(
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.SizedBox(height: 5.h),
-                        pw.Text('AL MASKAN PLASTER & TILE CONTRACTING',
-                            style: headerStyle),
-                        pw.SizedBox(height: 5.h),
-                        pw.Text('[Sharjah - UAE]',
-                            style: smallStyle.copyWith(
-                                color: const PdfColor.fromInt(0xFFC62828))),
-                        pw.SizedBox(height: 3.h),
-                        pw.Text('[almaskandecor@gmail.com]',
-                            style: smallStyle.copyWith(
-                                color: const PdfColor.fromInt(0xFFC62828))),
-                        pw.SizedBox(height: 3.h),
-                        pw.Text('[almaskandecor.in]',
-                            style: smallStyle.copyWith(
-                                color: const PdfColor.fromInt(0xFFC62828))),
-                      ],
-                    ),
+                    child: buildCompanyDetails(),
                   ),
                   // logo
                   pw.Container(
@@ -150,7 +178,7 @@ class _GratuitypdfState extends State<Gratuitypdf> {
               // Employee info box (table-like)
               pw.Container(
                 child: pw.Table(
-                  columnWidths:  {
+                  columnWidths: {
                     0: pw.FlexColumnWidth(3.w),
                     1: pw.FlexColumnWidth(5.w),
                     2: pw.FlexColumnWidth(2.w),
@@ -265,7 +293,8 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                                   fontWeight: pw.FontWeight.bold))),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
-                          child: pw.Text(widget.lastda.toString(), style: smallStyle)),
+                          child: pw.Text(widget.lastda.toString(),
+                              style: smallStyle)),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text('No of Days',
@@ -307,7 +336,8 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                                   fontWeight: pw.FontWeight.bold))),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
-                          child: pw.Text(widget.monthsalary.toString(), style: smallStyle)),
+                          child: pw.Text(widget.monthsalary.toString(),
+                              style: smallStyle)),
                       pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text('SUB TOTAL',
@@ -465,51 +495,51 @@ class _GratuitypdfState extends State<Gratuitypdf> {
                   ]),
                 ),
               ]),
-              pw.SizedBox(height: 40.h), 
+              pw.SizedBox(height: 40.h),
 
               // Signature lines
-           
-               pw.Row(
 
-                  children: [
-                    pw.Container(
-                      width: 100.w,
-                      child: pw.Row(
-                        children: [
-                          pw.Text('Date: ',
-                              style: smallStyle.copyWith(
-                                  color: PdfColors.black, fontSize: 10.sp)),
-                          pw.Padding(
-                            padding: pw.EdgeInsets.only(top: 8.h),
-                            child: pw.Container(
-                                width: 100.w,
-                                height: 1.h,
-                                color: PdfColors.black),
-                          )
-                        ],
-                      ),
+              pw.Row(
+                children: [
+                  pw.Container(
+                    width: 100.w,
+                    child: pw.Row(
+                      children: [
+                        pw.Text('Date: ',
+                            style: smallStyle.copyWith(
+                                color: PdfColors.black, fontSize: 10.sp)),
+                        pw.Padding(
+                          padding: pw.EdgeInsets.only(top: 8.h),
+                          child: pw.Container(
+                              width: 100.w,
+                              height: 1.h,
+                              color: PdfColors.black),
+                        )
+                      ],
                     ),
-                    pw.SizedBox(width: 350.w,),  
-                    pw.Container(
-                      width: 100.w,
-                      child: pw.Row(
-                        children: [
-                          pw.Text('Sign:',
-                              style: smallStyle.copyWith(
-                                  color: PdfColors.black, fontSize: 10.sp)),
-                          pw.Padding(
-                            padding: pw.EdgeInsets.only(top: 8.h),
-                            child: pw.Container(
-                                width: 100.w,
-                                height: 1.h,
-                                color: PdfColors.black),
-                          )
-                        ],
-                      ),
+                  ),
+                  pw.SizedBox(
+                    width: 350.w,
+                  ),
+                  pw.Container(
+                    width: 100.w,
+                    child: pw.Row(
+                      children: [
+                        pw.Text('Sign:',
+                            style: smallStyle.copyWith(
+                                color: PdfColors.black, fontSize: 10.sp)),
+                        pw.Padding(
+                          padding: pw.EdgeInsets.only(top: 8.h),
+                          child: pw.Container(
+                              width: 100.w,
+                              height: 1.h,
+                              color: PdfColors.black),
+                        )
+                      ],
                     ),
-                  ],
-                ),
-            
+                  ),
+                ],
+              ),
             ],
           );
         },
@@ -559,7 +589,7 @@ class _GratuitypdfState extends State<Gratuitypdf> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         leading: IconButton(
+        leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -569,7 +599,9 @@ class _GratuitypdfState extends State<Gratuitypdf> {
               color: Colors.white,
             )),
         backgroundColor: const Color(0xFFC62828),
-        title:  Text('Gratuity PDF Preview', style: GoogleFonts.poppins(
+        title: Text(
+          'Gratuity PDF Preview',
+          style: GoogleFonts.poppins(
               fontSize: 20.sp,
               fontWeight: FontWeight.w400,
               color: Colors.white),

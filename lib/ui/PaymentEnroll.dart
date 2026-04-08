@@ -23,6 +23,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
   FocusNode invoiceAmountFocusNode = FocusNode();
   FocusNode taxFocusNode = FocusNode();
   FocusNode totalAmountFocusNode = FocusNode();
+  FocusNode paymentmethodFocusNOde = FocusNode();
+  FocusNode paymentmethodFocusNOde2 = FocusNode();
 
   //focus node of overdue payment
   FocusNode customerNamedueFocusNode = FocusNode();
@@ -37,6 +39,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
   TextEditingController customername = TextEditingController();
   String paymentType = 'Cash'; //dropdown for selecting cash/bank transfer
   String emirate = 'Dubai';
+  String componey = 'Al Maskan';
+  String componey2 = 'Al Maskan';
   TextEditingController Project = TextEditingController();
   TextEditingController TRN = TextEditingController();
   TextEditingController invoicenumber = TextEditingController();
@@ -50,6 +54,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
   TextEditingController invoicenumberdue = TextEditingController();
   TextEditingController lponumberdue = TextEditingController();
   TextEditingController amountdue = TextEditingController();
+  TextEditingController paymentmethod = TextEditingController();
+  TextEditingController paymentmethod2 = TextEditingController();
   String? selectedcontainer;
 
   //for chart
@@ -130,8 +136,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                 thickness: 0.5,
               ),
               Padding(
-                padding: EdgeInsets.only(top: 15.sp),
+                padding: EdgeInsets.only(top: 15.h, right: 10.w),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 10.w),
@@ -224,8 +231,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                 ),
               ), //Customer Name
               Padding(
-                padding: EdgeInsets.only(top: 30.sp),
+                padding: EdgeInsets.only(top: 30.h, right: 10.w),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
                       children: [
@@ -331,8 +339,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                 ),
               ), //TRN NUMBER
               Padding(
-                padding: EdgeInsets.only(top: 30.sp),
+                padding: EdgeInsets.only(top: 30.h, right: 10.w),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 10.w),
@@ -382,12 +391,56 @@ class _PaymentenrollState extends State<Paymentenroll> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 20.w),
+                      child: Text(
+                        "Componey",
+                        style: GoogleFonts.poppins(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.w),
+                      child: Container(
+                        width: 150.w,
+                        height: 35.h,
+                        padding: EdgeInsets.symmetric(horizontal: 10.w),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.r),
+                            border:
+                                Border.all(color: Colors.black, width: 0.3)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: componey,
+                            items: [
+                              'Al Maskan',
+                              'Reyah Al Maskan',
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        fontSize: 12.sp, color: Colors.black)),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                componey = newValue!;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ), //InvoiceNumber
               Padding(
-                padding: EdgeInsets.only(top: 30.sp),
+                padding: EdgeInsets.only(top: 30.h, right: 10.w),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(left: 10.w),
@@ -400,9 +453,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 130.w),
+                      padding: EdgeInsets.only(left: 100.w),
                       child: Container(
-                        width: 250.w,
+                        width: 200.w,
                         height: 35.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5.r),
@@ -435,6 +488,54 @@ class _PaymentenrollState extends State<Paymentenroll> {
                                   .requestFocus(invoiceAmountFocusNode);
                             },
                             textInputAction: TextInputAction.next,
+                            maxLines: 1,
+                            keyboardType: TextInputType.text,
+                            cursorHeight: 20.h,
+                            cursorWidth: 0.5,
+                            textAlignVertical: TextAlignVertical.center,
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 12.sp),
+                            textAlign: TextAlign.start,
+                            cursorColor: Colors.black,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  top: 2.h, left: 5.w, bottom: 18.h),
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide.none),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.w),
+                      child: Text(
+                        "Payment Method",
+                        style: GoogleFonts.poppins(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.w),
+                      child: Container(
+                        width: 200.w,
+                        height: 35.h,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.r),
+                            border:
+                                Border.all(color: Colors.black, width: 0.3)),
+                        child: Center(
+                          child: TextFormField(
+                            focusNode: paymentmethodFocusNOde,
+                            onFieldSubmitted: (_) {
+                              FocusScope.of(context)
+                                  .requestFocus(invoiceNumberFocusNode);
+                            },
+                            textInputAction: TextInputAction.next,
+                            controller: paymentmethod,
                             maxLines: 1,
                             keyboardType: TextInputType.text,
                             cursorHeight: 20.h,
@@ -622,7 +723,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
                               'Date': date.text,
                               'Invoice Amount': Invoiceamount.text,
                               'Tax': Tax.text,
-                              'Total Amount': Totalamount.text
+                              'Total Amount': Totalamount.text,
+                              'componey name': componey,
+                              'payment method': paymentmethod.text,
                             });
                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content:
@@ -696,8 +799,8 @@ class _PaymentenrollState extends State<Paymentenroll> {
                   padding: EdgeInsets.only(left: 15.w, top: 15.h),
                   child: Text(
                     "OVERDUE Payment",
-                    style:
-                        GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 20.sp),
+                    style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600, fontSize: 20.sp),
                   ),
                 ),
                 Padding(
@@ -728,8 +831,9 @@ class _PaymentenrollState extends State<Paymentenroll> {
               thickness: 0.5,
             ),
             Padding(
-              padding: EdgeInsets.only(top: 15.sp),
+              padding: EdgeInsets.only(top: 15.h, right: 10.w),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(left: 10.w),
@@ -742,7 +846,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 50.w),
+                    padding: EdgeInsets.only(left: 15.w),
                     child: Container(
                       width: 250.w,
                       height: 35.h,
@@ -774,6 +878,48 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             enabledBorder:
                                 OutlineInputBorder(borderSide: BorderSide.none),
                           ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 20.w),
+                    child: Text(
+                      "Componey",
+                      style: GoogleFonts.poppins(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.w),
+                    child: Container(
+                      width: 150.w,
+                      height: 35.h,
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.r),
+                          border: Border.all(color: Colors.black, width: 0.3)),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: componey2,
+                          items: [
+                            'Al Maskan',
+                            'Reyah Al Maskan',
+                          ].map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value,
+                                  style: TextStyle(
+                                      fontSize: 12.sp, color: Colors.black)),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              componey2 = newValue!;
+                            });
+                          },
                         ),
                       ),
                     ),
@@ -812,6 +958,53 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             FocusScope.of(context)
                                 .requestFocus(invoiceNumberdueFocusNode);
                           },
+                          maxLines: 1,
+                          keyboardType: TextInputType.text,
+                          cursorHeight: 20.h,
+                          cursorWidth: 0.5,
+                          textAlignVertical: TextAlignVertical.center,
+                          style:
+                              TextStyle(color: Colors.black, fontSize: 12.sp),
+                          textAlign: TextAlign.start,
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.only(
+                                top: 2.h, left: 5.w, bottom: 18.h),
+                            border: InputBorder.none,
+                            enabledBorder:
+                                OutlineInputBorder(borderSide: BorderSide.none),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.w),
+                    child: Text(
+                      "Payment Method",
+                      style: GoogleFonts.poppins(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.w),
+                    child: Container(
+                      width: 200.w,
+                      height: 35.h,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.r),
+                          border: Border.all(color: Colors.black, width: 0.3)),
+                      child: Center(
+                        child: TextFormField(
+                          focusNode: paymentmethodFocusNOde2,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context)
+                                .requestFocus(invoiceNumberFocusNode);
+                          },
+                          textInputAction: TextInputAction.next,
+                          controller: paymentmethod2,
                           maxLines: 1,
                           keyboardType: TextInputType.text,
                           cursorHeight: 20.h,
@@ -1099,9 +1292,12 @@ class _PaymentenrollState extends State<Paymentenroll> {
                             'Invoice Number': invoicenumberdue.text,
                             'Date': datedue.text,
                             'LPO Number': lponumberdue.text,
-                            'Total Amount': amountdue.text
+                            'Total Amount': amountdue.text,
+                            'componey name': componey2,
+                            'payment method': paymentmethod2.text,
                           });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
                             content: Text("Payment Added to Overdue"),
                             backgroundColor: Colors.green,
                             duration: Duration(seconds: 3),
@@ -1257,12 +1453,15 @@ class _PaymentenrollState extends State<Paymentenroll> {
         .snapshots()
         .map((snapshot) {
       double total = 0.0;
+
       for (var doc in snapshot.docs) {
         final data = doc.data();
-        final totalamountfordue = data['Total Amount'] ?? 0.00;
-        final amount = double.tryParse(totalamountfordue.toString()) ?? 0.00;
+        final rawAmount = data['Total Amount'] ?? '0';
+        final cleaned = rawAmount.toString().replaceAll(',', '');
+        final amount = double.tryParse(cleaned) ?? 0.0;
         total += amount;
       }
+
       return total;
     });
   }
@@ -1292,324 +1491,352 @@ class _PaymentenrollState extends State<Paymentenroll> {
                           locale: 'en_AE', symbol: 'AED ', decimalDigits: 2);
                       overduetotaltext = formatter.format(snapshot.data);
                     }
-                    return LayoutBuilder(builder: (context, constraints){return SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 20.h, left: 20.w),
-                            child: Text(
-                              "PAYMENT ENROLLMENT",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  width: 550.w,
-                                  height: 200.h,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8.r),
-                                    border: Border.all(color: Colors.grey, width: 0.5),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Top Header with "Total Receivables" and Dropdown
-                                      Container(
-                                        width: 550.w,
-                                        height: 60.h,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(8.r),
-                                            topRight: Radius.circular(8.r),
-                                          ),
-                                          color: Color.fromARGB(255, 223, 163, 163),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 10.w),
-                                              child: InkWell(
-                                                onTap: tooglecontainer1,
-                                                child: Text(
-                                                  "Total Receivables",
-                                                  style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 20.sp,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Spacer(),
-                                            Padding(
-                                              padding: EdgeInsets.only(right: 10.w),
-                                              child: DropdownButton<String>(
-                                                dropdownColor: Colors.white,
-                                                hint: Text(
-                                                  "ADD PAYMENT",
-                                                  style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 15.sp,
-                                                    color: Colors.white
-                                                  ),
-                                                ),
-                                                icon: Icon(
-                                                  Icons.add_circle_rounded,
-                                                  size: 20.sp,
-                                                  color: Color(0xFFC62828),
-                                                ),
-                                                value: selectedcontainer,
-                                                items: [
-                                                  DropdownMenuItem(
-                                                    value: "Container 1",
-                                                    child: Text("New Payment"),
-                                                  ),
-                                                  DropdownMenuItem(
-                                                    value: "Container 2",
-                                                    child: Text("OVERDUE"),
-                                                  ),
-                                                ],
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    selectedcontainer = value!;
-                                                  });
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      // Data Rows: CURRENT and OVERDUE
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            // Current Column
-                                            Expanded(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(left: 20.w, top: 25.h),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "CURRENT",
-                                                      style: GoogleFonts.poppins(
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 15.sp,
-                                                        color: Colors.lightBlue,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 5.h),
-                                                    Text(
-                                                      totalText,
-                                                      style: GoogleFonts.poppins(
-                                                        fontSize: 18.sp,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-
-                                            // Divider
-                                            Container(
-                                              width: 1.w,
-                                              height: 100.h,
-                                              color: Colors.grey,
-                                            ),
-
-                                            // Overdue Column
-                                            Expanded(
-                                              child: Padding(
-                                                padding: EdgeInsets.only(left: 20.w, top: 25.h),
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "OVERDUE",
-                                                      style: GoogleFonts.poppins(
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 15.sp,
-                                                        color: Colors.orange,
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 5.h),
-                                                    Text(
-                                                      overduetotaltext,
-                                                      style:GoogleFonts.poppins(
-                                                        fontSize: 18.sp,
-                                                        fontWeight: FontWeight.w500,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                                ,
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 16.h),
-                          Padding(
-                            padding: EdgeInsets.only(left: 20.w, top: 20.h),
-                            child: Text(
-                              "FINANCIAL DASHBOARD",
-                              style:GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 20.sp,
-                                  color: Colors.black),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 800.w),
-                                child: DropdownButton<int>(
-                                  value: selectedYear,
-                                  items: availableYears
-                                      .map((year) => DropdownMenuItem(
-                                      value: year, child: Text('$year')))
-                                      .toList(),
-                                  onChanged: (year) {
-                                    if (year != null) {
-                                      setState(() {
-                                        selectedYear = year;
-                                        selectedMonth = null; // reset month
-                                      });
-                                      _loadData();
-                                    }
-                                  },
-                                ),
+                    return LayoutBuilder(builder: (context, constraints) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.h, left: 20.w),
+                              child: Text(
+                                "PAYMENT ENROLLMENT",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black),
                               ),
-                              SizedBox(width: 16.w),
-                              DropdownButton<int?>(
-                                value: selectedMonth,
-                                hint: Text("All Months"),
-                                items: [
-                                  DropdownMenuItem(
-                                      value: null, child: Text("All Months")),
-                                  ...months.map((m) => DropdownMenuItem(
-                                    value: m,
-                                    child: Text(DateFormat.MMMM()
-                                        .format(DateTime(0, m))),
-                                  ))
-                                ],
-                                onChanged: (month) {
-                                  setState(() {
-                                    selectedMonth = month;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 25.h),
-                          Padding(
-                            padding: EdgeInsets.only(left: 20.w, bottom: 20.h),
-                            child: Container(
-                              width: 1000.w,
-                              height: 380.h,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.black)),
-                              child: Stack(
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 15.h, left: 20.w),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  if (selectedMonth == null)
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 15.h),
-                                      child: SizedBox(
-                                        width: 745.w,
-                                        height: 300.h,
-                                        child: buildChart(monthlyFinance),
-                                      ),
-                                    )
-                                  else
-                                    Container(
-                                      padding: const EdgeInsets.all(24),
-                                      child: Text(
-                                        "Chart disabled in month view. Switch to 'All Months' to view full year.",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 14.sp, color: Colors.grey),
-                                      ),
+                                  Container(
+                                    width: 550.w,
+                                    height: 200.h,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(
+                                          color: Colors.grey, width: 0.5),
                                     ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 315.sp),
-                                    child: Row(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 250.w),
-                                          child: Container(
-                                            width: 10.w,
-                                            height: 10.w,
-                                            color: Colors.blue,
+                                        // Top Header with "Total Receivables" and Dropdown
+                                        Container(
+                                          width: 550.w,
+                                          height: 60.h,
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(8.r),
+                                              topRight: Radius.circular(8.r),
+                                            ),
+                                            color: Color.fromARGB(
+                                                255, 223, 163, 163),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10.w),
+                                                child: InkWell(
+                                                  onTap: tooglecontainer1,
+                                                  child: Text(
+                                                    "Total Receivables",
+                                                    style: GoogleFonts.poppins(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 20.sp,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    right: 10.w),
+                                                child: DropdownButton<String>(
+                                                  dropdownColor: Colors.white,
+                                                  hint: Text(
+                                                    "ADD PAYMENT",
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        fontSize: 15.sp,
+                                                        color: Colors.white),
+                                                  ),
+                                                  icon: Icon(
+                                                    Icons.add_circle_rounded,
+                                                    size: 20.sp,
+                                                    color: Color(0xFFC62828),
+                                                  ),
+                                                  value: selectedcontainer,
+                                                  items: const [
+                                                    DropdownMenuItem(
+                                                      value: "Container 1",
+                                                      child:
+                                                          Text("New Payment"),
+                                                    ),
+                                                    DropdownMenuItem(
+                                                      value: "Container 2",
+                                                      child: Text("OVERDUE"),
+                                                    ),
+                                                  ],
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedcontainer =
+                                                          value!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 8.w),
-                                          child: Text(
-                                            "Income Data",
-                                            style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 12.sp,
-                                                color: Colors.black),
+
+                                        // Data Rows: CURRENT and OVERDUE
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              // Current Column
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20.w, top: 25.h),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "CURRENT",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 15.sp,
+                                                          color:
+                                                              Colors.lightBlue,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 5.h),
+                                                      Text(
+                                                        totalText,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 18.sp,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // Divider
+                                              Container(
+                                                width: 1.w,
+                                                height: 100.h,
+                                                color: Colors.grey,
+                                              ),
+
+                                              // Overdue Column
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 20.w, top: 25.h),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        "OVERDUE",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 15.sp,
+                                                          color: Colors.orange,
+                                                        ),
+                                                      ),
+                                                      SizedBox(height: 5.h),
+                                                      Text(
+                                                        overduetotaltext,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 18.sp,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 40.w),
-                                          child: Container(
-                                            width: 10.w,
-                                            height: 10.w,
-                                            color: Colors.orange,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 8.w),
-                                          child: Text(
-                                            "Expense Data",
-                                            style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.w300,
-                                                fontSize: 12.sp,
-                                                color: Colors.black),
-                                          ),
-                                        )
                                       ],
                                     ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 750.w),
-                                    child: SummaryCard(
-                                      totalIncome: filteredIncome,
-                                      totalExpenses: filteredExpenses,
-                                      totalProfit: filteredProfit,
-                                      label: selectedMonth == null
-                                          ? 'Overall Summary'
-                                          : DateFormat.MMMM().format(
-                                          DateTime(0, selectedMonth!)) +
-                                          ' Summary',
-                                    ),
-                                  )
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );});
+                            SizedBox(height: 16.h),
+                            Padding(
+                              padding: EdgeInsets.only(left: 20.w, top: 20.h),
+                              child: Text(
+                                "FINANCIAL DASHBOARD",
+                                style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 20.sp,
+                                    color: Colors.black),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(left: 800.w),
+                                  child: DropdownButton<int>(
+                                    value: selectedYear,
+                                    items: availableYears
+                                        .map((year) => DropdownMenuItem(
+                                            value: year, child: Text('$year')))
+                                        .toList(),
+                                    onChanged: (year) {
+                                      if (year != null) {
+                                        setState(() {
+                                          selectedYear = year;
+                                          selectedMonth = null; // reset month
+                                        });
+                                        _loadData();
+                                      }
+                                    },
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                DropdownButton<int?>(
+                                  value: selectedMonth,
+                                  hint: Text("All Months"),
+                                  items: [
+                                    DropdownMenuItem(
+                                        value: null, child: Text("All Months")),
+                                    ...months.map((m) => DropdownMenuItem(
+                                          value: m,
+                                          child: Text(DateFormat.MMMM()
+                                              .format(DateTime(0, m))),
+                                        ))
+                                  ],
+                                  onChanged: (month) {
+                                    setState(() {
+                                      selectedMonth = month;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 25.h),
+                            Padding(
+                              padding:
+                                  EdgeInsets.only(left: 20.w, bottom: 20.h),
+                              child: Container(
+                                width: 1000.w,
+                                height: 380.h,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black)),
+                                child: Stack(
+                                  children: [
+                                    if (selectedMonth == null)
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 15.h),
+                                        child: SizedBox(
+                                          width: 745.w,
+                                          height: 300.h,
+                                          child: buildChart(monthlyFinance),
+                                        ),
+                                      )
+                                    else
+                                      Container(
+                                        padding: const EdgeInsets.all(24),
+                                        child: Text(
+                                          "Chart disabled in month view. Switch to 'All Months' to view full year.",
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 14.sp,
+                                              color: Colors.grey),
+                                        ),
+                                      ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 315.sp),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 250.w),
+                                            child: Container(
+                                              width: 10.w,
+                                              height: 10.w,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 8.w),
+                                            child: Text(
+                                              "Income Data",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 12.sp,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding:
+                                                EdgeInsets.only(left: 40.w),
+                                            child: Container(
+                                              width: 10.w,
+                                              height: 10.w,
+                                              color: Colors.orange,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 8.w),
+                                            child: Text(
+                                              "Expense Data",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w300,
+                                                  fontSize: 12.sp,
+                                                  color: Colors.black),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 750.w),
+                                      child: SummaryCard(
+                                        totalIncome: filteredIncome,
+                                        totalExpenses: filteredExpenses,
+                                        totalProfit: filteredProfit,
+                                        label: selectedMonth == null
+                                            ? 'Overall Summary'
+                                            : DateFormat.MMMM().format(DateTime(
+                                                    0, selectedMonth!)) +
+                                                ' Summary',
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
                   });
             }),
         if (selectedcontainer == "Container 1")
@@ -1667,7 +1894,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
                 final name =
                     DateFormat.MMM().format(DateTime(0, value.toInt()));
                 return Padding(
-                  padding:  EdgeInsets.only(top: 4.h),
+                  padding: EdgeInsets.only(top: 4.h),
                   child: Text(name, style: TextStyle(fontSize: 10.sp)),
                 );
               },
@@ -1679,7 +1906,7 @@ class _PaymentenrollState extends State<Paymentenroll> {
               reservedSize: 40,
               getTitlesWidget: (value, _) {
                 return Padding(
-                  padding:  EdgeInsets.only(right: 5.w),
+                  padding: EdgeInsets.only(right: 5.w),
                   child: Text(
                     value.toInt().toString(),
                     style: TextStyle(fontSize: 10.sp),

@@ -1,3 +1,4 @@
+import 'package:almaskan/ui/sales_edit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +33,53 @@ class _SalesState extends State<Sales> {
         _enddate = picked.end;
       });
       _fetchsales();
+    }
+  }
+
+  Future<void> _deleteSale(String docId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Delete Receipt",  style: GoogleFonts.poppins(color: Colors.black),),
+        content: Text(
+          "Are you sure you want to delete this receipt voucher?\nThis action cannot be undone.",
+            style: GoogleFonts.poppins(color: Colors.black),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(
+              "Cancel",
+              style: GoogleFonts.poppins(color: Colors.black),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC62828)),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(
+              "Delete",
+              style: GoogleFonts.poppins(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await FirebaseFirestore.instance.collection('Sales').doc(docId).delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Receipt voucher deleted",
+            style: GoogleFonts.poppins(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xFFC62828),
+        ),
+      );
+
+      _fetchsales(); // refresh list
     }
   }
 
@@ -115,27 +163,51 @@ class _SalesState extends State<Sales> {
                 pw.Text("REYAH AL MASKAN TECHNICAL SERVICES L.L.C",
                     style: pw.TextStyle(
                         fontSize: 10.sp, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 3),
-                pw.Text("Dubai", style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                pw.SizedBox(height: 3.h),
+                pw.Text("Dubai", style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("United Arab Emirates",
-                    style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                    style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("TRN 100342182100003",
-                    style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
-                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10)),
-                pw.SizedBox(height: 3),
+                    style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
+                pw.Text("0508089505", style: pw.TextStyle(fontSize: 10.sp)),
+                pw.SizedBox(height: 3.h),
                 pw.Text("reyahalmaskan@gmail.com",
-                    style: pw.TextStyle(fontSize: 10)),
+                    style: pw.TextStyle(fontSize: 10.sp)),
               ],
             ));
       }
     }
-    final formattedtotalAmount = NumberFormat("#,##0.00", "en_US")
-        .format(double.tryParse(salesData['Total Amount'].toString()) ?? 0);
-    final formattedinvoiceAmount = NumberFormat("#,##0.00", "en_US")
-        .format(double.tryParse(salesData['Invoice Amount'].toString()) ?? 0);
+// 🔍 Debug first (optional but helpful)
+print("PDF DATA: $salesData");
+
+// ✅ Safe parsing
+double totalAmount = double.tryParse(
+      salesData['Total Amount']
+              ?.toString()
+              .replaceAll(',', '')
+              .trim() ??
+          '0',
+    ) ??
+    0.0;
+
+double invoiceAmount = double.tryParse(
+      salesData['Invoice Amount']
+              ?.toString()
+              .replaceAll(',', '')
+              .trim() ??
+          '0',
+    ) ??
+    0.0;
+
+// ✅ Format
+final formattedtotalAmount =
+    NumberFormat("#,##0.00", "en_US").format(totalAmount);
+
+final formattedinvoiceAmount =
+    NumberFormat("#,##0.00", "en_US").format(invoiceAmount);
 
     pdf.addPage(
       pw.Page(
@@ -149,29 +221,31 @@ class _SalesState extends State<Sales> {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Padding(
-                      padding: pw.EdgeInsets.only(top: 20, left: 15),
+                      padding: pw.EdgeInsets.only(top: 20.h, left: 15.w),
                       child: pw.Container(
-                          width: 180, height: 180, child: pw.Image(image1))),
-                  pw.SizedBox(width: 10),
+                          width: 180.w,
+                          height: 180.h,
+                          child: pw.Image(image1))),
+                  pw.SizedBox(width: 10.w),
                   buildCompanyDetails()
                 ],
               ),
-              pw.SizedBox(height: 12),
+              pw.SizedBox(height: 12.h),
               pw.Divider(
                   endIndent: 25,
                   indent: 25,
                   thickness: 1.5,
                   color: PdfColors.grey300),
-              pw.SizedBox(height: 25),
+              pw.SizedBox(height: 25.h),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 230),
+                  padding: pw.EdgeInsets.only(left: 230.w),
                   child: pw.Text("PAYMENT RECEIPT",
                       style: pw.TextStyle(
-                          fontSize: 13,
+                          fontSize: 13.sp,
                           fontWeight: pw.FontWeight.normal,
                           color: PdfColors.black,
                           decoration: pw.TextDecoration.underline))),
-              pw.SizedBox(height: 35),
+              pw.SizedBox(height: 35.sp),
               pw.Row(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
@@ -180,14 +254,14 @@ class _SalesState extends State<Sales> {
                         children: [
                           pw.Row(children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 40),
+                                padding: pw.EdgeInsets.only(left: 40.w),
                                 child: pw.Text("Payment Date",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.grey,
-                                        fontSize: 12))),
+                                        fontSize: 12.sp))),
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 65),
+                                padding: pw.EdgeInsets.only(left: 65.w),
                                 child: pw.Column(
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
@@ -196,50 +270,50 @@ class _SalesState extends State<Sales> {
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
-                                              fontSize: 10)),
+                                              fontSize: 10.sp)),
                                       pw.Container(
-                                          width: 200,
-                                          height: 0.5,
+                                          width: 200.w,
+                                          height: 0.5.h,
                                           color: PdfColors.grey300)
                                     ]))
                           ]),
-                          pw.SizedBox(height: 20),
+                          pw.SizedBox(height: 20.h),
                           pw.Row(children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 40),
-                                child: pw.Text("Reference Number",
+                                padding: pw.EdgeInsets.only(left: 40.w),
+                                child: pw.Text("Payment Method",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.grey,
-                                        fontSize: 12))),
+                                        fontSize: 12.sp))),
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 40),
+                                padding: pw.EdgeInsets.only(left: 40.w),
                                 child: pw.Column(
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
                                     children: [
-                                      pw.Text("",
+                                      pw.Text(salesData["payment method"],
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
-                                              fontSize: 10)),
+                                              fontSize: 10.sp)),
                                       pw.Container(
-                                          width: 200,
-                                          height: 0.5,
+                                          width: 200.w,
+                                          height: 0.5.h,
                                           color: PdfColors.grey300)
                                     ]))
                           ]),
-                          pw.SizedBox(height: 20),
+                          pw.SizedBox(height: 20.sp),
                           pw.Row(children: [
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 40),
+                                padding: pw.EdgeInsets.only(left: 40.w),
                                 child: pw.Text("Payment Mode",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.grey,
-                                        fontSize: 12))),
+                                        fontSize: 12.sp))),
                             pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 60),
+                                padding: pw.EdgeInsets.only(left: 60.w),
                                 child: pw.Column(
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
@@ -248,15 +322,15 @@ class _SalesState extends State<Sales> {
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
-                                              fontSize: 10)),
+                                              fontSize: 10.sp)),
                                       pw.Container(
-                                          width: 200,
-                                          height: 0.5,
+                                          width: 200.w,
+                                          height: 0.5.h,
                                           color: PdfColors.grey300)
                                     ]))
                           ])
                         ]),
-                    pw.SizedBox(width: 20),
+                    pw.SizedBox(width: 20.w),
                     pw.Container(
                         width: 120.w,
                         height: 70.w,
@@ -265,152 +339,154 @@ class _SalesState extends State<Sales> {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Padding(
-                                padding: pw.EdgeInsets.only(left: 20, top: 20),
+                                padding:
+                                    pw.EdgeInsets.only(left: 20.w, top: 20.h),
                                 child: pw.Text("Amount Received",
                                     style: pw.TextStyle(
                                         fontWeight: pw.FontWeight.normal,
-                                        fontSize: 10,
+                                        fontSize: 10.sp,
                                         color: PdfColors.white)),
                               ),
                               pw.Padding(
-                                  padding: pw.EdgeInsets.only(left: 20, top: 4),
-                                  child: pw.Text(
-                                      "AED${formattedtotalAmount}",
+                                  padding:
+                                      pw.EdgeInsets.only(left: 20.w, top: 4.h),
+                                  child: pw.Text("AED${formattedtotalAmount}",
                                       style: pw.TextStyle(
                                           fontWeight: pw.FontWeight.normal,
-                                          fontSize: 14,
+                                          fontSize: 14.sp,
                                           color: PdfColors.white)))
                             ]))
                   ]),
-              pw.SizedBox(height: 60),
+              pw.SizedBox(height: 60.h),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
+                  padding: pw.EdgeInsets.only(left: 40.w),
                   child: pw.Text("Received From",
                       style: pw.TextStyle(
-                          fontSize: 10,
+                          fontSize: 10.sp,
                           fontWeight: pw.FontWeight.bold,
                           color: PdfColors.grey))),
-              pw.SizedBox(height: 10),
+              pw.SizedBox(height: 10.h),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
+                  padding: pw.EdgeInsets.only(left: 40.w),
                   child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(salesData['Customer Name'],
                             style: pw.TextStyle(
-                                fontWeight: pw.FontWeight.bold, fontSize: 10)),
-                        pw.SizedBox(height: 2),
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 10.sp)),
+                        pw.SizedBox(height: 2.h),
                         pw.Text(salesData['Project'],
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.normal,
-                                fontSize: 10)),
-                        pw.SizedBox(height: 2),
+                                fontSize: 10.sp)),
+                        pw.SizedBox(height: 2.h),
                         pw.Text(salesData['Emirate'],
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.normal,
-                                fontSize: 10)),
-                        pw.SizedBox(height: 2),
+                                fontSize: 10.sp)),
+                        pw.SizedBox(height: 2.h),
                         pw.Text("United Arab Emirates",
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.normal,
-                                fontSize: 10)),
-                        pw.SizedBox(height: 2)
+                                fontSize: 10.sp)),
+                        pw.SizedBox(height: 2.h)
                       ])),
-              pw.SizedBox(height: 60),
+              pw.SizedBox(height: 60.h),
               pw.Divider(color: PdfColors.grey300),
-              pw.SizedBox(height: 40),
+              pw.SizedBox(height: 40.h),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
+                  padding: pw.EdgeInsets.only(left: 40.w),
                   child: pw.Text("Payment for",
                       style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
-                          fontSize: 12,
+                          fontSize: 12.sp,
                           color: PdfColors.black))),
-              pw.SizedBox(height: 15),
+              pw.SizedBox(height: 15.h),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40),
+                  padding: pw.EdgeInsets.only(left: 40.w),
                   child: pw.Container(
-                      height: 20,
+                      height: 20.h,
                       width: double.infinity,
                       color: PdfColors.grey100,
                       child: pw.Row(children: [
                         pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 6),
+                            padding: pw.EdgeInsets.only(left: 6.w),
                             child: pw.Container(
-                                width: 90,
+                                width: 90.w,
                                 child: pw.Text("Invoice Number",
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 10.sp,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)))),
-                        pw.SizedBox(width: 25),
+                        pw.SizedBox(width: 25.w),
                         pw.Container(
-                            width: 90,
+                            width: 90.w,
                             child: pw.Text("Invoice Date",
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black))),
-                        pw.SizedBox(width: 50),
+                        pw.SizedBox(width: 50.w),
                         pw.Container(
-                            width: 110,
+                            width: 110.w,
                             child: pw.Text("Invoice Amount",
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black))),
-                        pw.SizedBox(width: 25),
+                        pw.SizedBox(width: 25.w),
                         pw.Container(
-                            width: 110,
+                            width: 110.w,
                             child: pw.Text("Payment Amount",
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black)))
                       ]))),
               pw.Padding(
-                  padding: pw.EdgeInsets.only(left: 40, top: 10),
+                  padding: pw.EdgeInsets.only(left: 40.w, top: 10.h),
                   child: pw.Container(
-                      height: 20,
+                      height: 20.h,
                       width: double.infinity,
                       color: PdfColors.white,
                       child: pw.Row(children: [
                         pw.Padding(
-                            padding: pw.EdgeInsets.only(left: 6),
+                            padding: pw.EdgeInsets.only(left: 6.w),
                             child: pw.Container(
-                                width: 90,
+                                width: 90.w,
                                 child: pw.Text(salesData['Invoice Number'],
                                     style: pw.TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 10.sp,
                                         fontWeight: pw.FontWeight.normal,
                                         color: PdfColors.black)))),
-                        pw.SizedBox(width: 25),
+                        pw.SizedBox(width: 25.w),
                         pw.Container(
-                            width: 90,
+                            width: 90.w,
                             child: pw.Text(salesData['Date'],
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black))),
-                        pw.SizedBox(width: 50),
+                        pw.SizedBox(width: 50.w),
                         pw.Container(
-                            width: 110,
+                            width: 110.w,
                             child: pw.Text(formattedinvoiceAmount,
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black))),
-                        pw.SizedBox(width: 25),
+                        pw.SizedBox(width: 25.w),
                         pw.Container(
-                            width: 110,
+                            width: 110.w,
                             child: pw.Text(formattedtotalAmount,
                                 style: pw.TextStyle(
-                                    fontSize: 10,
+                                    fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
                                     color: PdfColors.black)))
                       ]))),
               pw.Divider(indent: 40, color: PdfColors.grey300),
-              pw.SizedBox(height: 60),
+              pw.SizedBox(height: 60.h),
               pw.Divider(color: PdfColors.grey300)
             ],
           ),
@@ -425,7 +501,7 @@ class _SalesState extends State<Sales> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:const Color(0xFFC62828),
+        backgroundColor: const Color(0xFFC62828),
         leading: IconButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -450,7 +526,7 @@ class _SalesState extends State<Sales> {
           Container(
             width: double.infinity,
             height: 80.h,
-            color:  Color.fromARGB(255, 223, 163, 163),
+            color: const Color.fromARGB(255, 223, 163, 163),
             child: Row(
               children: [
                 Padding(
@@ -475,13 +551,14 @@ class _SalesState extends State<Sales> {
                           height: 40.h,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(color: Colors.white)), 
+                              border: Border.all(color: Colors.white)),
                           child: Center(
                             child: Text(
                               _startdate != null
                                   ? _formatter.format(_startdate!)
                                   : 'Select',
-                              style: TextStyle(fontSize: 12.sp,color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 12.sp, color: Colors.white),
                             ),
                           ),
                         ),
@@ -519,13 +596,14 @@ class _SalesState extends State<Sales> {
                           height: 40.h,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.r),
-                              border: Border.all(color: Colors.white)), 
+                              border: Border.all(color: Colors.white)),
                           child: Center(
                             child: Text(
                               _enddate != null
                                   ? _formatter.format(_enddate!)
                                   : 'Select',
-                              style: GoogleFonts.poppins(fontSize: 12.sp,color: Colors.white),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 12.sp, color: Colors.white),
                             ),
                           ),
                         ),
@@ -593,12 +671,13 @@ class _SalesState extends State<Sales> {
           Container(
             width: double.infinity,
             height: 40.h,
-            color:  const Color(0xFFC62828),
+            color: const Color(0xFFC62828),
             child: Row(
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 15.w),
-                  child: SizedBox(width: 125.w,
+                  child: SizedBox(
+                    width: 125.w,
                     child: Text(
                       "Date",
                       style: GoogleFonts.poppins(
@@ -610,7 +689,8 @@ class _SalesState extends State<Sales> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 23.w),
-                  child: SizedBox(width: 360.w,
+                  child: SizedBox(
+                    width: 360.w,
                     child: Text(
                       "Customer Name",
                       style: GoogleFonts.poppins(
@@ -622,7 +702,8 @@ class _SalesState extends State<Sales> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 25.w),
-                  child: SizedBox(width: 100.w,
+                  child: SizedBox(
+                    width: 100.w,
                     child: Text(
                       "Invoice#",
                       style: GoogleFonts.poppins(
@@ -634,7 +715,8 @@ class _SalesState extends State<Sales> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: 60.w),
-                  child: SizedBox(width: 130.w,
+                  child: SizedBox(
+                    width: 130.w,
                     child: Text(
                       "INV Amount",
                       style: GoogleFonts.poppins(
@@ -644,10 +726,10 @@ class _SalesState extends State<Sales> {
                     ),
                   ),
                 ),
-
                 Padding(
                   padding: EdgeInsets.only(left: 65.w),
-                  child: SizedBox(width: 150.w,
+                  child: SizedBox(
+                    width: 150.w,
                     child: Text(
                       "Total Amount",
                       style: GoogleFonts.poppins(
@@ -668,14 +750,16 @@ class _SalesState extends State<Sales> {
                   return Container(
                     width: double.infinity,
                     height: 40.h,
-                    color: index % 2 == 0 ?  Color.fromARGB(255, 223, 163, 163) : Colors.white,
+                    color: index % 2 == 0
+                        ? const Color.fromARGB(255, 223, 163, 163)
+                        : Colors.white,
                     child: Center(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 20.w),
-                            child:  SizedBox(
+                            child: SizedBox(
                               width: 125.w,
                               child: Text(
                                 sales['Date'] ?? '',
@@ -688,7 +772,7 @@ class _SalesState extends State<Sales> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 30.w),
-                            child:  SizedBox(
+                            child: SizedBox(
                               width: 360.w,
                               child: Text(
                                 sales['Customer Name'] ?? '',
@@ -701,7 +785,7 @@ class _SalesState extends State<Sales> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 25.w),
-                            child:  SizedBox(
+                            child: SizedBox(
                               width: 100.w,
                               child: Text(
                                 sales['Invoice Number'] ?? '',
@@ -714,7 +798,7 @@ class _SalesState extends State<Sales> {
                           ),
                           Padding(
                             padding: EdgeInsets.only(left: 60.w),
-                            child:  SizedBox(
+                            child: SizedBox(
                               width: 130.w,
                               child: Text(
                                 sales['Invoice Amount'] ?? '',
@@ -728,7 +812,6 @@ class _SalesState extends State<Sales> {
                           Padding(
                             padding: EdgeInsets.only(left: 65.w),
                             child: SizedBox(
-
                               width: 150.w,
                               child: Text(
                                 sales['Total Amount'] ?? '',
@@ -748,23 +831,54 @@ class _SalesState extends State<Sales> {
                                   color: Colors.white,
                                 ),
                                 onSelected: (value) async {
+                                  final docId = sales.id;
+
+                                  if (value == 'delete') {
+                                    await _deleteSale(docId);
+                                  }
+
+                                  if (value == 'edit') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => EditSalesPage(
+                                          docId: docId,
+                                          salesData: sales.data()
+                                              as Map<String, dynamic>,
+                                        ),
+                                      ),
+                                    ).then((_) =>
+                                        _fetchsales()); // refresh after edit
+                                  }
                                   if (value == 'download') {
                                     final selectedCompany =
                                         await showDialog<String>(
                                       context: context,
                                       builder: (context) {
                                         return AlertDialog(
-                                          title: Text("Select Company",style: GoogleFonts.poppins(color: Colors.white),),
+                                          title: Text(
+                                            "Select Company",
+                                            style: GoogleFonts.poppins(
+                                                color: Colors.black),
+                                          ),
                                           content: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               ListTile(
-                                                title: Text("Al Maskan",style: GoogleFonts.poppins(color: Colors.white),),
+                                                title: Text(
+                                                  "Al Maskan",
+                                                  style: GoogleFonts.poppins(
+                                                      color: Colors.black),
+                                                ),
                                                 onTap: () => Navigator.pop(
                                                     context, 'al_maskan'),
                                               ),
                                               ListTile(
-                                                title: Text("Reyah Almaskan",style: GoogleFonts.poppins(color: Colors.white),),
+                                                title: Text(
+                                                  "Reyah Almaskan",
+                                                  style: GoogleFonts.poppins(
+                                                      color: Colors.black),
+                                                ),
                                                 onTap: () => Navigator.pop(
                                                     context, 'reyah_almaskan'),
                                               ),
@@ -783,10 +897,18 @@ class _SalesState extends State<Sales> {
                                   }
                                 },
                                 offset: const Offset(0, 60),
-                                itemBuilder: (context) => [
+                                itemBuilder: (context) => const [
                                       PopupMenuItem(
-                                        child: Text("Download Reciept Voucher"),
                                         value: 'download',
+                                        child: Text("Download Reciept Voucher"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'edit',
+                                        child: Text("Edit Reciept Voucher"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text("Delete Reciept Voucher"),
                                       )
                                     ]),
                           )

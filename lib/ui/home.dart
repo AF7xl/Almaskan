@@ -4,6 +4,7 @@ import 'package:almaskan/ui/Sales.dart';
 import 'package:almaskan/ui/VatAdmin.dart';
 import 'package:almaskan/ui/VatPurchase.dart';
 import 'package:almaskan/ui/payslip/payslip.dart';
+import 'package:almaskan/ui/statement/statement_new.dart';
 import 'package:almaskan/ui/vatadminReyah.dart';
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/cupertino.dart';
@@ -166,6 +167,15 @@ class _homeState extends State<home> {
                         MaterialPageRoute(builder: (context) =>const Payslip()),
                       );
                     },
+                  ),
+                   SideMenuItem(
+                    title: 'Statement',
+                    onTap: (index, controller) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>const StatementNew()),
+                      );
+                    },
                   )
                 ],
               ),
@@ -184,6 +194,8 @@ class _homeState extends State<home> {
                 Vatadmin(),
                 Vatpurchase(),
                 Payslip(),
+                StatementNew()
+
               ],
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:almaskan/ui/quotation.dart';
+import 'package:almaskan/ui/statement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -607,6 +608,30 @@ Future<String> getLatestCompanyCounter2(String docName) async {
                                                                           index,
                                                                     )));
                                                   }
+                                                    if (value == 'statement') {
+                                                    Navigator.of(context)
+                                                        .push(MaterialPageRoute(
+                                                            builder:
+                                                                (_) =>
+                                                                    Statement(
+                                                                      id: snapshot
+                                                                          .data!
+                                                                          .docs[
+                                                                              index]
+                                                                          .id,
+                                                                      name: snapshot
+                                                                          .data!
+                                                                          .docs[index]['name'],
+                                                                      address: snapshot
+                                                                          .data!
+                                                                          .docs[index]['address'],
+                                                                      trn: snapshot
+                                                                          .data!
+                                                                          .docs[index]['TRN NO'],
+                                                                      index:
+                                                                          index,
+                                                                    )));
+                                                  }
                                                 },
                                                 itemBuilder: (context) =>
                                                     const [
@@ -624,6 +649,11 @@ Future<String> getLatestCompanyCounter2(String docName) async {
                                                         value: 'taxinvoice',
                                                         child: Text(
                                                             "Create Tax Invoice"),
+                                                      ),
+                                                      PopupMenuItem(
+                                                        value: 'statement',
+                                                        child: Text(
+                                                            "Create Statement"),
                                                       )
                                                     ]),
                                           ),

@@ -10,7 +10,6 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-
 class LeavePdf extends StatefulWidget {
   final String employeeName;
   final String dateofjoin;
@@ -23,7 +22,7 @@ class LeavePdf extends StatefulWidget {
   final double totalEarnings;
   final double totalDeductions;
   final double netPay;
-
+  final String selectedCompany;
 
   const LeavePdf(
       {super.key,
@@ -37,7 +36,8 @@ class LeavePdf extends StatefulWidget {
       required this.payperiod,
       required this.designation,
       required this.dateofexit,
-      required this.department});
+      required this.department,
+      required this.selectedCompany});
 
   @override
   State<LeavePdf> createState() => _LeavePdfState();
@@ -69,6 +69,56 @@ class _LeavePdfState extends State<LeavePdf> {
     final smallStyle =
         pw.TextStyle(fontSize: 9.sp, color: PdfColor.fromInt(0xFFC62828));
 
+    pw.Widget buildCompanyDetails() {
+      if (widget.selectedCompany == 'Al Maskan') {
+        return pw.Column(
+          children: [
+            pw.SizedBox(height: 10.h),
+            pw.Text('LEAVE SALARY',
+                style: pw.TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.black)),
+            pw.SizedBox(height: 6.h),
+            pw.Text('AL MASKAN',
+                style: pw.TextStyle(
+                  fontSize: 10.sp,
+                  color: PdfColors.black,
+                )),
+            pw.SizedBox(height: 6.h),
+            pw.Text('PLASTER & TILE CONTRACTING',
+                style: pw.TextStyle(
+                  fontSize: 10.sp,
+                  color: PdfColors.black,
+                )),
+          ],
+        );
+      } else {
+        return pw.Column(
+          children: [
+            pw.SizedBox(height: 10.h),
+            pw.Text('LEAVE SALARY',
+                style: pw.TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.black)),
+            pw.SizedBox(height: 6.h),
+            pw.Text('REYAH AL MASKAN',
+                style: pw.TextStyle(
+                  fontSize: 10.sp,
+                  color: PdfColors.black,
+                )),
+            pw.SizedBox(height: 6.h),
+            pw.Text('TECHNICAL SERVICES L.L.C',
+                style: pw.TextStyle(
+                  fontSize: 10.sp,
+                  color: PdfColors.black,
+                )),
+          ],
+        );
+      }
+    }
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -94,28 +144,7 @@ class _LeavePdfState extends State<LeavePdf> {
                     width: 20.w,
                   ),
                   pw.Expanded(
-                    child: pw.Column(
-                      children: [
-                        pw.SizedBox(height: 10.h),
-                        pw.Text('LEAVE SALARY',
-                            style: pw.TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: pw.FontWeight.bold,
-                                color: PdfColors.black)),
-                        pw.SizedBox(height: 6.h),
-                        pw.Text('AL MASKAN',
-                            style: pw.TextStyle(
-                              fontSize: 10.sp,
-                              color: PdfColors.black,
-                            )),
-                        pw.SizedBox(height: 6.h),
-                        pw.Text('PLASTER & TILE CONTRACTING',
-                            style: pw.TextStyle(
-                              fontSize: 10.sp,
-                              color: PdfColors.black,
-                            )),
-                      ],
-                    ),
+                    child: buildCompanyDetails()
                   ),
                   // logo
                 ],
@@ -130,7 +159,7 @@ class _LeavePdfState extends State<LeavePdf> {
 // --- START OF THE ALIGNED WIDGET ---
               pw.Table(
                 // Define column widths: Label | Colon | Value | Spacer | Label | Colon | Value
-                columnWidths:  {
+                columnWidths: {
                   0: pw.FlexColumnWidth(0.25.w), // Left Label
                   1: pw.FlexColumnWidth(0.02.w), // Colon
                   2: pw.FlexColumnWidth(0.23.w), // Left Value
@@ -150,7 +179,7 @@ class _LeavePdfState extends State<LeavePdf> {
                             "Date of joining",
                           )),
                       pw.Padding(
-                          padding:  pw.EdgeInsets.only(
+                          padding: pw.EdgeInsets.only(
                               left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
@@ -165,7 +194,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Employee name")),
                       pw.Padding(
-                          padding:  pw.EdgeInsets.only(
+                          padding: pw.EdgeInsets.only(
                               left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
@@ -182,7 +211,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Pay Period")),
                       pw.Padding(
-                          padding:  pw.EdgeInsets.only(
+                          padding: pw.EdgeInsets.only(
                               left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
@@ -214,7 +243,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Date of Exit")),
                       pw.Padding(
-                          padding:  pw.EdgeInsets.only(
+                          padding: pw.EdgeInsets.only(
                               left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
@@ -229,7 +258,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           padding: const pw.EdgeInsets.all(3),
                           child: pw.Text("Department")),
                       pw.Padding(
-                          padding:  pw.EdgeInsets.only(
+                          padding: pw.EdgeInsets.only(
                               left: 3.w, top: 3.h, bottom: 3.h),
                           child: pw.Text(":")),
                       pw.Padding(
@@ -296,7 +325,8 @@ class _LeavePdfState extends State<LeavePdf> {
                               children: [
                                 pw.Expanded(
                                     child: pw.Text(e['earnings'] ?? '',
-                                        style: smallStyle.copyWith(color: PdfColors.black))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black))),
                                 pw.Container(
                                     width: 120.w,
                                     alignment: pw.Alignment.centerRight,
@@ -304,7 +334,8 @@ class _LeavePdfState extends State<LeavePdf> {
                                         (e['amount'] != null)
                                             ? e['amount'].toString()
                                             : '-',
-                                        style: smallStyle.copyWith(color: PdfColors.black))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black))),
                               ],
                             ),
                           );
@@ -349,7 +380,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           pw.Container(
                               width: 120.w,
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text('Total Earnings', 
+                              child: pw.Text('Total Earnings',
                                   style: smallStyle.copyWith(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.black))),
@@ -357,8 +388,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           pw.Container(
                               width: 80.w,
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                  widget.totalEarnings.toString(),
+                              child: pw.Text(widget.totalEarnings.toString(),
                                   style: smallStyle.copyWith(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.black))),
@@ -417,7 +447,8 @@ class _LeavePdfState extends State<LeavePdf> {
                               children: [
                                 pw.Expanded(
                                     child: pw.Text(d['dedection'] ?? '',
-                                        style: smallStyle.copyWith(color: PdfColors.black))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black))),
                                 pw.Container(
                                     width: 120.w,
                                     alignment: pw.Alignment.centerRight,
@@ -425,7 +456,8 @@ class _LeavePdfState extends State<LeavePdf> {
                                         (d['amount2'] != null)
                                             ? d['amount2'].toString()
                                             : '-',
-                                        style: smallStyle.copyWith(color: PdfColors.black))),
+                                        style: smallStyle.copyWith(
+                                            color: PdfColors.black))),
                               ],
                             ),
                           );
@@ -471,8 +503,7 @@ class _LeavePdfState extends State<LeavePdf> {
                           pw.Container(
                               width: 80.w,
                               alignment: pw.Alignment.centerRight,
-                              child: pw.Text(
-                                  widget.totalDeductions.toString(),
+                              child: pw.Text(widget.totalDeductions.toString(),
                                   style: smallStyle.copyWith(
                                       fontWeight: pw.FontWeight.bold,
                                       color: PdfColors.black))),
@@ -490,7 +521,7 @@ class _LeavePdfState extends State<LeavePdf> {
                       style: pw.TextStyle(
                           fontSize: 12.sp,
                           fontWeight: pw.FontWeight.bold,
-                          color: const PdfColor.fromInt(0xFFC62828))), 
+                          color: const PdfColor.fromInt(0xFFC62828))),
                   pw.SizedBox(width: 20.w),
                   pw.Text(widget.netPay.toString(),
                       style: pw.TextStyle(
@@ -552,7 +583,7 @@ class _LeavePdfState extends State<LeavePdf> {
                         padding: const pw.EdgeInsets.all(6),
                         child: pw.Text(
                           'SALARY CARD WERE GIVEN TO ALMASKAN',
-                          style:  pw.TextStyle(fontSize: 10.sp),
+                          style: pw.TextStyle(fontSize: 10.sp),
                         ),
                       ),
                       pw.Padding(
@@ -623,57 +654,56 @@ class _LeavePdfState extends State<LeavePdf> {
               ),
 
               // Signature lines
-            
-                  pw.Padding(
-                    padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
-                    child: pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, 
-                      children: [
-                        pw.Text('Suhaib Poozhithara',
-                            style: smallStyle.copyWith(color: PdfColors.black)),
-                        pw.Text('MD_Mohammed Shafi',
-                            style: smallStyle.copyWith(color: PdfColors.black)),
-                        pw.Text('Co-Founder_Shahul Hameed',
-                            style: smallStyle.copyWith(color: PdfColors.black)),
-                      ],
-                    ),
+
+              pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Suhaib Poozhithara',
+                        style: smallStyle.copyWith(color: PdfColors.black)),
+                    pw.Text('MD_Mohammed Shafi',
+                        style: smallStyle.copyWith(color: PdfColors.black)),
+                    pw.Text('Co-Founder_Shahul Hameed',
+                        style: smallStyle.copyWith(color: PdfColors.black)),
+                  ],
+                ),
+              ),
+
+              pw.SizedBox(height: 50.h),
+
+              pw.Padding(
+                padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Container(
+                        width: 150.w, height: .8.h, color: PdfColors.black),
+                    pw.Container(
+                        width: 150.w, height: .8.h, color: PdfColors.black),
+                    pw.Container(
+                        width: 150.w, height: .8.h, color: PdfColors.black),
+                  ],
+                ),
+              ),
+
+              pw.SizedBox(height: 10.h),
+              pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Container(
+                      width: 150.w, height: .5.h, color: PdfColors.black),
+                  pw.Text(
+                    'Receivers Name & Sign',
+                    textAlign: pw.TextAlign.center,
+                    style: pw.TextStyle(
+                        fontSize: 10.sp, fontWeight: pw.FontWeight.bold),
                   ),
-
-                pw.SizedBox(height:50.h), 
-
-                pw.Padding(
-                    padding: pw.EdgeInsets.symmetric(horizontal: 10.w),
-                    child: pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Container(
-                          width: 150.w, height: .8.h, color: PdfColors.black),
-                        pw.Container(
-                          width: 150.w, height: .8.h, color: PdfColors.black),
-                        pw.Container(
-                          width: 150.w, height: .8.h, color: PdfColors.black),
-                      ],
-                    ),
-                  ),
-
-
-                  pw.SizedBox(height: 10.h),
-                  pw.Column(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Container(
-                          width: 150.w, height: .5.h, color: PdfColors.black),
-                         pw.Text(
-                          'Receivers Name & Sign',
-                          textAlign: pw.TextAlign.center,
-                          style: pw.TextStyle(
-                              fontSize: 10.sp, fontWeight: pw.FontWeight.bold),
-                        ),
-                        pw.Container(
-                          width: 150.w, height: .5.h, color: PdfColors.black),
-                      ],
-                    ), 
-            ], 
+                  pw.Container(
+                      width: 150.w, height: .5.h, color: PdfColors.black),
+                ],
+              ),
+            ],
           );
         },
       ),
@@ -732,7 +762,9 @@ class _LeavePdfState extends State<LeavePdf> {
               color: Colors.white,
             )),
         backgroundColor: const Color(0xFFC62828),
-        title:  Text('Leave Salary PDF Preview', style: GoogleFonts.poppins(
+        title: Text(
+          'Leave Salary PDF Preview',
+          style: GoogleFonts.poppins(
               fontSize: 20.sp,
               fontWeight: FontWeight.w400,
               color: Colors.white),

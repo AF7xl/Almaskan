@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:number_to_words/number_to_words.dart';
+
 
 class Taxinvoice1 extends StatefulWidget {
   final String id;
@@ -52,6 +52,8 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
   final TextEditingController subtotalController = TextEditingController();
   final TextEditingController advanceController = TextEditingController();
   String selectedCompany = 'Reyah Al Maskan';
+  String? selectedCompany2;
+  bool isSaving = false;
 
   double vat = 0.0;
   double advance = 0.0;
@@ -63,8 +65,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
 
   bool isclicked = false;
   final List<Map<String, dynamic>> options = [
-    {'label': 'YES', 'id': 1},
-    {'label': 'NO', 'id': 2},
+    {'label': 'Sign-1', 'id': 1},
+    {'label': 'Sign-2', 'id': 2},
+    {'label': 'NO Sign', 'id': 3},
   ];
 
   int? selectedoption;
@@ -80,7 +83,6 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
       });
     });
     fetchnbqSuggestions();
-    loadNewinvno();
   }
 
   // Add a helper function to handle async initialization
@@ -94,126 +96,86 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
       .collection('invoice');
 
 // 1. QTN Load function (for initState)
-  void loadNewinvno() async {
+Future<String> previewInvNo(String company) async {
+    String docName = company == "Al Maskan"
+        ? "inv_al_maskan"
+        : company == "Reyah Al Maskan"
+            ? "inv_reyah"
+            : "inv_other";
+
+    final docRef =
+        FirebaseFirestore.instance.collection('counters2').doc(docName);
+    final snap = await docRef.get();
+
+    final year = DateTime.now().year;
+    final shortYear = year % 100;
+
+    if (!snap.exists) return "$shortYear-01";
+
+    int last = snap.data()?['last'] ?? 0;
+
+    return "$shortYear-${(last + 1).toString().padLeft(2, '0')}";
+  }
+
+// 1. QTN Load function (for initState)
+  Future<void> loadNextInvNo() async {
+    if (selectedCompany2 == null || selectedCompany2!.isEmpty) {
+      setState(() {
+        invno.text = "Select Company First";
+      });
+      return;
+    }
+
+    final next = await previewInvNo(selectedCompany2!);
+    setState(() {
+      invno.text = next;
+    });
+  }
+
+  int extractSequence(String invNo) {
     try {
-      // Note: This calls the safe read-only fetch
-      final nextinvno = await _fetchNextinvnoForDisplay(_firestore);
-      if (mounted) {
-        setState(() {
-          invno.text = nextinvno;
-        });
-      }
-    } catch (e) {
-      print('Failed to pre-load invno No.: $e');
-      if (mounted) {
-        setState(() {
-          invno.text = 'Failed to load';
-        });
-      }
+      final parts = invNo.split("-");
+      if (parts.length != 2) return 0;
+      return int.parse(parts[1]);
+    } catch (_) {
+      return 0;
     }
   }
 
-// 2. QTN Reserve function (for save button)
-  Future<void> _reserveAndIncrementinvno(FirebaseFirestore firestore,
-      TextEditingController qtnnoController) async {
-    final DocumentReference invnoCounterRef =
-        firestore.collection('counters').doc('invoice_counter');
+  Future<String> safeCompanyInvCounter(
+      String company, String manualInvNo) async {
+    String docName = company == "Al Maskan"
+        ? "inv_al_maskan"
+        : company == "Reyah Al Maskan"
+            ? "inv_reyah"
+            : "inv_other";
 
-    final currentFullYear = DateTime.now().year;
-    final currentShortYear = currentFullYear % 100;
-    String reservedinvNumber =
-        ''; // Store the number calculated inside the transaction
+    final docRef =
+        FirebaseFirestore.instance.collection('counters2').doc(docName);
 
-    await firestore.runTransaction((Transaction transaction) async {
-      final counterSnapshot = await transaction.get(invnoCounterRef);
+    final year = DateTime.now().year;
+    final shortYear = year % 100;
 
-      int yearInDb = counterSnapshot.exists
-          ? counterSnapshot.get('currentYear') as int
-          : 0;
-      int lastSequence = counterSnapshot.exists
-          ? counterSnapshot.get('lastSequence') as int
-          : 0;
+    final snap = await docRef.get();
+    int last = snap.exists ? (snap.data()?['last'] ?? 0) : 0;
 
-      int newSequence;
-
-      if (yearInDb != currentFullYear) {
-        newSequence = 1;
-      } else {
-        newSequence = lastSequence + 1;
-      }
-
-      // 1. Format the reserved number
-      final sequenceString = newSequence.toString().padLeft(2, '0');
-      reservedinvNumber = '$currentShortYear-$sequenceString';
-
-      // 2. Safely commit the new sequence to the counter
-      if (yearInDb != currentFullYear) {
-        transaction.set(invnoCounterRef, {
-          'currentYear': currentFullYear,
-          'lastSequence': newSequence,
-          'lastUpdated': FieldValue.serverTimestamp(),
-        });
-      } else {
-        transaction.update(invnoCounterRef, {
-          'lastSequence': newSequence,
-          'lastUpdated': FieldValue.serverTimestamp(),
-        });
-      }
-    }); // End of Transaction
-
-    // Update the local controller with the reserved number ONLY if the transaction succeeded
-    qtnnoController.text = reservedinvNumber;
-  }
-
-  Future<String> _fetchNextinvnoForDisplay(FirebaseFirestore firestore) async {
-    final DocumentReference invnoCounterRef =
-        firestore.collection('counters').doc('invoice_counter');
-
-    final currentFullYear = DateTime.now().year;
-    final currentShortYear = currentFullYear % 100;
-
-    try {
-      // Read the counter WITHOUT a transaction (it's only for display/pre-fill)
-      final counterSnapshot = await invnoCounterRef.get();
-
-      int yearInDb = counterSnapshot.exists
-          ? counterSnapshot.get('currentYear') as int
-          : 0;
-      int lastSequence = counterSnapshot.exists
-          ? counterSnapshot.get('lastSequence') as int
-          : 0;
-
-      int nextSequence;
-
-      // Check for year change (the first number of the new year is 1)
-      if (yearInDb != currentFullYear) {
-        nextSequence = 1;
-      } else {
-        // Get the next number (e.g., if lastSequence was 5, the next is 6)
-        nextSequence = lastSequence + 1;
-      }
-
-      final sequenceString = nextSequence.toString().padLeft(2, '0');
-      return '$currentShortYear-$sequenceString';
-    } catch (e) {
-      print('Error fetching next QTN No.: $e');
-      return 'XX-00'; // Return a fallback value
+    int manualSeq = extractSequence(manualInvNo);
+    if (manualSeq <= 0) {
+      throw Exception("Invalid Invoice Number format");
     }
-  }
 
-// You will need to pass the FirebaseFirestore instance to this function
-  Future<bool> isinvnoUnique(
-      FirebaseFirestore firestore, String invNumber) async {
-    // Use a Collection Group Query to search all 'quotation' sub-collections
-    // regardless of the parent client document.
-    final querySnapshot = await firestore
-        .collectionGroup('invoice') // Searches all 'quotation' sub-collections
-        .where('inv no', isEqualTo: invNumber)
-        .limit(1)
-        .get();
+    // 🔥 ALWAYS trust manual input
+    int newLast = manualSeq;
 
-    // If the query returns any documents, the QTN number is NOT unique
-    return querySnapshot.docs.isEmpty;
+    await docRef.set({
+      'year': year,
+      'last': newLast,
+      'company': company,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+
+    // 🔹 Return NEXT invoice number
+    return "$shortYear-${(newLast + 1).toString().padLeft(2, '0')}";
   }
 
   void fetchnbqSuggestions() async {
@@ -226,24 +188,79 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
     }
   }
 
+  String convertToUaeWords(double amount) {
+    final int dirhams = amount.floor();
+    final int fils = ((amount - dirhams) * 100).round();
+
+    String numberToWords(int n) {
+      const ones = [
+        '',
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+        'ten',
+        'eleven',
+        'twelve',
+        'thirteen',
+        'fourteen',
+        'fifteen',
+        'sixteen',
+        'seventeen',
+        'eighteen',
+        'nineteen'
+      ];
+      const tens = [
+        '',
+        '',
+        'twenty',
+        'thirty',
+        'forty',
+        'fifty',
+        'sixty',
+        'seventy',
+        'eighty',
+        'ninety'
+      ];
+
+      if (n < 20) return ones[n];
+      if (n < 100) {
+        return tens[n ~/ 10] + (n % 10 != 0 ? ' ${ones[n % 10]}' : '');
+      }
+      if (n < 1000) {
+        return '${ones[n ~/ 100]} hundred'
+            '${n % 100 != 0 ? ' ${numberToWords(n % 100)}' : ''}';
+      }
+      if (n < 1000000) {
+        return '${numberToWords(n ~/ 1000)} thousand'
+            '${n % 1000 != 0 ? ' ${numberToWords(n % 1000)}' : ''}';
+      }
+      return '${numberToWords(n ~/ 1000000)} million'
+          '${n % 1000000 != 0 ? ' ${numberToWords(n % 1000000)}' : ''}';
+    }
+
+    String result = '${numberToWords(dirhams)} dirhams';
+
+    if (fils > 0) {
+      result += ' and ${numberToWords(fils)} fils';
+    }
+
+    return '${result[0].toUpperCase()}${result.substring(1)} only';
+  }
+
   void calculatetotal() {
     vat = advance * 0.05;
     total = advance + vat;
 
-    final totalInt = total.floor();
-    final totalFils = ((total - totalInt) * 100).round();
+    // ✅ UAE format only
+    totalamountinname.text = convertToUaeWords(total);
 
-    String amountInWords =
-        NumberToWord().convert('en-in', totalInt) + 'dirhams';
-
-    if (totalFils > 0) {
-      amountInWords += ' and ${NumberToWord().convert('en-in', totalFils)}fils';
-    }
-
-    amountInWords += ' only';
-
-    totalamountinname.text =
-        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+    setState(() {});
   }
 
   @override
@@ -299,7 +316,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
         toolbarHeight: 60.h,
         title: Text(
           "Create TaxInvoice",
-          style: GoogleFonts.poppins(fontSize: 20.sp, fontWeight: FontWeight.w400,color: Colors.white),
+          style: GoogleFonts.poppins(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.white),
         ),
       ),
       body: SingleChildScrollView(
@@ -316,8 +336,55 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       Padding(
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
+                          "Select Company",
+                          style: GoogleFonts.poppins(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black),
+                        ),
+                      ),
+                      Container(
+                        height: 60.h,
+                        width: 250.w,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.r),
+                            ),
+                          ),
+                          value: selectedCompany2,
+                          items:
+                              ["Al Maskan", "Reyah Al Maskan"].map((company) {
+                            return DropdownMenuItem(
+                              value: company,
+                              child: Text(company),
+                            );
+                          }).toList(),
+                          onChanged: (value) async {
+                            if (value == null) return;
+
+                            setState(() {
+                              selectedCompany2 =
+                                  value; // 🔥 This must run BEFORE calling loadNextQtnNo()
+                            });
+
+                            await loadNextInvNo(); // 🔥 QTN updates based on correct company
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 20.h),
+                        child: Text(
                           "INV No",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -336,7 +403,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -365,7 +432,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Date",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -390,12 +457,12 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
 
                             if (pickedDate != null) {
                               String formattedDate =
-                                  DateFormat('dMMMyyyy').format(pickedDate);
+                                  DateFormat('d/MM/yyyy').format(pickedDate);
                               date.text = formattedDate;
                             }
                           },
                           cursorHeight: 25.h,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           textAlignVertical: TextAlignVertical.center,
@@ -406,7 +473,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "Select Date",
-                            hintStyle:  GoogleFonts.poppins(
+                            hintStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
                               color: Colors.black,
@@ -426,7 +493,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "LPO/QTN #",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -445,7 +512,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -465,6 +532,10 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     ],
                   ),
                 ),
+              ],
+            ),
+            Row(
+              children: [
                 Padding(
                   padding: EdgeInsets.only(left: 20.w),
                   child: Column(
@@ -474,7 +545,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "Project:",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -493,7 +564,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           keyboardType: TextInputType.multiline,
                           cursorHeight: 25.h,
                           textAlignVertical: TextAlignVertical.center,
-                          style:  GoogleFonts.poppins(color: Colors.black),
+                          style: GoogleFonts.poppins(color: Colors.black),
                           textAlign: TextAlign.start,
                           cursorColor: Colors.black45,
                           decoration: InputDecoration(
@@ -503,7 +574,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             enabledBorder: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
                             hintText: "",
-                            hintStyle:  GoogleFonts.poppins(
+                            hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16.sp,
                                 color: Colors.black),
@@ -512,11 +583,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       )
                     ],
                   ),
-                )
-              ],
-            ),
-            Row(
-              children: [
+                ),
                 Padding(
                   padding: EdgeInsets.only(left: 20.w),
                   child: Column(
@@ -526,7 +593,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.only(top: 20.h),
                         child: Text(
                           "NOTE Before Quote",
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black),
@@ -586,7 +653,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle:  GoogleFonts.poppins(
+                              hintStyle: GoogleFonts.poppins(
                                 fontWeight: FontWeight.w300,
                                 fontSize: 16.sp,
                                 color: Colors.black,
@@ -669,7 +736,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             keyboardType: TextInputType.multiline,
                             cursorHeight: 25.h,
                             textAlignVertical: TextAlignVertical.center,
-                            style:  GoogleFonts.poppins(color: Colors.black),
+                            style: GoogleFonts.poppins(color: Colors.black),
                             textAlign: TextAlign.start,
                             cursorColor: Colors.black45,
                             decoration: InputDecoration(
@@ -679,7 +746,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide.none),
                               hintText: "",
-                              hintStyle:  GoogleFonts.poppins(
+                              hintStyle: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w300,
                                   fontSize: 16.sp,
                                   color: Colors.black),
@@ -717,7 +784,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Description',
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 16.sp),
@@ -727,7 +794,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         padding: EdgeInsets.all(8.0),
                         child: Text(
                           'Amount (AED)',
-                          style:  GoogleFonts.poppins(
+                          style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                               fontSize: 16.sp),
@@ -739,9 +806,9 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                   TableRow(children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, left: 20.w),
-                      child:  Text(
+                      child: Text(
                         'Subtotal Taxable Amount',
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                             fontSize: 16.sp),
@@ -760,7 +827,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -779,16 +846,20 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                   border: OutlineInputBorder(),
                                 ),
                                 onChanged: (value) {
-                                  // Optional: detect custom percentages like "40%"
-                                  if (value.contains('%')) {
-                                    final numeric = double.tryParse(value
-                                        .replaceAll(RegExp(r'[^0-9]'), ''));
-                                    if (numeric != null) {
-                                      setState(() {
-                                        selectedPercentage = numeric;
-                                      });
-                                      updateAdvanceAmount(); // 👈 call your existing amount update function
-                                    }
+                                  // If user types, clear selectedpaymentId (so typed value is authoritative)
+                                  setState(() {
+                                    selectedpaymentId = null;
+                                  });
+
+                                  // If they typed a percentage like "40%" or "40", parse it
+                                  final numeric = double.tryParse(
+                                      value.replaceAll(RegExp(r'[^0-9.]'), ''));
+                                  if (numeric != null) {
+                                    selectedPercentage = numeric;
+                                    updateAdvanceAmount(); // your existing function that updates advance value
+                                  } else {
+                                    selectedPercentage = null;
+                                    updateAdvanceAmount();
                                   }
                                 },
                               ),
@@ -798,25 +869,44 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               underline: const SizedBox(),
                               items: paymentOptions.map((option) {
                                 return DropdownMenuItem<int>(
-                                  value: option['id'],
-                                  child: Text(option['label']),
+                                  value: option['id'] as int,
+                                  child: Text(option['label'] as String),
                                 );
                               }).toList(),
                               onChanged: (id) {
-                                final selectedOption = paymentOptions
-                                    .firstWhere((opt) => opt['id'] == id);
+                                final selectedOption =
+                                    paymentOptions.firstWhere(
+                                  (opt) => opt['id'] == id,
+                                  orElse: () =>
+                                      <String, dynamic>{}, // Safe fallback
+                                );
+
+                                if (selectedOption.isEmpty)
+                                  return; // No matching option found
+
                                 setState(() {
                                   selectedpaymentId = id;
-                                  selectedPercentage = selectedOption['value'];
-                                  _controller.text = selectedOption['label'];
-                                  updateAdvanceAmount(); // 👈 fills text field
+
+                                  // Extract numeric percentage
+                                  selectedPercentage = (selectedOption['value']
+                                          is num)
+                                      ? (selectedOption['value'] as num)
+                                          .toDouble()
+                                      : double.tryParse(
+                                          selectedOption['value'].toString());
+
+                                  // Update text field
+                                  _controller.text =
+                                      selectedOption['label'].toString();
+
+                                  updateAdvanceAmount();
                                 });
                               },
                               value: selectedpaymentId,
                             ),
                           ],
-
                         )
+
                         //  DropdownButtonFormField<int>(
                         //   hint: Text("Select Payment Method"),
                         //   items: paymentOptions.map((option) {
@@ -851,7 +941,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                         ),
                         keyboardType: TextInputType.number,
-                        style:  GoogleFonts.poppins(
+                        style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w400, fontSize: 15.sp),
                       ),
                     ),
@@ -860,13 +950,13 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:  SizedBox(
+                        child: SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'VAT (5%)',
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16.sp,
@@ -882,7 +972,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           padding: EdgeInsets.only(top: 10.h, left: 20.w),
                           child: Text(
                             vat.toString(),
-                            style:  GoogleFonts.poppins(
+                            style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w400,
                             ),
@@ -896,13 +986,13 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     children: [
                       Padding(
                         padding: EdgeInsets.only(top: 10.h, left: 20.w),
-                        child:  SizedBox(
+                        child: SizedBox(
                           height: 40, // Set the desired height
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               'Total Amount',
-                              style:  GoogleFonts.poppins(
+                              style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                                 fontSize: 16.sp,
@@ -918,7 +1008,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                           padding: EdgeInsets.only(top: 10.h, left: 20.w),
                           child: Text(
                             total.toString(),
-                            style:  GoogleFonts.poppins(
+                            style: GoogleFonts.poppins(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.w800,
                             ),
@@ -939,7 +1029,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                     padding: EdgeInsets.only(left: 725.w, top: 10.h),
                     child: Text(
                       "Sign Section ",
-                      style:  GoogleFonts.poppins(
+                      style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w400,
                           color: Colors.red),
@@ -978,7 +1068,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                 children: [
                   Text(
                     "Total Amount in Name",
-                    style:  GoogleFonts.poppins(
+                    style: GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -1021,7 +1111,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                 children: [
                   Text(
                     "Note after quote",
-                    style:  GoogleFonts.poppins(
+                    style: GoogleFonts.poppins(
                         fontSize: 15.sp,
                         fontWeight: FontWeight.w400,
                         color: Colors.black),
@@ -1041,7 +1131,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         keyboardType: TextInputType.multiline,
                         cursorHeight: 25.h,
                         textAlignVertical: TextAlignVertical.center,
-                        style:  GoogleFonts.poppins(color: Colors.black),
+                        style: GoogleFonts.poppins(color: Colors.black),
                         textAlign: TextAlign.start,
                         cursorColor: Colors.black45,
                         decoration: InputDecoration(
@@ -1086,7 +1176,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         SizedBox(
-                          width: 300,
+                          width: 300.w,
                           // Give a fixed width to prevent stretching
                           child: DropdownSearch<String>(
                             asyncItems: (String? filter) async {
@@ -1138,14 +1228,18 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                     data['advance percent'] ?? '';
                                 //new field
                                 newfeild.text =
-                                    data['newfield'] ?? 'No Data foud';
+                                    data['newfield'] ?? ''; 
                                 vat =
                                     double.tryParse(data['vat 5%'] ?? '0') ?? 0;
                                 total = double.tryParse(
                                         data['total amount'] ?? '0') ??
                                     0;
 
-                                final paymentLabel = data['payment'];
+                                final paymentLabel = data['payment'] ?? '';
+
+                                _controller.text =
+                                    paymentLabel; // 👈 Fills TextField correctly
+
                                 final paymentMatch = paymentOptions.firstWhere(
                                   (opt) => opt['label'] == paymentLabel,
                                   orElse: () => {},
@@ -1155,6 +1249,18 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                   selectedpaymentId = paymentMatch['id'];
                                   selectedPercentage = paymentMatch['value'];
                                   updateAdvanceAmount();
+                                } else {
+                                  // 👇 If text is custom (not in dropdown), parse it
+                                  selectedpaymentId = null;
+
+                                  // Extract numeric % if exists → "40%" or "40" etc.
+                                  final numeric = double.tryParse(paymentLabel
+                                      .replaceAll(RegExp(r'[^0-9]'), ''));
+
+                                  if (numeric != null) {
+                                    selectedPercentage = numeric;
+                                    updateAdvanceAmount();
+                                  }
                                 }
                               });
                             },
@@ -1162,22 +1268,24 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                         ),
                         InkWell(
                           onTap: () async {
-                            final id = DateTime.now()
-                                .microsecondsSinceEpoch
-                                .toString();
-                            var selectedPayment = paymentOptions.firstWhere(
-                              (opt) => opt['id'] == selectedpaymentId,
-                              orElse: () => {'label': '', 'value': 0},
-                            );
+                            if (isSaving) return;
+                            setState(() => isSaving = true);
 
                             try {
-                              await _reserveAndIncrementinvno(
-                                  _firestore, invno);
+                              final id = DateTime.now()
+                                  .microsecondsSinceEpoch
+                                  .toString();
+                             final nextInv = await safeCompanyInvCounter(
+                                  selectedCompany2!,
+                                  invno.text, // 👈 whatever user typed
+                                );
+
+                                invno.text = nextInv;
                               await firestore.doc(id).set({
                                 'id': id,
                                 'inv no': invno.text,
                                 'date': date.text,
-                                'payment': selectedPayment['label'],
+                                'payment': _controller.text.trim(),
                                 'LpoQtn#': lpoqtn.text,
                                 'project': project.text,
                                 'note before quote': nbq.text,
@@ -1204,7 +1312,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                       15), // only works with floating behavior
                                 ),
                               );
-                              loadNewinvno();
+                              await loadNextInvNo();
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -1233,7 +1341,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               child: Center(
                                 child: Text(
                                   "Save",
-                                  style:  GoogleFonts.poppins(
+                                  style: GoogleFonts.poppins(
                                       color: Colors.white,
                                       fontSize: 15.sp,
                                       fontWeight: FontWeight.w500),
@@ -1294,6 +1402,16 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             if (selected != null) {
                               selectedCompany = selected;
 
+                              final paymentLabel =
+                                  _controller.text.trim(); // what user sees
+                              final advancePercentString =
+                                  selectedPercentage != null
+                                      ? selectedPercentage!
+                                          .toStringAsFixed(0) // "40"
+                                      : (advancepercent.text.isNotEmpty
+                                          ? advancepercent.text
+                                          : '');
+
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -1301,7 +1419,8 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                     invno: invno.text,
                                     date: date.text,
                                     lpoqtn: lpoqtn.text,
-                                    advancepercent: advancepercent.text,
+                                    advancepercent:
+                                        advancePercentString, // numeric percent string
                                     project: project.text,
                                     nbq: nbq.text,
                                     subtotal: subtotalController.text,
@@ -1313,17 +1432,14 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                                     name: widget.name,
                                     address: widget.address,
                                     trn: widget.trn,
-                                    payment: paymentOptions.firstWhere(
-                                            (opt) =>
-                                                opt['id'] == selectedpaymentId,
-                                            orElse: () =>
-                                                {'label': ''})['label'] ??
-                                        '',
+                                    payment:
+                                        paymentLabel, // pass the actual label
                                     selectedCompany: selectedCompany,
                                     option: selectedoption != null
                                         ? options.firstWhere((m) =>
                                             m['id'] == selectedoption)['label']
-                                        : '',
+                                        : '', 
+                                        newfeild: newfeild.text,
                                   ),
                                 ),
                               );
@@ -1339,7 +1455,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             child: Center(
                               child: Text(
                                 "Preview",
-                                style:  GoogleFonts.poppins(
+                                style: GoogleFonts.poppins(
                                   color: Colors.white,
                                   fontSize: 15.sp,
                                   fontWeight: FontWeight.w400,
@@ -1353,32 +1469,27 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             if (selectedDocumentId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content:const Text(
+                                  content: const Text(
                                       'Please select a document to update'),
-                                  duration:const Duration(seconds: 2),
+                                  duration: const Duration(seconds: 2),
                                   backgroundColor: Colors.black54,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin:const EdgeInsets.all(
+                                  margin: const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
                             }
-
-                            var selectedPayment = paymentOptions.firstWhere(
-                              (opt) => opt['id'] == selectedpaymentId,
-                              orElse: () => {'label': '', 'value': 0},
-                            );
 
                             try {
                               await firestore.doc(selectedDocumentId).update({
                                 'inv no': invno.text,
                                 'date': date.text,
                                 'LpoQtn#': lpoqtn.text,
-                                'payment': selectedPayment['label'],
+                                'payment': _controller.text.trim(),
                                 'advance percent': advancepercent.text,
                                 'project': project.text,
                                 'note before quote': nbq.text,
@@ -1393,15 +1504,15 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content:const Text('Tax Invoice Updated'),
-                                  duration:const  Duration(seconds: 2),
+                                  content: const Text('Tax Invoice Updated'),
+                                  duration: const Duration(seconds: 2),
                                   backgroundColor: Colors.green,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin:const EdgeInsets.all(
+                                  margin: const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
@@ -1409,20 +1520,19 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text('Failed to update ${e}'),
-                                  duration:const Duration(seconds: 2),
+                                  duration: const Duration(seconds: 2),
                                   backgroundColor: Colors.black54,
                                   behavior: SnackBarBehavior.floating,
                                   // optional for a floating snackbar
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  margin:const EdgeInsets.all(
+                                  margin: const EdgeInsets.all(
                                       15), // only works with floating behavior
                                 ),
                               );
                             }
                           },
-
                           child: Container(
                             width: 65.w,
                             height: 35.h,
@@ -1432,8 +1542,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
                             child: Center(
                               child: Text(
                                 "Update",
-
-                                style:  GoogleFonts.poppins(
+                                style: GoogleFonts.poppins(
                                     color: Colors.white,
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w500),

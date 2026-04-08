@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:number_to_words/number_to_words.dart';
 import 'Invoice.dart';
 
 import 'Quotationpdf.dart';
@@ -64,8 +63,9 @@ class _Quotation2State extends State<Quotation2> {
   ];
 
   final List<Map<String, dynamic>> options = [
-    {'label': 'YES', 'id': 1},
-    {'label': 'NO', 'id': 2},
+    {'label': 'Sign-1', 'id': 1},
+    {'label': 'Sign-2', 'id': 2},
+    {'label': 'NO Sign', 'id': 3},
   ];
 
   int? selectedoption;
@@ -102,7 +102,7 @@ class _Quotation2State extends State<Quotation2> {
   List<Map<String, dynamic>> formStructure = [];
   bool isDiscountEnabled = false;
   String selectedCompany = 'Reyah Al Maskan';
-  String? selectedCompany2; 
+  String? selectedCompany2;
 
   //function to add header text
   void addNewHeader() {
@@ -167,8 +167,7 @@ class _Quotation2State extends State<Quotation2> {
     if (!snap.exists) return "$shortYear-01";
 
     int last = snap.data()?['last'] ?? 0;
-
-    return "$shortYear-${(last + 1).toString().padLeft(2, '0')}";
+return "$shortYear-${last.toString().padLeft(2, '0')}";
   }
 
 // 1. QTN Load function (for initState)
@@ -188,10 +187,10 @@ class _Quotation2State extends State<Quotation2> {
 
   int extractSequence(String qtnNo) {
     try {
-      // qtnNo format: "25-32"
       final parts = qtnNo.split("-");
-      return int.tryParse(parts[1]) ?? 0;
-    } catch (e) {
+      if (parts.length != 2) return 0;
+      return int.parse(parts[1]);
+    } catch (_) {
       return 0;
     }
   }
@@ -212,21 +211,27 @@ class _Quotation2State extends State<Quotation2> {
 
     final snap = await docRef.get();
 
-    // ✔ FIXED LINE (no syntax error)
     int last = snap.exists ? (snap.data()?['last'] ?? 0) : 0;
 
+    // 🔥 THIS IS THE FIX
     int manualSeq = extractSequence(manualQtnNo);
 
-    int newSeq = manualSeq > last ? manualSeq : last + 1;
+    if (manualSeq <= 0) {
+      throw Exception("Invalid QTN format");
+    }
+
+    // ✔ Always trust the manually entered number
+    int newLast = manualSeq;
 
     await docRef.set({
       'year': year,
-      'last': newSeq,
+      'last': newLast,
       'company': company,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
 
-    return "$shortYear-${newSeq.toString().padLeft(2, '0')}";
+    // 🔹 Return NEXT number
+    return "$shortYear-${(newLast + 1).toString().padLeft(2, '0')}";
   }
 
   // ... rest of your methods ...
@@ -303,28 +308,78 @@ class _Quotation2State extends State<Quotation2> {
     calculateTotal(); // Recalculate total after updating subtotal
   }
 
+  String convertToUaeWords(double amount) {
+    final int dirhams = amount.floor();
+    final int fils = ((amount - dirhams) * 100).round();
+
+    String numberToWords(int n) {
+      const ones = [
+        '',
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+        'seven',
+        'eight',
+        'nine',
+        'ten',
+        'eleven',
+        'twelve',
+        'thirteen',
+        'fourteen',
+        'fifteen',
+        'sixteen',
+        'seventeen',
+        'eighteen',
+        'nineteen'
+      ];
+      const tens = [
+        '',
+        '',
+        'twenty',
+        'thirty',
+        'forty',
+        'fifty',
+        'sixty',
+        'seventy',
+        'eighty',
+        'ninety'
+      ];
+
+      if (n < 20) return ones[n];
+      if (n < 100) {
+        return tens[n ~/ 10] + (n % 10 != 0 ? ' ${ones[n % 10]}' : '');
+      }
+      if (n < 1000) {
+        return '${ones[n ~/ 100]} hundred'
+            '${n % 100 != 0 ? ' ${numberToWords(n % 100)}' : ''}';
+      }
+      if (n < 1000000) {
+        return '${numberToWords(n ~/ 1000)} thousand'
+            '${n % 1000 != 0 ? ' ${numberToWords(n % 1000)}' : ''}';
+      }
+      return '${numberToWords(n ~/ 1000000)} million'
+          '${n % 1000000 != 0 ? ' ${numberToWords(n % 1000000)}' : ''}';
+    }
+
+    String result = '${numberToWords(dirhams)} dirhams';
+
+    if (fils > 0) {
+      result += ' and ${numberToWords(fils)} fils';
+    }
+
+    return '${result[0].toUpperCase()}${result.substring(1)} only';
+  }
+
   void calculateTotal() {
     taxableAmount = subtotal - discount;
     vat = taxableAmount * 0.05;
     totalAmount = taxableAmount + vat;
 
-    // Convert amount to words and update the controller
-    final totalInt = totalAmount.floor(); // Dirhams
-    final totalFils = ((totalAmount - totalInt) * 100).round(); // Fils
-
-    String amountInWords =
-        NumberToWord().convert('en-in', totalInt) + 'dirhams';
-
-    if (totalFils > 0) {
-      amountInWords +=
-          ' and ${NumberToWord().convert('en-in', totalFils)} fils';
-    }
-
-    amountInWords += ' only';
-
-    // Capitalize first letter
-    totalamountinname.text =
-        amountInWords[0].toUpperCase() + amountInWords.substring(1);
+    // ✅ ONLY THIS LINE for words
+    totalamountinname.text = convertToUaeWords(totalAmount);
 
     setState(() {});
   }
@@ -1111,6 +1166,7 @@ class _Quotation2State extends State<Quotation2> {
     Navigator.push(
       context,
       MaterialPageRoute(
+        
         builder: (context) => invoice1(
           id: widget.id,
           name: widget.name,
@@ -1351,7 +1407,7 @@ class _Quotation2State extends State<Quotation2> {
 
                             if (pickedDate != null) {
                               String formattedDate =
-                                  DateFormat('dMMMyyyy').format(pickedDate);
+                                  DateFormat('d/MM/yyyy').format(pickedDate);
                               date.text = formattedDate;
                             }
                           },
@@ -1788,21 +1844,21 @@ class _Quotation2State extends State<Quotation2> {
                 Padding(
                   padding: EdgeInsets.only(top: 40.h),
                   child: CircleAvatar(
-                    radius: 25.r, 
+                    radius: 25.r,
                     backgroundColor: Color(0xFFC62828),
                     child: IconButton(
                         onPressed: () {
                           setState(() {
                             isclicked = true;
                           });
-                        }, 
+                        },
                         icon: Icon(
                           Icons.add,
                           color: Colors.white,
-                          size: 20.sp, 
+                          size: 20.sp,
                         )),
                   ),
-                ) 
+                )
               ],
             ),
             isclicked == true
@@ -2855,11 +2911,11 @@ class _Quotation2State extends State<Quotation2> {
                                           .contains(filter.toLowerCase()))
                                   .toList();
                             },
-                            popupProps: const PopupProps.menu(
+                             popupProps: const PopupProps.menu(
                               showSearchBox: true,
                               searchFieldProps: TextFieldProps(
                                 decoration: InputDecoration(
-                                    hintText: "Search by QTN No"),
+                                    hintText: "Search by INV No"),
                               ),
                             ),
                             dropdownDecoratorProps:
@@ -2869,8 +2925,6 @@ class _Quotation2State extends State<Quotation2> {
                                 border: OutlineInputBorder(),
                               ),
                             ),
-                            // In the onChanged callback of DropdownSearch<String>:
-                            // In the onChanged callback of DropdownSearch<String>:
                             onChanged: (invNo) async {
                               if (invNo == null) return;
 
@@ -2897,8 +2951,7 @@ class _Quotation2State extends State<Quotation2> {
                                   selectednbq = data['note before quote'] ?? '';
                                   termsandconditioncontroller.text =
                                       data['termsandcondition'] ?? '';
-                                  newfeild.text =
-                                      data['newfield'] ?? 'No Data foud';
+                                  newfeild.text = data['newfield'] ?? '';
                                   selectedTAC = data['termsandcondition'] ?? '';
                                   naq.text = data['note after quote'] ?? '';
                                   totalamountinname.text =
@@ -3000,11 +3053,12 @@ class _Quotation2State extends State<Quotation2> {
                                     .microsecondsSinceEpoch
                                     .toString();
 
-                                // Generate number for this quotation
-                                final generated = await safeCompanyQtnCounter(
-                                    selectedCompany2!, qtnno.text);
-                                qtnno.text = generated;
+                                final nextQtn = await safeCompanyQtnCounter(
+                                  selectedCompany2!,
+                                  qtnno.text, // 👈 whatever user typed
+                                );
 
+                                qtnno.text = nextQtn;
                                 await quotationRef.doc(id).set({
                                   'id': id,
                                   'project': project.text,

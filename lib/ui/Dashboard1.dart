@@ -1,6 +1,7 @@
 import 'package:almaskan/ui/Invoice.dart';
 import 'package:almaskan/ui/Taxinvoice1.dart';
 import 'package:almaskan/ui/quotation.dart';
+import 'package:almaskan/ui/statement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,7 +17,8 @@ class Dashboard2 extends StatefulWidget {
       required this.id,
       required this.name,
       required this.address,
-      required this.trn, required this.index});
+      required this.trn,
+      required this.index});
 
   @override
   State<Dashboard2> createState() => _Dashboard2State();
@@ -26,7 +28,8 @@ class _Dashboard2State extends State<Dashboard2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.blueGrey[300],
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey[300],
         leading: Padding(
           padding: EdgeInsets.only(left: 20.w),
           child: IconButton(
@@ -68,6 +71,9 @@ class _Dashboard2State extends State<Dashboard2> {
                           Tab(text: "Quotation"),
                           Tab(text: "Invoice"),
                           Tab(text: "Tax Invoice"),
+                          Tab(
+                            text: 'Statement',
+                          )
                         ]),
                   ),
                   Expanded(
@@ -76,23 +82,30 @@ class _Dashboard2State extends State<Dashboard2> {
                       Quotation2(
                         id: widget.id,
                         name: widget.name,
-                address: widget.address,
-                         index: widget.index ,
+                        address: widget.address,
+                        index: widget.index,
                       ),
                       invoice1(
                         id: widget.id,
                         name: widget.name,
                         address: widget.address,
                         trn: widget.trn,
-                         index:widget.index,
+                        index: widget.index,
                       ),
                       Taxinvoice1(
                         id: widget.id,
                         name: widget.name,
                         address: widget.address,
                         trn: widget.trn,
-                         index: widget.index,
+                        index: widget.index,
                       ),
+                      Statement(
+                        id: widget.id,
+                        name: widget.name,
+                        address: widget.address,
+                        index: widget.index,
+                        trn: widget.trn,
+                      )
                     ],
                   ))
                 ],
