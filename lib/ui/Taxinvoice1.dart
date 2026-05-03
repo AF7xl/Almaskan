@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-
 class Taxinvoice1 extends StatefulWidget {
   final String id;
   final String name;
@@ -96,7 +95,7 @@ class _Taxinvoice1State extends State<Taxinvoice1> {
       .collection('invoice');
 
 // 1. QTN Load function (for initState)
-Future<String> previewInvNo(String company) async {
+  Future<String> previewInvNo(String company) async {
     String docName = company == "Al Maskan"
         ? "inv_al_maskan"
         : company == "Reyah Al Maskan"
@@ -532,6 +531,125 @@ Future<String> previewInvNo(String company) async {
                     ],
                   ),
                 ),
+                SizedBox(
+                  width: 10.w,
+                ),
+                InkWell(
+                  onTap: () async {
+                    TextEditingController duplicateInvController =
+                        TextEditingController(text: invno.text);
+
+                    bool? confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Duplicate Invoice"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Customize Invoice Number",
+                                style: TextStyle(fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 10),
+                              TextField(
+                                controller: duplicateInvController,
+                                decoration: const InputDecoration(
+                                  labelText: "Invoice Number",
+                                  border: OutlineInputBorder(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, false);
+                              },
+                              child: const Text("Cancel"),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: const Text("Duplicate",
+                                  style: TextStyle(color: Colors.white)),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    if (confirm != true) return;
+
+                    try {
+                      // collectFormData();
+
+                      final newId =
+                          DateTime.now().microsecondsSinceEpoch.toString();
+
+                      final customInv = duplicateInvController.text.trim();
+             
+
+                      // await safeCompanyInvCounter(selectedCompany2!, customInv);
+                      await firestore.doc(newId).set({
+                        'id': newId,
+                        'inv no': customInv,
+                        'date': date.text,
+                        'payment': _controller.text.trim(),
+                        'LpoQtn#': lpoqtn.text,
+                        'project': project.text,
+                        'note before quote': nbq.text,
+                        'subtotal taxable amount': subtotalController.text,
+                        'advance payment': advanceController.text,
+                        'vat 5%': vat.toString(),
+                        'total amount': total.toString(),
+                        'total amount in name': totalamountinname.text,
+                        'note after quote': naq.text,
+                        'newfield': newfeild.text,
+                      });
+
+                      setState(() {
+                        invno.text = customInv;
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Invoice duplicated successfully"),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Duplicate failed: $e"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    width: 80.w,
+                    height: 35.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5.r),
+                      color: Colors.red[900],
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Duplicate",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
             Row(
@@ -1227,8 +1345,7 @@ Future<String> previewInvNo(String company) async {
                                 advancepercent.text =
                                     data['advance percent'] ?? '';
                                 //new field
-                                newfeild.text =
-                                    data['newfield'] ?? ''; 
+                                newfeild.text = data['newfield'] ?? '';
                                 vat =
                                     double.tryParse(data['vat 5%'] ?? '0') ?? 0;
                                 total = double.tryParse(
@@ -1275,12 +1392,12 @@ Future<String> previewInvNo(String company) async {
                               final id = DateTime.now()
                                   .microsecondsSinceEpoch
                                   .toString();
-                             final nextInv = await safeCompanyInvCounter(
-                                  selectedCompany2!,
-                                  invno.text, // 👈 whatever user typed
-                                );
+                              final nextInv = await safeCompanyInvCounter(
+                                selectedCompany2!,
+                                invno.text, // 👈 whatever user typed
+                              );
 
-                                invno.text = nextInv;
+                              invno.text = nextInv;
                               await firestore.doc(id).set({
                                 'id': id,
                                 'inv no': invno.text,
@@ -1438,8 +1555,8 @@ Future<String> previewInvNo(String company) async {
                                     option: selectedoption != null
                                         ? options.firstWhere((m) =>
                                             m['id'] == selectedoption)['label']
-                                        : '', 
-                                        newfeild: newfeild.text,
+                                        : '',
+                                    newfeild: newfeild.text,
                                   ),
                                 ),
                               );

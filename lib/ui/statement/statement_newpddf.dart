@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:almaskan/ui/Taxinvoicepdf.dart';
 import 'package:almaskan/ui/statementpdf.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -272,11 +273,11 @@ class _StatementNewpddfState extends State<StatementNewpddf> {
                                 children: [
                                   tableCell(item['date'] ?? ''),
                                   tableCell(item['description'] ?? ''),
-                                  tableCell(item['invoiceamount'] ?? '',
+                                  tableCell( formatIndian(item['invoiceamount']) ?? '',
                                       align: pw.TextAlign.right),
-                                  tableCell(item['receivedamount'] ?? '',
+                                  tableCell( formatIndian(item['receivedamount']) ?? '',
                                       align: pw.TextAlign.right),
-                                  tableCell(item['accountbalance'] ?? '',
+                                  tableCell( formatIndian(item['accountbalance']) ?? '',
                                       align: pw.TextAlign.right),
                                 ],
                               );
@@ -291,7 +292,7 @@ class _StatementNewpddfState extends State<StatementNewpddf> {
                                 tableCell("TOTAL AMOUNT", bold: true),
                                 tableCell(""),
                                 tableCell(""),
-                                tableCell(widget.totalamount,
+                                tableCell(formatIndian(widget.totalamount),
                                     bold: true, align: pw.TextAlign.right),
                               ],
                             ),

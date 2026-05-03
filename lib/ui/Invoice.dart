@@ -589,7 +589,7 @@ return "$shortYear-${last.toString().padLeft(2, '0')}";
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.cancel_outlined, color: Colors.black),
+                  icon:const Icon(Icons.cancel_outlined, color: Colors.black),
                   onPressed: () {
                     setState(() {
                       formStructure.removeAt(i);
@@ -663,7 +663,7 @@ return "$shortYear-${last.toString().padLeft(2, '0')}";
                       EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                   border: InputBorder.none,
                   enabledBorder:
-                      OutlineInputBorder(borderSide: BorderSide.none),
+                     const OutlineInputBorder(borderSide: BorderSide.none),
                 ),
               ),
             ),
@@ -714,7 +714,7 @@ return "$shortYear-${last.toString().padLeft(2, '0')}";
                             EdgeInsets.only(top: 2.h, left: 5.w, bottom: 15.h),
                         border: InputBorder.none,
                         enabledBorder:
-                            OutlineInputBorder(borderSide: BorderSide.none),
+                          const  OutlineInputBorder(borderSide: BorderSide.none),
                       ),
                       style: GoogleFonts.poppins(
                           color: Colors.black, fontSize: 15.sp),
@@ -739,7 +739,7 @@ return "$shortYear-${last.toString().padLeft(2, '0')}";
                                   onSelected(option);
                                 },
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
+                                  padding:const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 10),
                                   child: Row(
                                     mainAxisAlignment:
@@ -1510,7 +1510,7 @@ return "$shortYear-${last.toString().padLeft(2, '0')}";
                               onPressed: () {
                                 Navigator.pop(context, true);
                               },
-                              child: const Text("Duplicate"),
+                              child: const Text("Duplicate",style: TextStyle(color: Colors.white),),
                             ),
                           ],
                         );

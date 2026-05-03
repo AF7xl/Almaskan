@@ -475,7 +475,7 @@ class _statementpdfpageState extends State<statementpdfpage> {
                                 flex: 2,
                                 child: pw.Text(
                                     textAlign: pw.TextAlign.right,
-                                    widget.totalamount,
+                                     formatIndian(widget.totalamount),
                                     style: pw.TextStyle(
                                       fontSize: 9.sp,
                                       fontWeight: pw.FontWeight.bold
@@ -484,7 +484,7 @@ class _statementpdfpageState extends State<statementpdfpage> {
                         ),
                         pw.Divider(thickness: 0.2),
                         pw.SizedBox(height: 6.h),
-                        pw.Text(formatIndian(widget.totalamountinname),
+                        pw.Text(widget.totalamountinname,
                             style: pw.TextStyle(
                                 decoration: pw.TextDecoration.underline,
                                 fontSize: 10.sp,

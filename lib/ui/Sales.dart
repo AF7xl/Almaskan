@@ -266,7 +266,7 @@ final formattedinvoiceAmount =
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
                                     children: [
-                                      pw.Text(salesData["Date"],
+                                      pw.Text(salesData["Date"]?.toString() ?? "",
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
@@ -292,7 +292,7 @@ final formattedinvoiceAmount =
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
                                     children: [
-                                      pw.Text(salesData["payment method"],
+                                      pw.Text(salesData["payment method"]?.toString() ?? "",
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
@@ -318,7 +318,7 @@ final formattedinvoiceAmount =
                                     crossAxisAlignment:
                                         pw.CrossAxisAlignment.start,
                                     children: [
-                                      pw.Text(salesData['Payment Type'],
+                                      pw.Text(salesData['Payment Type']?.toString() ?? "",
                                           style: pw.TextStyle(
                                               fontWeight: pw.FontWeight.normal,
                                               color: PdfColors.black,
@@ -371,17 +371,17 @@ final formattedinvoiceAmount =
                   child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Text(salesData['Customer Name'],
+                        pw.Text(salesData['Customer Name']?.toString() ?? "",
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.bold,
                                 fontSize: 10.sp)),
                         pw.SizedBox(height: 2.h),
-                        pw.Text(salesData['Project'],
+                        pw.Text(salesData['Project']?.toString() ?? "",
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.normal,
                                 fontSize: 10.sp)),
                         pw.SizedBox(height: 2.h),
-                        pw.Text(salesData['Emirate'],
+                        pw.Text(salesData['Emirate']?.toString() ?? "",
                             style: pw.TextStyle(
                                 fontWeight: pw.FontWeight.normal,
                                 fontSize: 10.sp)),
@@ -455,7 +455,7 @@ final formattedinvoiceAmount =
                             padding: pw.EdgeInsets.only(left: 6.w),
                             child: pw.Container(
                                 width: 90.w,
-                                child: pw.Text(salesData['Invoice Number'],
+                                child: pw.Text(salesData['Invoice Number']?.toString() ?? "",
                                     style: pw.TextStyle(
                                         fontSize: 10.sp,
                                         fontWeight: pw.FontWeight.normal,
@@ -463,7 +463,7 @@ final formattedinvoiceAmount =
                         pw.SizedBox(width: 25.w),
                         pw.Container(
                             width: 90.w,
-                            child: pw.Text(salesData['Date'],
+                            child: pw.Text(salesData['Date']?.toString() ?? "",
                                 style: pw.TextStyle(
                                     fontSize: 10.sp,
                                     fontWeight: pw.FontWeight.normal,
